@@ -17,6 +17,8 @@ configuration {
 
 // Main //
 window {
+    height:                      500px;
+    width:                       750px;
     transparency:                "real";
     fullscreen:                  false;
     enabled:                     true;
@@ -32,7 +34,7 @@ mainbox {
     enabled:                     true;
     spacing:                     0px;
     orientation:                 horizontal;
-    children:                    [  "inputbar" , "listbox" ];
+    children:                    [ "inputbar" , "mode-switcher" , "listbox" ];
     background-color:            transparent;
     background-image:            url("~/.config/swww/wall.blur", height);
 }
@@ -41,9 +43,8 @@ mainbox {
 // Inputs //
 inputbar {
     enabled:                     true;
-    width:                       25%;
-    children:                    [ "mode-switcher" , "entry" ];
-    background-color:            transparent;
+    width:                       180px;
+    children:                    [ "entry" ];
     background-image:            url("~/.config/swww/wall.set", height);
 }
 entry {
@@ -56,11 +57,10 @@ mode-switcher{
     orientation:                 vertical;
     enabled:                     true;
     spacing:                     0px;
-    width:                       2.5%;
-    padding:                     160px 10px 160px 10px;
+    width:                       100px;
+    padding:                     70px 10px 70px 20px;
     spacing:                     25px;
     background-color:            transparent;
-    background-image:            url("~/.config/swww/wall.blur", height);
 }
 button {
     cursor:                      pointer;
@@ -76,12 +76,13 @@ button selected {
 
 // Lists //
 listbox {
-    spacing:                     10px;
-    padding:                     30px;
+    spacing:                     5px;
+    padding:                     10px;
     children:                    [ "listview" ];
-    background-color:            @background;
+    background-color:            transparent;
 }
 listview {
+    padding:                     20px;
     enabled:                     true;
     columns:                     1;
     cycle:                       true;
@@ -92,8 +93,9 @@ listview {
     fixed-height:                true;
     fixed-columns:               true;
     cursor:                      "default";
-    background-color:            transparent;
+    background-color:            @background;
     text-color:                  @foreground;
+    border-radius:               30px;
 }
 
 
@@ -101,7 +103,7 @@ listview {
 element {
     enabled:                     true;
     spacing:                     30px;
-    padding:                     7px;
+    padding:                     6px;
     border-radius:               20px;
     cursor:                      pointer;
     background-color:            transparent;
