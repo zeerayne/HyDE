@@ -25,3 +25,4 @@
 0|40|top|( hyprland/workspaces )|( custom/cava idle_inhibitor clock )|( backlight pulseaudio pulseaudio#microphone tray battery custom/keybindhint custom/cliphist custom/hyprsunset custom/power )
 0|30|top|( hyprland/workspaces##kanji wlr/taskbar##custom )|( keyboard-state custom/hyprsunset idle_inhibitor clock##alt custom/updates  custom/keybindhint ) | ( privacy backlight tray network custom/bluetooth pulseaudio pulseaudio#microphone battery custom/gpuinfo custom/swaync )
 0|30|bottom||( wlr/taskbar##windows )| ( privacy tray  custom/gpuinfo network pulseaudio pulseaudio#microphone battery clock )
+1|36|top|( cpu memory custom/cpuinfo custom/gpuinfo ) ( idle_inhibitor clock ) ( hyprland/workspaces )|( wlr/taskbar )|( custom/spotify backlight bluetooth pulseaudio pulseaudio#microphone ) ( custom/keybindhint hyprland/language ) ( privacy tray battery ) ( custom/cliphist custom/power )
