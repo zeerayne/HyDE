@@ -1,5 +1,6 @@
     "clock": {
-        "format": "{:%I:%M %p}",
+        "format": "{:%H:%M:%S}",
+        "interval": 1,
         "rotate": ${r_deg},
         "format-alt": "{:%R 󰃭 %d·%m·%y}",
         "tooltip-format": "<span>{calendar}</span>",
