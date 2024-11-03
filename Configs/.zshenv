@@ -38,60 +38,6 @@ function command_not_found_handler {
     return 127
 }
 
-function _load_zsh_plugins {
-    unset -f _load_zsh_plugins
-    # Oh-my-zsh installation path
-    zsh_paths=(
-        "$HOME/.oh-my-zsh"
-        "/usr/local/share/oh-my-zsh"
-        "/usr/share/oh-my-zsh"
-    )
-    for zsh_path in "${zsh_paths[@]}"; do [[ -d $zsh_path ]] && export ZSH=$zsh_path && break; done
-    # Load Plugins
-    hyde_plugins=(git zsh-256color zsh-autosuggestions zsh-syntax-highlighting)
-    plugins+=("${plugins[@]}" "${hyde_plugins[@]}")
-    # Deduplicate plugins
-    plugins=("${plugins[@]}")
-    plugins=($(printf "%s\n" "${plugins[@]}" | sort -u))
-    # Defer oh-my-zsh loading until after prompt appears
-    typeset -g DEFER_OMZ_LOAD=1
-}
-
-# Function to display a slow load warning
-# the intention is for hyprdots users who might have multiple zsh initialization
-function _slow_load_warning {
-    local lock_file="/tmp/.hyde_slow_load_warning.lock"
-    local load_time=$SECONDS
-
-    # Check if the lock file exists
-    if [[ ! -f $lock_file ]]; then
-        # Create the lock file
-        touch $lock_file
-
-        # Display the warning if load time exceeds the limit
-        time_limit=3
-        if ((load_time > time_limit)); then
-            cat <<EOF
-    ⚠️ Warning: Shell startup took more than ${time_limit} seconds. Consider optimizing your configuration.
-        1. This might be due to slow plugins, slow initialization scripts.
-        2. Duplicate plugins initialization.
-            - navigate to ~/.zshrc and remove any 'source ZSH/oh-my-zsh.sh' or
-                'source ~/.oh-my-zsh/oh-my-zsh.sh' lines.
-            - HyDE already sources the oh-my-zsh.sh file for you.
-            - It is important to remove all HyDE related
-                configurations from your .zshrc file as HyDE will handle it for you.
-            - Check the '.zshrc' file from the repo for a clean configuration.
-                https://github.com/HyDE-Project/HyDE/blob/master/Configs/.zshrc
-        3. Check the '~/.hyde.zshrc' file for any slow initialization scripts.
-
-    For more information, on the possible causes of slow shell startup, see:
-        🌐 https://github.com/HyDE-Project/HyDE/wiki
-
-EOF
-        fi
-    fi
-}
-
 # Function to handle initialization errors
 function handle_init_error {
     if [[ $? -ne 0 ]]; then
@@ -117,16 +63,6 @@ function _load_persistent_aliases {
             lt='eza --icons=auto --tree'
     fi
 
-}
-
-function _load_omz_on_init() {
-    # Load oh-my-zsh when line editor initializes // before user input
-    if [[ -n $DEFER_OMZ_LOAD ]]; then
-        unset DEFER_OMZ_LOAD
-        [[ -r $ZSH/oh-my-zsh.sh ]] && source $ZSH/oh-my-zsh.sh
-        ZDOTDIR="${__ZDOTDIR:-$HOME}"
-        _load_post_init
-    fi
 }
 
 # best fzf aliases ever
@@ -221,55 +157,10 @@ function _load_if_terminal {
 
         unset -f _load_if_terminal
 
-        # Currently We are loading Starship and p10k prompts on start so users can see the prompt immediately
-
-        if command -v starship &>/dev/null; then
-            # ===== START Initialize Starship prompt =====
-            eval "$(starship init zsh)"
-            export STARSHIP_CACHE=$XDG_CACHE_HOME/starship
-            export STARSHIP_CONFIG=$XDG_CONFIG_HOME/starship/starship.toml
-        # ===== END Initialize Starship prompt =====
-        elif [ -r $HOME/.p10k.zsh ]; then
-            # ===== START Initialize Powerlevel10k theme =====
-            POWERLEVEL10K_TRANSIENT_PROMPT=same-dir
-            P10k_THEME=${P10k_THEME:-/usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme}
-            [[ -r $P10k_THEME ]] && source $P10k_THEME
-            # To customize prompt, run `p10k configure` or edit $HOME/.p10k.zsh
-            [[ ! -f $HOME/.p10k.zsh ]] || source $HOME/.p10k.zsh
-        # ===== END Initialize Powerlevel10k theme =====
-        fi
-
         # Optionally load user configuration // useful for customizing the shell without modifying the main file
-        if [[ -f $HOME/.hyde.zshrc ]]; then
-            source $HOME/.hyde.zshrc # for backward compatibility
-        elif [[ -f $HOME/.user.zsh ]]; then
-            source $HOME/.user.zsh # renamed to .user.zsh for intuitiveness that it is a user config
-        fi
-
-        # Load plugins
-        _load_zsh_plugins
-
-        # Load zsh hooks module once
-
-        #? Methods to load oh-my-zsh lazily
-        __ZDOTDIR="${ZDOTDIR:-$HOME}"
-        ZDOTDIR=/tmp
-        zle -N zle-line-init _load_omz_on_init # Loads when the line editor initializes // The best option
+        source $HOME/.user.zsh # renamed to .user.zsh for intuitiveness that it is a user config
 
         #  Below this line are the commands that are executed after the prompt appears
-
-        autoload -Uz add-zsh-hook
-        # add-zsh-hook zshaddhistory load_omz_deferred # loads after the first command is added to history
-        # add-zsh-hook precmd load_omz_deferred # Loads when shell is ready to accept commands
-        # add-zsh-hook preexec load_omz_deferred # Loads before the first command executes
-
-        # TODO: add handlers in pm.sh
-        # for these aliases please manually add the following lines to your .zshrc file.(Using yay as the aur helper)
-        # pc='yay -Sc' # remove all cached packages
-        # po='yay -Qtdq | ${PM_COMMAND[@]} -Rns -' # remove orphaned packages
-
-        # Warn if the shell is slow to load
-        add-zsh-hook -Uz precmd _slow_load_warning
 
         alias c='clear' \
             in='${PM_COMMAND[@]} install' \
