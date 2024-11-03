@@ -28,6 +28,7 @@ dunst                                                  # notification daemon
 rofi-wayland                                           # application launcher
 waybar                                                 # system bar
 swww                                                   # wallpaper
+hypridle                                               # idle manager
 hyprlock                                               # lock screen
 wlogout                                                # logout menu
 grim                                                   # screenshot tool

@@ -1,5 +1,5 @@
     "hyprland/language": {
-        "format": "{short} {variant}",
+        "format": "{shortDescription} {variant}",
         "rotate": ${r_deg},
         "on-click": "keyboardswitch.sh",
     },
