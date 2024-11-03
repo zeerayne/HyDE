@@ -34,25 +34,6 @@ function command_not_found_handler {
     return 127
 }
 
-function load_zsh_plugins {
-    # Oh-my-zsh installation path
-    zsh_paths=(
-        "$HOME/.oh-my-zsh"
-        "/usr/local/share/oh-my-zsh"
-        "/usr/share/oh-my-zsh"
-    )
-    for zsh_path in "${zsh_paths[@]}"; do [[ -d $zsh_path ]] && export ZSH=$zsh_path && break; done
-    # Load Plugins
-    hyde_plugins=( git zsh-256color zsh-autosuggestions zsh-syntax-highlighting )
-    plugins+=( "${plugins[@]}" "${hyde_plugins[@]}" git zsh-256color zsh-autosuggestions zsh-syntax-highlighting)
-    # Deduplicate plugins
-    plugins=("${plugins[@]}")
-    plugins=($(printf "%s\n" "${plugins[@]}" | sort -u))
-
-    # Loads om-my-zsh
-    [[ -r $ZSH/oh-my-zsh.sh ]] && source $ZSH/oh-my-zsh.sh
-}
-
 # Install packages from both Arch and AUR
 function in {
     local -a inPkg=("$@")
@@ -76,51 +57,11 @@ function in {
     fi
 }
 
-# Function to display a slow load warning
-function slow_load_warning {
-    local lock_file="/tmp/.hyde_slow_load_warning.lock"
-    local load_time=$SECONDS
-
-    # Check if the lock file exists
-    if [[ ! -f $lock_file ]]; then
-        # Create the lock file
-        touch $lock_file
-
-        # Display the warning if load time exceeds the limit
-        time_limit=3
-        if ((load_time > time_limit)); then
-            cat <<EOF
-    ⚠️ Warning: Shell startup took more than ${time_limit} seconds. Consider optimizing your configuration.
-        1. This might be due to slow plugins, slow initialization scripts.
-        2. Duplicate plugins initialization.
-            - navigate to ~/.zshrc and remove any 'source ZSH/oh-my-zsh.sh' or
-                'source ~/.oh-my-zsh/oh-my-zsh.sh' lines.
-            - HyDE already sources the oh-my-zsh.sh file for you.
-            - It is important to remove all HyDE related
-                configurations from your .zshrc file as HyDE will handle it for you.
-            - Check the '.zshrc' file from the repo for a clean configuration.
-                https://github.com/HyDE-Project/HyDE/blob/master/Configs/.zshrc
-        3. Check the '~/.hyde.zshrc' file for any slow initialization scripts.
-        4. Check the '~/.p10k.zsh' file for any slow initialization scripts.
-
-    For more information, on the possible causes of slow shell startup, see:
-        🌐 https://github.com/HyDE-Project/HyDE/wiki
-
-EOF
-        fi
-    fi
-}
-
 # Function to handle initialization errors
 function handle_init_error {
     if [[ $? -ne 0 ]]; then
         echo "Error during initialization. Please check your configuration."
     fi
-}
-
-# Function to remove the lock file on exit
-function cleanup {
-    rm -f /tmp/.hyde_slow_load_warning.lock
 }
 
 function no_such_file_or_directory_handler {
