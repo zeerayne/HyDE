@@ -76,9 +76,8 @@ fzf                                                    # Command-line fuzzy find
 
 # --------------------------------------------------- // Shell
 eza|zsh                                                # file lister for zsh
-starship|zsh                                           # customizable shell prompt written in Rust
 duf|zsh                                                # prettier version of df for zsh
-# starship-git                                         # The cross-shell prompt for astronauts  
+sheldon|zsh                                            # plugin manager for zsh
 eza|fish                                               # file lister for fish
 starship|fish                                          # customizable shell prompt
 duf|fish                                               # prettier version of df for fish
