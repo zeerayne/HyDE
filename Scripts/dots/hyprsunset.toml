@@ -6,7 +6,7 @@
     pacman = [ "hyprsunset" ]
 
 [[hyprsunset.files]]
-    action      = "preserve"
+    action      = "sync"
     paths       = "hyprsunset.conf"
     source_root = "Configs/.config/hypr"
     target_root = "${XDG_CONFIG_HOME}/hypr"
