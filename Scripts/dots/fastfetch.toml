@@ -7,7 +7,7 @@
     pacman = [ "fastfetch" ]
 
 [[fastfetch.files]]
-    action      = "preserve"
+    action      = "sync"
     paths       = "fastfetch"
     source_root = "Configs/.config"
     target_root = "${XDG_CONFIG_HOME}"
