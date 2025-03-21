@@ -1,3 +1,4 @@
+
 <div align = center>
   <a href="https://discord.gg/AYbJ9MJez7">
     <img alt="Dynamic JSON Badge" src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fdiscordapp.com%2Fapi%2Finvites%2FmT5YqjaJFh%3Fwith_counts%3Dtrue&query=%24.approximate_member_count&suffix=%20members&style=for-the-badge&logo=discord&logoSize=auto&label=The%20HyDe%20Project&labelColor=ebbcba&color=c79bf0">
@@ -17,6 +18,7 @@ Multi-language README support
 [![nl](https://img.shields.io/badge/lang-nl-green.svg)](Source/docs/README.nl.md)
 [![中文](https://img.shields.io/badge/lang-中文-orange.svg)](Source/docs/README.zh.md)
 [![fr](https://img.shields.io/badge/lang-fr-blue.svg)](Source/docs/README.fr.md)
+[![ar](https://img.shields.io/badge/lang-AR-orange.svg)](Source/docs/README.ar.md)
 
 <div align="center">
 

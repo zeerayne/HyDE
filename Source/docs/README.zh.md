@@ -17,6 +17,8 @@ Multi-language README support
 [![de](https://img.shields.io/badge/lang-de-black.svg)](README.de.md)
 [![nl](https://img.shields.io/badge/lang-nl-green.svg)](README.nl.md)
 [![fr](https://img.shields.io/badge/lang-fr-blue.svg)](README.fr.md)
+[![ar](https://img.shields.io/badge/lang-AR-orange.svg)](README.ar.md)
+
 
 <div align="center">
 
@@ -233,7 +235,7 @@ For more details, you can refer to [Hyde-cli - dots management wiki](https://git
 </div>
 
 <div align="right">
-  <sub>最后编辑: 27/02/2025<span id="last-edited"></span></sub>
+  <sub>最后编辑: 21/03/2025<span id="last-edited"></span></sub>
 </div>
 
 <a id="star_history"></a>

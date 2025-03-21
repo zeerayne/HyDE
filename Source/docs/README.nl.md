@@ -17,6 +17,8 @@ Multi-language README support
 [![de](https://img.shields.io/badge/lang-de-black.svg)](README.de.md)
 [![中文](https://img.shields.io/badge/lang-中文-orange.svg)](README.zh.md)
 [![fr](https://img.shields.io/badge/lang-fr-blue.svg)](README.fr.md)
+[![ar](https://img.shields.io/badge/lang-AR-orange.svg)](README.ar.md)
+
 
 <div align="center"><br>
   <a href="#installatie"><kbd> <br> Installatie <br> </kbd></a>&ensp;&ensp;
@@ -199,5 +201,5 @@ Voor meer informatie, bezoek [HyDE-Project/hyde-themes](https://github.com/HyDE-
 </div>
 
 <div align="right">
-  <sub>Laatst bewerkt op: 27/02/2025<span id="last-edited"></span></sub>
+  <sub>Laatst bewerkt op: 21/03/2025<span id="last-edited"></span></sub>
 </div>
