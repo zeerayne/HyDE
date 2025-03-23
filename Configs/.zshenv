@@ -62,29 +62,6 @@ function load_zsh_plugins {
     [[ -r $ZSH/oh-my-zsh.sh ]] && source $ZSH/oh-my-zsh.sh
 }
 
-# Install packages from both Arch and AUR
-function in {
-    local -a inPkg=("$@")
-    local -a arch=()
-    local -a aur=()
-
-    for pkg in "${inPkg[@]}"; do
-        if pacman -Si "${pkg}" &>/dev/null; then
-            arch+=("${pkg}")
-        else
-            aur+=("${pkg}")
-        fi
-    done
-
-    if [[ ${#arch[@]} -gt 0 ]]; then
-        sudo pacman -S "${arch[@]}"
-    fi
-
-    if [[ ${#aur[@]} -gt 0 ]]; then
-        ${PM} -S "${aur[@]}"
-    fi
-}
-
 # Function to display a slow load warning
 function slow_load_warning {
     local lock_file="/tmp/.hyde_slow_load_warning.lock"
@@ -198,10 +175,11 @@ if [ -t 1 ]; then
     fi
 
     alias c='clear' \
-        un='$PM uninstall' \
+        in='$PM install' \
+        un='$PM remove' \
         up='$PM upgrade' \
         pl='$PM search installed' \
-        pa='$PM search installed' \
+        pa='$PM search all' \
         vc='code' \
         fastfetch='fastfetch --logo-type kitty' \
         ..='cd ..' \
