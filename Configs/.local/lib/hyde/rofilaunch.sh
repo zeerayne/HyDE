@@ -96,8 +96,7 @@ rofi -show "${r_mode}" \
     -theme-str "${font_override}" \
     -theme-str "${i_override}" \
     -theme-str "${r_override}" \
-    -run-command "${run_uwsm}" \
-    -theme "${rofi_config}" &
+    -theme "${rofi_config}" & # -run-command "${run_uwsm}" \
 disown
 
 #// Set full screen state
