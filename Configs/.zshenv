@@ -18,7 +18,7 @@ function command_not_found_handler {
     local purple='\e[1;35m' bright='\e[0;1m' green='\e[1;32m' reset='\e[0m'
     printf "${green}zsh${reset}: command ${purple}NOT${reset} found: ${bright}'%s'${reset}\n" "$1"
 
-    PM="pm.shs"
+    PM="pm.sh"
     # Try to find pm.sh in common locations
     if [ ! command -v "${PM}" ] &>/dev/null; then
         for path in "/usr/lib/hyde" "/usr/local/lib/hyde" "$HOME/.local/lib/hyde" "$HOME/.local/bin"; do
