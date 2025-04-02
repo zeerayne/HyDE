@@ -3,14 +3,21 @@ import os
 import gi
 
 gi.require_version("Playerctl", "2.0")
-from gi.repository import Playerctl, GLib
-import argparse
-import logging
-import sys
-import signal
-import json
+from gi.repository import Playerctl, GLib  # noqa: E402
+import argparse  # noqa: E402
+import logging  # noqa: E402
+import sys  # noqa: E402
+import signal  # noqa: E402
+import json  # noqa: E402
+import pyutils.logger as logger  # noqa: E402
+from pyutils.xdg_base_dirs import (  # noqa: E402
+    xdg_state_home,
+    xdg_cache_home,
+)
 
-logger = logging.getLogger(__name__)
+
+logger = logger.get_logger()
+
 
 #
 # Global dictionary to store the track, artist, and total duration
@@ -51,15 +58,17 @@ def create_tooltip_text(
 ) -> str:
     """
     Build the tooltip text showing artist, track, and current position vs duration.
+    Use Pango markup to style the artist as italic and the track as bold.
     """
     tooltip = ""
+
     if artist or track:
-        tooltip += f"{artist}\n{track}\n"
-    if duration_seconds > 0:
-        tooltip += (
-            f"{format_time(current_position_seconds)}/"
-            f"{format_time(duration_seconds)}"
-        )
+        tooltip += f'<span foreground="{track_color}"><b>{track}</b></span>\n<span foreground="{artist_color}"><i>{artist}</i></span>\n'
+        if duration_seconds > 0:
+            progress = int((current_position_seconds / duration_seconds) * 20)
+            bar = f'<span foreground="{progress_color}">{"━" * progress}</span><span foreground="{empty_color}">{"─" * (20 - progress)}</span>'
+            tooltip += f'<span foreground="{time_color}">{format_time(current_position_seconds)}</span> {bar} <span foreground="{time_color}">{format_time(duration_seconds)}</span>'
+
     return tooltip
 
 
@@ -75,14 +84,14 @@ def write_output(track, artist, playing, player, tooltip_text):
     if total_length > max_length:
         available_length = max(0, max_length - len(artist))
         track = (
-            f"{track[:available_length]}..." if len(track) > available_length else track
+            f"{track[:available_length]}…" if len(track) > available_length else track
         )
 
     # Generate the "text" based on the presence of track and artist
     if track and not artist:
-        output_text = f"{prefix}  <b>{track}</b>"
+        output_text = f"{prefix}  <b>{track}</b>"
     elif track and artist:
-        output_text = f"{prefix}  <i>{artist}</i> ~ <b>{track}</b>"
+        output_text = f"{prefix}  <i>{artist}</i>  <b>{track}</b>"
     else:
         output_text = "<b>Nothing playing</b>"
 
@@ -150,9 +159,9 @@ def on_player_vanished(manager, player, loop):
     logger.info("Player has vanished")
 
     # Remove from our stored dictionary
-    pname = player.props.player_name
-    if pname in players_data:
-        del players_data[pname]
+    p_name = player.props.player_name
+    if p_name in players_data:
+        del players_data[p_name]
 
     # Output "standby" text
     output = {
@@ -183,15 +192,15 @@ def update_positions(manager):
     """
     # manager.props.players gives us the current active Player objects
     for player in manager.props.players:
-        pname = player.props.player_name
+        p_name = player.props.player_name
         # If we haven't stored metadata for this player yet, skip
-        if pname not in players_data:
+        if p_name not in players_data:
             continue
 
         playing = player.props.status == "Playing"
-        track = players_data[pname]["track"]
-        artist = players_data[pname]["artist"]
-        duration_seconds = players_data[pname]["duration"]
+        track = players_data[p_name]["track"]
+        artist = players_data[p_name]["artist"]
+        duration_seconds = players_data[p_name]["duration"]
 
         current_position_seconds = player.get_position() / 1e6
         tooltip_text = create_tooltip_text(
@@ -219,15 +228,6 @@ def parse_arguments():
         description="A media player status tool with customizable display options."
     )
 
-    # Increase verbosity with every occurrence of -v
-    parser.add_argument(
-        "-v",
-        "--verbose",
-        action="count",
-        default=0,
-        help="Increase output verbosity (e.g. -v, -vv)",
-    )
-
     # Define for which player we're listening
     parser.add_argument("--player", help="Specify the player to listen to.")
 
@@ -236,9 +236,15 @@ def parse_arguments():
 
 def main():
     global prefix_playing, prefix_paused, max_length_module, standby_text
+    global artist_color, track_color, progress_color, empty_color, time_color
 
     # Load environment variables from your config file:
-    load_env_file(os.path.expanduser("~/.local/state/hyde/config"))
+    config_file = os.path.join(xdg_state_home(), "hyde", "config")
+    colors_file = os.path.join(xdg_cache_home(), "hyde/wall.dcol")
+    if os.path.exists(config_file):
+        load_env_file(config_file)
+    if os.path.exists(colors_file):
+        load_env_file(colors_file)
 
     # Pull values from environment variables
     # You can configure these in ~/.config/hyde/config.toml
@@ -246,6 +252,23 @@ def main():
     prefix_paused = os.getenv("MEDIAPLAYER_PREFIX_PAUSED", "  ")
     max_length_module = int(os.getenv("MEDIAPLAYER_MAX_LENGTH", "70"))
     standby_text = os.getenv("MEDIAPLAYER_STANDBY_TEXT", "  Music")
+
+    # Initialize tooltip colors
+    artist_color = os.getenv(
+        "MEDIAPLAYER_TOOLTIP_ARTIST_COLOR", "#" + os.getenv("dcol_3xa8", "FFFFFF")
+    )
+    track_color = os.getenv(
+        "MEDIAPLAYER_TOOLTIP_TRACK_COLOR", "#" + os.getenv("dcol_txt1", "FFFFFF")
+    )
+    progress_color = os.getenv(
+        "MEDIAPLAYER_TOOLTIP_PROGRESS_COLOR", "#" + os.getenv("dcol_pry4", "FFFFFF")
+    )
+    empty_color = os.getenv(
+        "MEDIAPLAYER_TOOLTIP_EMPTY_COLOR", "#" + os.getenv("dcol_1xa3", "FFFFFF")
+    )
+    time_color = os.getenv(
+        "MEDIAPLAYER_TOOLTIP_TIME_COLOR", "#" + os.getenv("dcol_txt1", "FFFFFF")
+    )
 
     arguments = parse_arguments()
     player_found = False
@@ -256,9 +279,6 @@ def main():
         level=logging.DEBUG,
         format="%(name)s %(levelname)s %(message)s",
     )
-
-    # Adjust logging level based on verbosity
-    logger.setLevel(max((3 - arguments.verbose) * 10, 0))
 
     logger.debug("Arguments received {}".format(vars(arguments)))
 
