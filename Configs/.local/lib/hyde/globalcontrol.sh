@@ -107,7 +107,7 @@ get_hashmap() {
 
     # Notify the list of directories without compatible wallpapers
     if [ "${#no_wallpapers[@]}" -gt 0 ]; then
-        [ -n "${no_notify}" ] && notify-send -a "HyDE Alert" "WARNING: No compatible wallpapers found in: ${no_wallpapers[*]}"
+        # [ -n "${no_notify}" ] && notify-send -a "HyDE Alert" "WARNING: No compatible wallpapers found in: ${no_wallpapers[*]}"
         print_log -warn "No compatible wallpapers found in:" "${no_wallpapers[*]}"
     fi
 
@@ -116,6 +116,7 @@ get_hashmap() {
             return 1
         else
             echo "ERROR: No image found in any source"
+            [ -n "${no_notify}" ] && notify-send -a "HyDE Alert" "WARNING: No compatible wallpapers found in: ${no_wallpapers[*]}"
             exit 1
         fi
     fi
