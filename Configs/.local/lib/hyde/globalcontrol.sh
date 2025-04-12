@@ -38,6 +38,9 @@ get_hashmap() {
     unset verboseMap
 
     for wallSource in "$@"; do
+
+        [ "${LOG_LEVEL}" == "debug" ] && print_log -g "DEBUG:" -b "arg:" "${wallSource}"
+
         [ -z "${wallSource}" ] && continue
         [ "${wallSource}" == "--no-notify" ] && no_notify=1 && continue
         [ "${wallSource}" == "--skipstrays" ] && skipStrays=1 && continue
@@ -45,7 +48,7 @@ get_hashmap() {
         [ -e "${wallSource}" ] || continue
         wallSource="$(realpath "${wallSource}")"
 
-        [ "${LOG_LEVEL}" == "debug" ] && print_log -g "DEBUG:" -b "wallSource:" "${wallSource}"
+        [ "${LOG_LEVEL}" == "debug" ] && print_log -g "DEBUG:" -b "wallpaper source:" "${wallSource}"
 
         list_extensions() {
             # Define supported file extensions
