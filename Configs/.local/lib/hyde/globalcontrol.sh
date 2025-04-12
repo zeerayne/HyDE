@@ -45,11 +45,13 @@ get_hashmap() {
         [ "${wallSource}" == "--no-notify" ] && no_notify=1 && continue
         [ "${wallSource}" == "--skipstrays" ] && skipStrays=1 && continue
         [ "${wallSource}" == "--verbose" ] && verboseMap=1 && continue
+
+        wallSource="$(realpath "${wallSource}")"
+
         [ -e "${wallSource}" ] || {
             print_log -err "ERROR:" -b "wallpaper source does not exist:" "${wallSource}" -y " skipping..."
             continue
         }
-        wallSource="$(realpath "${wallSource}")"
 
         [ "${LOG_LEVEL}" == "debug" ] && print_log -g "DEBUG:" -b "wallSource path:" "${wallSource}"
 
