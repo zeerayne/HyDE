@@ -11,7 +11,7 @@ ${XDG_CACHE_HOME}/hyde/wallbash/discord.css|${WALLBASH_SCRIPTS}/discord.sh
   --textbright: <wallbash_1xa9_rgb>;
   --textdark: <wallbash_3xa9_rgb>;
   --textdarker: <wallbash_txt3_rgb>;
-  --textdarkest: wallbash_txt4_rgb>;
+  --textdarkest: <wallbash_txt4_rgb>;
 
   --backgroundaccent: <wallbash_1xa5_rgb>;
   --backgroundprimary: <wallbash_2xa1_rgb>;
