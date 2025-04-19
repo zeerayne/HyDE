@@ -1,23 +1,17 @@
 #!/usr/bin/env bash
-# This script will soon be used to resolve $PATHS and $LIB_DIR specific to hyde
+# This script will soon be used to resolve $PATHS and LIB_DIR specific to hyde
 # wallbash script can source this script to resolve the paths cleanly on a separate shell
 
-is_sourced=0
 if [[ -z "${BASH_SOURCE[0]}" ]]; then
     EXECUTABLE="${0}"
-    is_sourced=1
 else
     EXECUTABLE="${BASH_SOURCE[0]}"
 fi
 
 BIN_DIR=$(dirname "$(which "${EXECUTABLE:-hyde-shell}")")
-LIB_DIR="${BIN_DIR}/../lib"
-SHARE_DIR="${BIN_DIR}/../share"
+LIB_DIR=$(realpath "${BIN_DIR}/../lib")
+SHARE_DIR=$(realpath "${BIN_DIR}/../share")
 PATH="$BIN_DIR:$LIB_DIR/hyde:$PATH" #! I added this to the PATH to make sure that the hyde commands are available in the shell
-
-BIN_DIR=$(realpath "$BIN_DIR")
-LIB_DIR=$(realpath "$LIB_DIR")
-SHARE_DIR=$(realpath "$SHARE_DIR")
 
 export BIN_DIR LIB_DIR SHARE_DIR
 
@@ -26,7 +20,6 @@ if ! source "${LIB_DIR}/hyde/globalcontrol.sh"; then
     echo "Error: Could not load HyDE, broken installation?"
     exit 1
 fi
-[[ "$is_sourced" -eq 1 ]] && return
 
 USAGE() {
 
@@ -76,6 +69,7 @@ interactive_shell() {
 zoom() { #? Zoom in/out Hyprland
     # case
     intensity=${2:-0.1}
+    local cursor_state
     local cursor_state
     cursor_state="$(hyprctl getoption cursor:no_hardware_cursors 1 -j | jq .int)"
     trap 'hyprctl -q keyword cursor:no_hardware_cursors "$cursor_state"' EXIT
@@ -150,7 +144,8 @@ list_script() {
     find "$LIB_DIR/hyde" -type f \( -name "*.sh" -o -name "*.py" \) -exec basename {} \;
 }
 
-if [[ "${is_sourced}" -ne 1 ]]; then
+if [[ ! "${BASH_SOURCE[0]}" != "${0}" ]]; then
+
     case $1 in
     -i | interactive)
         interactive_shell
