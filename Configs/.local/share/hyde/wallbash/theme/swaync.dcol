@@ -1,0 +1,17 @@
+${confDir}/swaync/style.css|${WALLBASH_SCRIPTS}/swaync.sh
+
+
+@define-color cc-bg #<wallbash_pry2>;
+@define-color noti-border-color #<wallbash_pry4>;
+
+@define-color noti-bg #<wallbash_pry2>;
+@define-color noti-bg-hover #<wallbash_4xa2>;
+
+@define-color noti-bg-opaque #<wallbash_pry3>;
+@define-color noti-bg-hover-opaque #<wallbash_4xa3>;
+/* @define-color noti-bg-darker rgb(38, 38, 38); */
+/* @define-color noti-bg-focus #wallbash_pry3; */
+/* @define-color noti-close-bg rgba(255, 255, 255, 0.1); */
+/* @define-color noti-close-bg-hover rgba(255, 255, 255, 0.15); */
+@define-color text-color #<wallbash_txt2>;
+@define-color text-color-disabled #<wallbash_txt4>;
