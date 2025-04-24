@@ -33,4 +33,5 @@ ${confDir}/swaync/style.css|${WALLBASH_SCRIPTS}/swaync.sh
   background: @cc-bg;
   color: @text-color;
   border-radius: 12px;
+  opacity: 0.9;
 }
