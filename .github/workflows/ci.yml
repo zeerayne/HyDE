@@ -43,9 +43,9 @@ jobs:
           echo "According to our release policy, this PR is expected to be merged on: **$MERGE_DATE**" >> $GITHUB_ENV
           echo "" >> $GITHUB_ENV
           echo "## Commits to be merged:" >> $GITHUB_ENV
-          echo "\`\`\`" >> $GITHUB_ENV
+          echo "---" >> $GITHUB_ENV
           cat commit_list.txt >> $GITHUB_ENV
-          echo "\`\`\`" >> $GITHUB_ENV
+          echo "---" >> $GITHUB_ENV
           echo "" >> $GITHUB_ENV
           echo "Please review the changes carefully before merging." >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
