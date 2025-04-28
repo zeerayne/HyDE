@@ -29,6 +29,8 @@ jobs:
           branch: automated-dev-to-master
           base: master
           delete-branch: true
+          branch-suffix: timestamp
+          draft: false
 
   release:
     name: release
