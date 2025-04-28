@@ -8,7 +8,7 @@ on:
 
 jobs:
   dev-to-master-pr:
-    name: Create PR from Dev to Master
+    name: Create or Update PR from Dev to Master
     if: github.ref == 'refs/heads/dev'
     runs-on: ubuntu-latest
     steps:
@@ -16,19 +16,67 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v5
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "chore: promote dev changes to master"
-          title: "Promote dev changes to master"
-          body: |
-            This is an automated PR to promote changes from `dev` to `master`.
+      # Use a fixed branch name for the PR
+      - name: Update dev-to-master branch
+        run: |
+          # Setup git
+          git config user.name "GitHub Actions Bot"
+          git config user.email "actions@github.com"
 
-            Please review the changes carefully before merging.
-          branch: automated-dev-to-master
-          base: master
-          delete-branch: true
+          # Use a fixed branch name for consistency
+          BRANCH_NAME="automated-dev-to-master-branch"
+
+          # Force-push current dev state to the fixed branch
+          git checkout -b $BRANCH_NAME
+          git push --force origin $BRANCH_NAME
+
+      # Create or update PR using GitHub API
+      - name: Create or Update Pull Request
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { repo, owner } = context.repo;
+            const prBranch = "automated-dev-to-master-branch";
+            const prTitle = "Promote dev changes to master";
+            const prBody = "This is an automated PR to promote changes from `dev` to `master`.\n\nPlease review the changes carefully before merging.";
+
+            // Check if PR already exists
+            const prs = await github.rest.pulls.list({
+              owner,
+              repo,
+              head: `${owner}:${prBranch}`,
+              base: 'master',
+              state: 'open'
+            });
+
+            if (prs.data.length > 0) {
+              // Update existing PR
+              console.log(`Updating existing PR #${prs.data[0].number}`);
+              await github.rest.pulls.update({
+                owner,
+                repo,
+                pull_number: prs.data[0].number,
+                title: prTitle,
+                body: prBody
+              });
+            } else {
+              // Create new PR
+              try {
+                const result = await github.rest.pulls.create({
+                  owner,
+                  repo,
+                  title: prTitle,
+                  body: prBody,
+                  head: prBranch,
+                  base: 'master'
+                });
+                console.log(`PR created: ${result.data.html_url}`);
+              } catch (error) {
+                console.log(`Error creating PR: ${error.message}`);
+                throw error;
+              }
+            }
 
   release:
     name: release
