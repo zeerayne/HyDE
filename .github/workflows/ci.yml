@@ -72,7 +72,7 @@ jobs:
           script: |
             const { repo, owner } = context.repo;
             const prBranch = "automated-dev-to-master-branch";
-            const prTitle = "Promote dev changes to master";
+            const prTitle = "chore(rc):Promote dev changes to master"; 
             const prBody = process.env.PR_BODY;
 
             // Retry helper function
