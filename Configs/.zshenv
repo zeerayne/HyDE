@@ -119,30 +119,16 @@ function no_such_file_or_directory_handler {
     return 127
 }
 
-function load_aliases {
-    unset -f load_aliases
-    # Helpful aliases
+function load_persistent_aliases {
+    #! Persistent Aliases are loaded after zshrc is loaded you cannot overwrite them
+    unset -f load_persistent_aliases
+
     if [[ -x "$(which eza)" ]]; then
         alias l='eza -lh --icons=auto' \
             ll='eza -lha --icons=auto --sort=name --group-directories-first' \
             ld='eza -lhD --icons=auto' \
             lt='eza --icons=auto --tree'
     fi
-
-    alias c='clear' \
-        in='$PM install' \
-        un='$PM remove' \
-        up='$PM upgrade' \
-        pl='$PM search installed' \
-        pa='$PM search all' \
-        vc='code' \
-        fastfetch='fastfetch --logo-type kitty' \
-        ..='cd ..' \
-        ...='cd ../..' \
-        .3='cd ../../..' \
-        .4='cd ../../../..' \
-        .5='cd ../../../../..' \
-        mkdir='mkdir -p' # Always mkdir a path (this doesn't inhibit functionality to make a single dir)
 
 }
 
@@ -169,7 +155,7 @@ function load_omz_on_init() {
 
     fi
     # Load aliases
-    load_aliases
+    load_persistent_aliases
 }
 
 function load_if_terminal {
@@ -218,6 +204,21 @@ function load_if_terminal {
 
         # Warn if the shell is slow to load
         add-zsh-hook -Uz precmd slow_load_warning
+
+        alias c='clear' \
+            in='$PM install' \
+            un='$PM remove' \
+            up='$PM upgrade' \
+            pl='$PM search installed' \
+            pa='$PM search all' \
+            vc='code' \
+            fastfetch='fastfetch --logo-type kitty' \
+            ..='cd ..' \
+            ...='cd ../..' \
+            .3='cd ../../..' \
+            .4='cd ../../../..' \
+            .5='cd ../../../../..' \
+            mkdir='mkdir -p' # Always mkdir a path (this doesn't inhibit functionality to make a single dir)
 
     fi
 
