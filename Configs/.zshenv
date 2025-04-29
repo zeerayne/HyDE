@@ -134,8 +134,6 @@ function load_persistent_aliases {
 
 # Load oh-my-zsh when line editor initializes // before user input
 function load_omz_on_init() {
-    unset -f load_omz_on_init
-
     if [[ -n $DEFER_OMZ_LOAD ]]; then
         unset DEFER_OMZ_LOAD
         [[ -r $ZSH/oh-my-zsh.sh ]] && source $ZSH/oh-my-zsh.sh
@@ -152,10 +150,8 @@ function load_omz_on_init() {
                 fi
             done
         fi
-
+        load_persistent_aliases
     fi
-    # Load aliases
-    load_persistent_aliases
 }
 
 function load_if_terminal {
@@ -225,6 +221,7 @@ function load_if_terminal {
 }
 
 # cleaning up home folder
+PATH="$HOME/.local/bin:$PATH"
 XDG_CONFIG_DIR="${XDG_CONFIG_DIR:-"$(xdg-user-dir CONFIG)"}"
 XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
 XDG_DATA_DIRS="${XDG_DATA_DIRS:-$XDG_DATA_HOME:/usr/local/share:/usr/share}"
