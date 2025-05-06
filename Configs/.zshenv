@@ -289,6 +289,10 @@ function _load_if_terminal {
             ffcd='_fuzzy_change_directory' \
             ffe='_fuzzy_edit_search_file'
 
+        # Some binds won't work on first prompt when deferred
+        bindkey '\e[H' beginning-of-line
+        bindkey '\e[F' end-of-line
+
     fi
 
 }
