@@ -66,7 +66,7 @@ setup_rofi_config() {
 
 # rofi menu, get selection
 get_glyph_selection() {
-    echo "${unique_entries}" | rofi -dmenu -multi-select -i \
+    echo "${unique_entries}" | rofi -dmenu \
         -theme-str "entry { placeholder: \" 🔣 Glyph\";} ${rofi_position}" \
         -theme-str "${font_override}" \
         -theme-str "${r_override}" \

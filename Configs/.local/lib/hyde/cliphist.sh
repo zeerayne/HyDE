@@ -32,10 +32,10 @@ process_selections() {
         elif [[ "${lines[0]}" = ":b:a:r:"* ]] || [[ "${lines[0]}" = *":c:o:p:y:"* ]]; then
             "${0}" --copy
             return
-        elif [[ "${lines[0]}" = ":f:a:v:"* ]]; then
+        elif [[ "${lines[0]}" = *":f:a:v:" ]]; then
             "${0}" --favorites
             return
-        elif [[ "${lines[0]}" = ":o:p:t:"* ]]; then
+        elif [[ "${lines[0]}" = *":o:p:t:" ]]; then
             "${0}"
             return
         fi
@@ -162,10 +162,10 @@ prepare_favorites_for_display() {
 show_history() {
     local selected_item
     selected_item=$( (
-        echo -e ":f:a:v:\t📌 Favorites"
-        echo -e ":o:p:t:\t⚙️ Options"
+        echo -e "📌\tFavorites\t:f:a:v:"
+        echo -e "⚙️\tOptions\t:o:p:t:"
         cliphist list
-    ) | run_rofi " 📜 History..." -multi-select -i -display-columns 2 -selected-row 2)
+    ) | run_rofi " 📜 History" -display-columns 1,2 -selected-row 2)
 
     [ -n "${selected_item}" ] || exit 0
 
@@ -183,7 +183,7 @@ show_history() {
 # delete items from clipboard history
 delete_items() {
     export del_mode=true
-    cliphist list | run_rofi " 🗑️ Delete" -multi-select -i -display-columns 2 | process_selections
+    cliphist list | run_rofi " 🗑️ Delete" -display-columns 1,2 | process_selections
 }
 
 # favorite clipboard items
