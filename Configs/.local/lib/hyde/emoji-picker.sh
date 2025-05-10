@@ -112,13 +112,13 @@ get_emoji_selection() {
                 -theme "clipboard"
             ;;
         1 | list)
-            echo "${unique_entries}" | rofi -dmenu -multi-select -i \
+            echo "${unique_entries}" | rofi -dmenu \
                 -theme-str "entry { placeholder: \" 🔎 Emoji\";} ${rofi_position} ${r_override}" \
                 -theme-str "${font_override}" \
                 -theme "clipboard"
             ;;
         *)
-            echo "${unique_entries}" | rofi -dmenu -multi-select -i \
+            echo "${unique_entries}" | rofi -dmenu \
                 -theme-str "entry { placeholder: \" 🔎 Emoji\";} ${rofi_position} ${r_override}" \
                 -theme-str "${font_override}" \
                 -theme "${style_type:-clipboard}"
