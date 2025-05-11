@@ -89,9 +89,9 @@ def write_output(track, artist, playing, player, tooltip_text):
 
     # Generate the "text" based on the presence of track and artist
     if track and not artist:
-        output_text = f"{prefix}  <b>{track}</b>"
+        output_text = f"{prefix}  {track}>"
     elif track and artist:
-        output_text = f"{prefix}  <i>{artist}</i>  <b>{track}</b>"
+        output_text = f"{prefix}  {artist} — {track}"
     else:
         output_text = "<b>Nothing playing</b>"
 
