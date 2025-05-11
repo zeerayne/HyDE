@@ -81,7 +81,7 @@ def format_artist_track(artist, track, playing, max_length):
     if track and not artist:
         if len(track) != len(track[:max_length]):
             track = track[:max_length].rstrip() + "…"
-        output_text = f"{prefix}{prefix_separator}<b>{track}</b>"
+        output_text = f"{prefix}{prefix_separator}{track}"
     elif track and artist:
         if full_length > max_length:
             # proportion how to share max length between track and artist
@@ -96,7 +96,7 @@ def format_artist_track(artist, track, playing, max_length):
                 track = track[:track_limit].rstrip() + "…"
 
         output_text = (
-            f"{prefix}{prefix_separator}<i>{artist}</i>{artist_track_separator}<b>{track}</b>"
+            f"{prefix}{prefix_separator}{artist}{artist_track_separator}{track}"
         )
     else:
         output_text = "<b>Nothing playing</b>"
