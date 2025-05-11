@@ -89,9 +89,9 @@ def write_output(track, artist, playing, player, tooltip_text):
 
     # Generate the "text" based on the presence of track and artist
     if track and not artist:
-        output_text = f"{prefix}  <b>{track}</b>"
+        output_text = f"{prefix}  {track}>"
     elif track and artist:
-        output_text = f"{prefix}  <i>{artist}</i>  <b>{track}</b>"
+        output_text = f"{prefix}  {artist} — {track}"
     else:
         output_text = "<b>Nothing playing</b>"
 
@@ -248,10 +248,10 @@ def main():
 
     # Pull values from environment variables
     # You can configure these in ~/.config/hyde/config.toml
-    prefix_playing = os.getenv("MEDIAPLAYER_PREFIX_PLAYING", "")
-    prefix_paused = os.getenv("MEDIAPLAYER_PREFIX_PAUSED", "  ")
+    prefix_playing = os.getenv("MEDIAPLAYER_PREFIX_PLAYING", "")
+    prefix_paused = os.getenv("MEDIAPLAYER_PREFIX_PAUSED", "")
     max_length_module = int(os.getenv("MEDIAPLAYER_MAX_LENGTH", "70"))
-    standby_text = os.getenv("MEDIAPLAYER_STANDBY_TEXT", "  Music")
+    standby_text = os.getenv("MEDIAPLAYER_STANDBY_TEXT", "")
 
     # Initialize tooltip colors
     artist_color = os.getenv(
