@@ -3,14 +3,23 @@
 # Updated config.toml file can be found at $HOME/.local/share/hyde/config.toml
 
 [rofi]
-# global rofi configuration`
 font = "JetBrainsMono Nerd Font"
-scale = 10 # rofi default scaling
+scale = 10
 
 [rofi.launch]
-# rofilaunch.sh configuration
 scale = 10
 
 [rofi.cliphist]
-# cliphist.sh configuration
 scale = 10
+
+[screenshot]
+annotation_tool = "swappy"
+
+[mediaplayer]
+prefix_playing = " "
+prefix_paused = " "
+max_length = 25
+standby_text = ""
+
+[hyprland]
+lockscreen = "hyprlock"
