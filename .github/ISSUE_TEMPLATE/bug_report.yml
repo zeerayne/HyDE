@@ -62,15 +62,29 @@ body:
       label: Environment
       description: Please run the command below and attach the output. This information is required to properly diagnose your issue.
       placeholder: |
-        Run this command and paste the output here:
+        Please paste the output of the following command below:
 
         ```bash
-        hyprctl systeminfo -c > /tmp/hyde_environment && cat /tmp/hyde_environment
+        hyprctl systeminfo -c
         ```
 
-        Additional information (if needed):
+        <details>
+        <summary>System Information (Click to expand)</summary>
+
+        ```
+        [Paste the entire output of hyprctl systeminfo -c here]
+        ```
+        </details>
+
+        <details>
+        <summary>Additional Information (Click to expand)</summary>
+
         - Installation Environment: [e.g., On The Main Hardware, On A Virtual Machine]
         - Other info: [e.g., Display Resolution, etc]
+        - Graphics Driver: [e.g., nvidia, intel, amd]
+        - Display Server: [e.g., Wayland, X11]
+
+        </details>
     validations:
       required: true
 
