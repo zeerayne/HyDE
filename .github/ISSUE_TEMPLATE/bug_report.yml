@@ -60,22 +60,25 @@ body:
     id: environment
     attributes:
       label: Environment
-      description: Please run the command below and attach the output. This information is required to properly diagnose your issue.
-      placeholder: |
+      description: |
         Please run this command to save your system information to a file:
-
         ```bash
         hyprctl systeminfo -c > /tmp/hyprland_systeminfo.txt
         ```
+        Then copy the contents and paste them in the collapsible section below.
 
-        Then upload the file by dragging and dropping it here or clicking below to browse.
-
-        ### Additional Environment Information
+        Also include these additional details:
         - Installation Environment: [e.g., On The Main Hardware, On A Virtual Machine]
         - Display Resolution: [e.g., 1920x1080]
         - Graphics Driver: [e.g., nvidia, intel, amd]
         - Display Server: [e.g., Wayland, X11]
-
+      placeholder: |
+        <details>
+        <summary>System Information (Click to expand)</summary>
+        ```
+        [Paste the entire output of hyprctl systeminfo -c here]
+        ```
+        </details>
     validations:
       required: true
 
