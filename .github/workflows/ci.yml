@@ -20,47 +20,8 @@ jobs:
       - name: Generate commit history and schedule
         id: generate-commits
         run: |
-          # Get the commit history between master and dev in conventional commit format
-          COMMIT_LIST=$(git log --pretty=format:"* %s (%h) by %an" origin/master..dev | 
-            while IFS= read -r line; do
-              if [[ ! $line =~ ^"* feat"* && ! $line =~ ^"* fix"* && ! $line =~ ^"* docs"* ]]; then
-                echo "* chore${line:1}"
-              else
-                echo "$line"
-              fi
-            done)
-
-          # Handle empty commit list (branches are identical)
-          if [ -z "$COMMIT_LIST" ]; then
-            COMMIT_LIST="No new commits - branches may be identical"
-          fi
-
-          # Calculate suggested merge date based on release policy
-          # By default, suggesting next Monday as merge date - adjust according to your policy
-          MERGE_DATE="Friday"
-
-          # Save commit list to a file (to handle multi-line output)
-          echo "$COMMIT_LIST" > commit_list.txt
-
-          # Create a PR body with the commit list and suggested merge date
-          echo "PR_BODY<<EOF" >> $GITHUB_ENV
-          echo "This is an automated PR to promote changes from \`dev\` to \`master\`." >> $GITHUB_ENV
-          echo "Please review and test before merging." >> $GITHUB_ENV
-          echo "" >> $GITHUB_ENV
-          echo "## For Testers" >> $GITHUB_ENV
-          echo "See [TESTING.md](./TESTING.md) for complete testing instructions." >> $GITHUB_ENV
-          echo "" >> $GITHUB_ENV
-          echo "## Suggested Merge Schedule" >> $GITHUB_ENV
-          echo "According to our release policy, this PR is expected to be merged on: **$MERGE_DATE**" >> $GITHUB_ENV
-          echo "Testers are encouraged to test the changes before merging." >> $GITHUB_ENV
-          echo "Please note that this schedule may be adjusted based on the needs of the project." >> $GITHUB_ENV
-          echo "## Commits to be merged:" >> $GITHUB_ENV
-          echo "---" >> $GITHUB_ENV
-          cat commit_list.txt >> $GITHUB_ENV
-          echo "---" >> $GITHUB_ENV
-          echo "" >> $GITHUB_ENV
-          echo "Please review the changes carefully before merging." >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
+          chmod +x .github/scripts/promote_to_master.sh
+          .github/scripts/promote_to_master.sh
 
       # Use a fixed branch name for the PR
       - name: Update dev-to-master branch
