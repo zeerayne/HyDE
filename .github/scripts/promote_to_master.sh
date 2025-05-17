@@ -1,3 +1,5 @@
+#!/bin/bash
+
 COMMIT_LIST=$(git log --pretty=format:"* %s (%h) by %an" origin/master..dev |
     while IFS= read -r line; do
         if [[ ! $line =~ ^"* feat"* && ! $line =~ ^"* fix"* && ! $line =~ ^"* docs"* ]]; then
