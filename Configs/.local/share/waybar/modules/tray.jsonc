@@ -1,5 +1,16 @@
 {
     "tray": {
-        "spacing": 5
+        "spacing": 5,
+        "ignore-list": [
+            "brave",
+            "brave-browser",
+            "google-chrome",
+            "chrome",
+            "chromium",
+            "chromium-browser",
+            "opera",
+            "vivaldi",
+            "vivaldi-bin"
+        ]
     }
 }
