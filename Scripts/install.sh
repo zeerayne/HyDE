@@ -228,7 +228,7 @@ fi
 if [ ${flg_Restore} -eq 1 ]; then
     cat <<"EOF"
 
-             _           _
+             _           _d
  ___ ___ ___| |_ ___ ___|_|___ ___
 |  _| -_|_ -|  _| . |  _| |   | . |
 |_| |___|___|_| |___|_| |_|_|_|_  |
@@ -246,7 +246,7 @@ EOF
     print_log -g "[generate] " "cache ::" "Wallpapers..."
     if [ "${flg_DryRun}" -ne 1 ]; then
         "$HOME/.local/lib/hyde/swwwallcache.sh" -t ""
-        "$HOME/.local/lib/hyde/themeswitch.sh" -q || true
+        "$HOME/.local/lib/hyde/theme.switch.sh" -q || true
         echo "[install] reload :: Hyprland"
     fi
 
@@ -290,7 +290,6 @@ EOF
             print_log -y "start" "Service ${serviceChk}"
             if [ $flg_DryRun -ne 1 ]; then
                 sudo systemctl enable "${serviceChk}.service"
-                sudo systemctl start "${serviceChk}.service"
             fi
         fi
 
@@ -304,7 +303,7 @@ print_log -stat "Log" "View logs at ${cacheDir}/logs/${HYDE_LOG}"
 if [ $flg_Install -eq 1 ] ||
     [ $flg_Restore -eq 1 ] ||
     [ $flg_Service -eq 1 ]; then
-    print_log -stat "HyDE" "It is not recommended to use newly installed or upgraded HyDE without rebooting the system. Do you want to reboot the system? (y/N)"
+    print_log -stat "HyDE" "It is recommended to reboot the system after installing or upgrading HyDE. Do you want to reboot the system now? (y/N)"
     read -r answer
 
     if [[ "$answer" == [Yy] ]]; then

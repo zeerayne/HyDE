@@ -31,204 +31,6 @@ export themesDir="$THEMES_DIR"
 export fontsDir="$FONTS_DIR"
 export hashMech="sha1sum"
 
-get_hashmap() {
-    unset wallHash
-    unset wallList
-    unset skipStrays
-    unset verboseMap
-
-    for wallSource in "$@"; do
-        [ -z "${wallSource}" ] && continue
-        [ "${wallSource}" == "--no-notify" ] && no_notify=1 && continue
-        [ "${wallSource}" == "--skipstrays" ] && skipStrays=1 && continue
-        [ "${wallSource}" == "--verbose" ] && verboseMap=1 && continue
-        [ -e "${wallSource}" ] || continue
-        wallSource="$(realpath "${wallSource}")"
-
-        [ "${LOG_LEVEL}" == "debug" ] && print_log -g "DEBUG:" -b "wallSource:" "${wallSource}"
-
-        list_extensions() {
-            # Define supported file extensions
-            supported_files=(
-                "gif"
-                "jpg"
-                "jpeg"
-                "png"
-                "${WALLPAPER_FILETYPES[@]}"
-            )
-            printf -- "-iname *.%s -o " "${supported_files[@]}" | sed 's/ -o $//'
-        }
-
-        find_wallpapers() {
-            local wallSource="$1"
-
-            if [ -z "${wallSource}" ]; then
-                print_log -err "ERROR: wallSource is empty"
-                return 1
-            fi
-
-            local find_command
-            find_command="find \"${wallSource}\" -type f \\( $(list_extensions) \\) ! -path \"*/logo/*\" -exec \"${hashMech}\" {} + 2>/dev/null"
-
-            [ "${LOG_LEVEL}" == "debug" ] && print_log -g "DEBUG:" -b "Running command:" "${find_command}"
-
-            eval "${find_command}" | sort -k2
-        }
-
-        hashMap=$(find_wallpapers "${wallSource}") # Enable debug mode for testing
-
-        # hashMap=$(
-        # find "${wallSource}" -type f \( -iname "*.gif" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.mkv"  \) ! -path "*/logo/*" -exec "${hashMech}" {} + | sort -k2
-        # )
-
-        if [ -z "${hashMap}" ]; then
-            no_wallpapers+=("${wallSource}")
-            print_log -warn "No compatible wallpapers found in: " "${wallSource}"
-            continue
-        fi
-
-        while read -r hash image; do
-            wallHash+=("${hash}")
-            wallList+=("${image}")
-        done <<<"${hashMap}"
-    done
-
-    # Notify the list of directories without compatible wallpapers
-    if [ "${#no_wallpapers[@]}" -gt 0 ]; then
-        [ -n "${no_notify}" ] && notify-send -a "HyDE Alert" "WARNING: No compatible wallpapers found in: ${no_wallpapers[*]}"
-    fi
-
-    if [ -z "${#wallList[@]}" ] || [[ "${#wallList[@]}" -eq 0 ]]; then
-        if [[ "${skipStrays}" -eq 1 ]]; then
-            return 1
-        else
-            echo "ERROR: No image found in any source"
-            exit 1
-        fi
-    fi
-
-    if [[ "${verboseMap}" -eq 1 ]]; then
-        echo "// Hash Map //"
-        for indx in "${!wallHash[@]}"; do
-            echo ":: \${wallHash[${indx}]}=\"${wallHash[indx]}\" :: \${wallList[${indx}]}=\"${wallList[indx]}\""
-        done
-    fi
-}
-
-# shellcheck disable=SC2120
-get_themes() {
-    unset thmSortS
-    unset thmListS
-    unset thmWallS
-    unset thmSort
-    unset thmList
-    unset thmWall
-
-    while read -r thmDir; do
-        local realWallPath
-        realWallPath="$(readlink "${thmDir}/wall.set")"
-        if [ ! -e "${realWallPath}" ]; then
-            get_hashmap "${thmDir}" --skipstrays || continue
-            echo "fixing link :: ${thmDir}/wall.set"
-            ln -fs "${wallList[0]}" "${thmDir}/wall.set"
-        fi
-        [ -f "${thmDir}/.sort" ] && thmSortS+=("$(head -1 "${thmDir}/.sort")") || thmSortS+=("0")
-        thmWallS+=("${realWallPath}")
-        thmListS+=("${thmDir##*/}") # Use this instead of basename
-    done < <(find "${hydeConfDir}/themes" -mindepth 1 -maxdepth 1 -type d)
-
-    while IFS='|' read -r sort theme wall; do
-        thmSort+=("${sort}")
-        thmList+=("${theme}")
-        thmWall+=("${wall}")
-    done < <(paste -d '|' <(printf "%s\n" "${thmSortS[@]}") <(printf "%s\n" "${thmListS[@]}") <(printf "%s\n" "${thmWallS[@]}") | sort -n -k 1 -k 2)
-    #!  done < <(parallel --link echo "{1}\|{2}\|{3}" ::: "${thmSortS[@]}" ::: "${thmListS[@]}" ::: "${thmWallS[@]}" | sort -n -k 1 -k 2) # This is overkill and slow
-    if [ "${1}" == "--verbose" ]; then
-        echo "// Theme Control //"
-        for indx in "${!thmList[@]}"; do
-            echo -e ":: \${thmSort[${indx}]}=\"${thmSort[indx]}\" :: \${thmList[${indx}]}=\"${thmList[indx]}\" :: \${thmWall[${indx}]}=\"${thmWall[indx]}\""
-        done
-    fi
-}
-
-[ -f "${HYDE_RUNTIME_DIR}/environment" ] && source "${HYDE_RUNTIME_DIR}/environment"
-[ -f "$HYDE_STATE_HOME/staterc" ] && source "$HYDE_STATE_HOME/staterc"
-[ -f "$HYDE_STATE_HOME/config" ] && source "$HYDE_STATE_HOME/config"
-
-case "${enableWallDcol}" in
-0 | 1 | 2 | 3) ;;
-*) enableWallDcol=0 ;;
-esac
-
-if [ -z "${HYDE_THEME}" ] || [ ! -d "${hydeConfDir}/themes/${HYDE_THEME}" ]; then
-    get_themes
-    HYDE_THEME="${thmList[0]}"
-fi
-
-HYDE_THEME_DIR="${hydeConfDir}/themes/${HYDE_THEME}"
-wallbashDirs=(
-    "${hydeConfDir}/wallbash"
-    "${XDG_DATA_HOME}/hyde/wallbash"
-    "/usr/local/share/hyde/wallbash"
-    "/usr/share/hyde/wallbash"
-)
-
-export HYDE_THEME \
-    HYDE_THEME_DIR \
-    wallbashDirs \
-    enableWallDcol
-
-#// hypr vars
-
-if [ -n "$HYPRLAND_INSTANCE_SIGNATURE" ]; then
-    hypr_border="$(hyprctl -j getoption decoration:rounding | jq '.int')"
-    hypr_width="$(hyprctl -j getoption general:border_size | jq '.int')"
-
-    export hypr_border=${hypr_border:-0}
-    export hypr_width=${hypr_width:-0}
-fi
-
-#// extra fns
-
-pkg_installed() {
-    local pkgIn=$1
-    if command -v "${pkgIn}" &>/dev/null; then
-        return 0
-    elif command -v "flatpak" &>/dev/null && flatpak info "${pkgIn}" &>/dev/null; then
-        return 0
-    elif hyde-shell pm.sh pq "${pkgIn}" &>/dev/null; then
-        return 0
-    else
-        return 1
-    fi
-}
-
-get_aurhlpr() {
-    if pkg_installed yay; then
-        aurhlpr="yay"
-    elif pkg_installed paru; then
-        # shellcheck disable=SC2034
-        aurhlpr="paru"
-    fi
-}
-
-set_conf() {
-    local varName="${1}"
-    local varData="${2}"
-    touch "${XDG_STATE_HOME}/hyde/staterc"
-
-    if [ "$(grep -c "^${varName}=" "${XDG_STATE_HOME}/hyde/staterc")" -eq 1 ]; then
-        sed -i "/^${varName}=/c${varName}=\"${varData}\"" "${XDG_STATE_HOME}/hyde/staterc"
-    else
-        echo "${varName}=\"${varData}\"" >>"${XDG_STATE_HOME}/hyde/staterc"
-    fi
-}
-
-set_hash() {
-    local hashImage="${1}"
-    "${hashMech}" "${hashImage}" | awk '{print $1}'
-}
-
 print_log() {
     # [ -t 1 ] && return 0 # Skip if not in the terminal
     while (("$#")); do
@@ -299,6 +101,223 @@ print_log() {
     echo "" >&2
 }
 
+get_hashmap() {
+    unset wallHash
+    unset wallList
+    unset skipStrays
+    unset filetypes
+
+    list_extensions() {
+        # Define supported file extensions
+        supported_files=(
+            "gif"
+            "jpg"
+            "jpeg"
+            "png"
+            "${WALLPAPER_FILETYPES[@]}"
+        )
+        if [ -n "${WALLPAPER_OVERRIDE_FILETYPES}" ]; then
+            supported_files=("${WALLPAPER_OVERRIDE_FILETYPES[@]}")
+        fi
+
+        printf -- "-iname \"*.%s\" -o " "${supported_files[@]}" | sed 's/ -o $//'
+
+    }
+
+    find_wallpapers() {
+        local wallSource="$1"
+
+        if [ -z "${wallSource}" ]; then
+            print_log -err "ERROR: wallSource is empty"
+            return 1
+        fi
+
+        local find_command
+        find_command="find \"${wallSource}\" -type f \\( $(list_extensions) \\) ! -path \"*/logo/*\" -exec \"${hashMech}\" {} +"
+
+        [ "${LOG_LEVEL}" == "debug" ] && print_log -g "DEBUG:" -b "Running command:" "${find_command}"
+
+        tmpfile=$(mktemp)
+        eval "${find_command}" 2>"$tmpfile" | sort -k2
+        error_output=$(<"$tmpfile") && rm -f "$tmpfile"
+        [ -n "${error_output}" ] && print_log -err "ERROR:" -b "found an error: " -r "${error_output}" -y " skipping..."
+
+    }
+
+    for wallSource in "$@"; do
+
+        [ "${LOG_LEVEL}" == "debug" ] && print_log -g "DEBUG:" -b "arg:" "${wallSource}"
+
+        [ -z "${wallSource}" ] && continue
+        [ "${wallSource}" == "--no-notify" ] && no_notify=1 && continue
+        [ "${wallSource}" == "--skipstrays" ] && skipStrays=1 && continue
+        [ "${wallSource}" == "--verbose" ] && verboseMap=1 && continue
+
+        wallSource="$(realpath "${wallSource}")"
+
+        [ -e "${wallSource}" ] || {
+            print_log -err "ERROR:" -b "wallpaper source does not exist:" "${wallSource}" -y " skipping..."
+            continue
+        }
+
+        [ "${LOG_LEVEL}" == "debug" ] && print_log -g "DEBUG:" -b "wallSource path:" "${wallSource}"
+
+        hashMap=$(find_wallpapers "${wallSource}") # Enable debug mode for testing
+
+        # hashMap=$(
+        # find "${wallSource}" -type f \( -iname "*.gif" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.mkv"  \) ! -path "*/logo/*" -exec "${hashMech}" {} + | sort -k2
+        # )
+
+        if [ -z "${hashMap}" ]; then
+            no_wallpapers+=("${wallSource}")
+            print_log -warn "No compatible wallpapers found in: " "${wallSource}"
+            continue
+        fi
+
+        while read -r hash image; do
+            wallHash+=("${hash}")
+            wallList+=("${image}")
+        done <<<"${hashMap}"
+    done
+
+    # Notify the list of directories without compatible wallpapers
+    if [ "${#no_wallpapers[@]}" -gt 0 ]; then
+        # [ -n "${no_notify}" ] && notify-send -a "HyDE Alert" "WARNING: No compatible wallpapers found in: ${no_wallpapers[*]}"
+        print_log -warn "No compatible wallpapers found in:" "${no_wallpapers[*]}"
+    fi
+
+    if [ -z "${#wallList[@]}" ] || [[ "${#wallList[@]}" -eq 0 ]]; then
+        if [[ "${skipStrays}" -eq 1 ]]; then
+            return 1
+        else
+            echo "ERROR: No image found in any source"
+            [ -n "${no_notify}" ] && notify-send -a "HyDE Alert" "WARNING: No compatible wallpapers found in: ${no_wallpapers[*]}"
+            exit 1
+        fi
+    fi
+
+    if [[ "${verboseMap}" -eq 1 ]]; then
+        echo "// Hash Map //"
+        for indx in "${!wallHash[@]}"; do
+            echo ":: \${wallHash[${indx}]}=\"${wallHash[indx]}\" :: \${wallList[${indx}]}=\"${wallList[indx]}\""
+        done
+    fi
+}
+
+# shellcheck disable=SC2120
+get_themes() {
+    unset thmSortS
+    unset thmListS
+    unset thmWallS
+    unset thmSort
+    unset thmList
+    unset thmWall
+
+    while read -r thmDir; do
+        local realWallPath
+        realWallPath="$(readlink "${thmDir}/wall.set")"
+        if [ ! -e "${realWallPath}" ]; then
+            get_hashmap "${thmDir}" --skipstrays || continue
+            echo "fixing link :: ${thmDir}/wall.set"
+            ln -fs "${wallList[0]}" "${thmDir}/wall.set"
+        fi
+        [ -f "${thmDir}/.sort" ] && thmSortS+=("$(head -1 "${thmDir}/.sort")") || thmSortS+=("0")
+        thmWallS+=("${realWallPath}")
+        thmListS+=("${thmDir##*/}") # Use this instead of basename
+    done < <(find "${HYDE_CONFIG_HOME}/themes" -mindepth 1 -maxdepth 1 -type d)
+
+    while IFS='|' read -r sort theme wall; do
+        thmSort+=("${sort}")
+        thmList+=("${theme}")
+        thmWall+=("${wall}")
+    done < <(paste -d '|' <(printf "%s\n" "${thmSortS[@]}") <(printf "%s\n" "${thmListS[@]}") <(printf "%s\n" "${thmWallS[@]}") | sort -n -k 1 -k 2)
+    #!  done < <(parallel --link echo "{1}\|{2}\|{3}" ::: "${thmSortS[@]}" ::: "${thmListS[@]}" ::: "${thmWallS[@]}" | sort -n -k 1 -k 2) # This is overkill and slow
+    if [ "${1}" == "--verbose" ]; then
+        echo "// Theme Control //"
+        for indx in "${!thmList[@]}"; do
+            echo -e ":: \${thmSort[${indx}]}=\"${thmSort[indx]}\" :: \${thmList[${indx}]}=\"${thmList[indx]}\" :: \${thmWall[${indx}]}=\"${thmWall[indx]}\""
+        done
+    fi
+}
+
+[ -f "${HYDE_RUNTIME_DIR}/environment" ] && source "${HYDE_RUNTIME_DIR}/environment"
+[ -f "$HYDE_STATE_HOME/staterc" ] && source "$HYDE_STATE_HOME/staterc"
+[ -f "$HYDE_STATE_HOME/config" ] && source "$HYDE_STATE_HOME/config"
+
+case "${enableWallDcol}" in
+0 | 1 | 2 | 3) ;;
+*) enableWallDcol=0 ;;
+esac
+
+if [ -z "${HYDE_THEME}" ] || [ ! -d "${HYDE_CONFIG_HOME}/themes/${HYDE_THEME}" ]; then
+    get_themes
+    HYDE_THEME="${thmList[0]}"
+fi
+
+HYDE_THEME_DIR="${HYDE_CONFIG_HOME}/themes/${HYDE_THEME}"
+wallbashDirs=(
+    "${HYDE_CONFIG_HOME}/wallbash"
+    "${XDG_DATA_HOME}/hyde/wallbash"
+    "/usr/local/share/hyde/wallbash"
+    "/usr/share/hyde/wallbash"
+)
+
+export HYDE_THEME \
+    HYDE_THEME_DIR \
+    wallbashDirs \
+    enableWallDcol
+
+#// hypr vars
+
+if [ -n "$HYPRLAND_INSTANCE_SIGNATURE" ]; then
+    hypr_border="$(hyprctl -j getoption decoration:rounding | jq '.int')"
+    hypr_width="$(hyprctl -j getoption general:border_size | jq '.int')"
+
+    export hypr_border=${hypr_border:-0}
+    export hypr_width=${hypr_width:-0}
+fi
+
+#// extra fns
+
+pkg_installed() {
+    local pkgIn=$1
+    if command -v "${pkgIn}" &>/dev/null; then
+        return 0
+    elif command -v "flatpak" &>/dev/null && flatpak info "${pkgIn}" &>/dev/null; then
+        return 0
+    elif hyde-shell pm.sh pq "${pkgIn}" &>/dev/null; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+get_aurhlpr() {
+    if pkg_installed yay; then
+        aurhlpr="yay"
+    elif pkg_installed paru; then
+        # shellcheck disable=SC2034
+        aurhlpr="paru"
+    fi
+}
+
+set_conf() {
+    local varName="${1}"
+    local varData="${2}"
+    touch "${XDG_STATE_HOME}/hyde/staterc"
+
+    if [ "$(grep -c "^${varName}=" "${XDG_STATE_HOME}/hyde/staterc")" -eq 1 ]; then
+        sed -i "/^${varName}=/c${varName}=\"${varData}\"" "${XDG_STATE_HOME}/hyde/staterc"
+    else
+        echo "${varName}=\"${varData}\"" >>"${XDG_STATE_HOME}/hyde/staterc"
+    fi
+}
+
+set_hash() {
+    local hashImage="${1}"
+    "${hashMech}" "${hashImage}" | awk '{print $1}'
+}
+
 check_package() {
 
     local lock_file="${XDG_RUNTIME_DIR:-/tmp}/hyde/__package.lock"
@@ -323,6 +342,22 @@ check_package() {
 get_hyprConf() {
     local hyVar="${1}"
     local file="${2:-"$HYDE_THEME_DIR/hypr.theme"}"
+
+    # First try using hyq for fast config parsing if available
+    if command -v hyq &>/dev/null; then
+        local hyq_result
+        # Try with source option for accurate results
+        hyq_result=$(hyq -s --query "\$${hyVar}" "${file}" 2>/dev/null)
+        # If empty, try without source option
+        if [ -z "${hyq_result}" ]; then
+            hyq_result=$(hyq --query "\$${hyVar}" "${file}" 2>/dev/null)
+        fi
+        # Return result if not empty
+        [ -n "${hyq_result}" ] && echo "${hyq_result}" && return 0
+
+    fi
+
+    # Fall back to traditional parsing if hyq fails or isn't available
     local gsVal
     gsVal="$(grep "^[[:space:]]*\$${hyVar}\s*=" "${file}" | cut -d '=' -f2 | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
     [ -n "${gsVal}" ] && [[ "${gsVal}" != \$* ]] && echo "${gsVal}" && return 0
@@ -404,6 +439,7 @@ get_rofi_pos() {
 #? handle pasting
 paste_string() {
     if ! command -v wtype >/dev/null; then exit 0; fi
+    if [ -t 1 ]; then return 0; fi
     ignore_paste_file="$HYDE_STATE_HOME/ignore.paste"
 
     if [[ ! -e "${ignore_paste_file}" ]]; then
@@ -418,7 +454,7 @@ EOF
     fi
 
     ignore_class=$(echo "$@" | awk -F'--ignore=' '{print $2}')
-    [ -n "${ignore_class}" ] && echo "${ignore_class}" >>"${ignore_paste_file}" && print_prompt -y "[ignore]" "'$ignore_class'" && exit 0
+    [ -n "${ignore_class}" ] && echo "${ignore_class}" >>"${ignore_paste_file}" && print_log -y "[ignore]" "'$ignore_class'" && exit 0
     class=$(hyprctl -j activewindow | jq -r '.initialClass')
     if ! grep -q "${class}" "${ignore_paste_file}"; then
         hyprctl -q dispatch exec 'wtype -M ctrl V -m ctrl'
@@ -479,7 +515,7 @@ accepted_mime_types() {
         if file --mime-type -b "${file}" | grep -q "^${mime_type}"; then
             return 0
         else
-            print_log err "File type not supported for this wallpaper backend."
+            print_log -err "File type not supported for this wallpaper backend."
             notify-send -u critical -a "HyDE-Alert" "File type not supported for this wallpaper backend."
         fi
 
