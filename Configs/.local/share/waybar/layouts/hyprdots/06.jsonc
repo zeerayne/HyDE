@@ -5,7 +5,7 @@
     "output": [
         "*"
     ],
-    "position": "top",
+    "position": "bottom",
     "mod": "dock",
     "height": 10,
     "exclusive": true,
