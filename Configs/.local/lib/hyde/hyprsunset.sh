@@ -346,7 +346,6 @@ esac
 send_signal_to_process
 
 # Ensure that hyprsunset process is running (only when we need to apply changes)
-if [ "$action" != "read" ]; then
     if ! pgrep -x "hyprsunset" >/dev/null; then
         # If socket exists but process is not running, remove the stale socket
         if [ -f "$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.hyprsunset.sock" ]; then
@@ -354,7 +353,6 @@ if [ "$action" != "read" ]; then
         fi
         hyprctl --quiet dispatch exec -- hyprsunset
     fi
-fi
 
 if [ "$action" = "read" ]; then
     if [ "$toggle_mode" -eq 1 ]; then
@@ -365,9 +363,8 @@ if [ "$action" = "read" ]; then
     fi
 else
     if [ "$toggle_mode" -eq 0 ]; then
-        # hyprctl --quiet hyprsunset identity
-        # hyprctl --quiet hyprsunset gamma "${default_gamma}"
-        killall hyprsunset # Saves some memory #TODO Use above if this one is buggy
+        hyprctl --quiet hyprsunset identity
+        hyprctl --quiet hyprsunset gamma "${default_gamma}"
     else
         if [ "$color_mode" = "gamma" ] && [ -n "$newGamma" ]; then
             hyprctl --quiet hyprsunset temperature "$currentTemp"
