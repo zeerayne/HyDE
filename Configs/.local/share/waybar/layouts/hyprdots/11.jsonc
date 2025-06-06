@@ -39,10 +39,14 @@
         ]
     },
     "modules-center": [
-	            "group/pill#center"
-
+        "group/pill#center"
     ],
-
+    "group/pill#center": {
+        "orientation": "inherit",
+        "modules": [
+            "wlr/taskbar"
+        ]
+    },
     "modules-right": [
         "group/pill#right1",
         "group/pill#right2"
@@ -59,12 +63,6 @@
             "custom/keybindhint"
         ]
     },
-    "group/pill#center": {
-    "orientation": "inherit", 
-    "modules" : [
-        "wlr/taskbar"
-    ]
-},
     "group/pill#right2": {
         "orientation": "inherit",
         "modules": [
@@ -75,6 +73,7 @@
             "custom/theme",
             "custom/wbar",
             "custom/cliphist",
+            "custom/hyde-menu",
             "custom/power"
         ]
     }
