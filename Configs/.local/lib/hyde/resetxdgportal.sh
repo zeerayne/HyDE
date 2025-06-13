@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 sleep 1
 killall -e xdg-desktop-portal-hyprland
-killall xdg-desktop-portal
+killall -e xdg-desktop-portal
 sleep 1
 
 # Use different directory on NixOS
