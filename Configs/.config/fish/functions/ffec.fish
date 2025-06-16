@@ -13,7 +13,6 @@ function ffec
 
     set fzf_options '--height' '80%' \
                     '--layout' 'reverse' \
-                    '--preview-window' 'right:60%' \
                     '--cycle' \
                     '--preview-window' 'right:60%' \
                     "--preview $preview_cmd"
