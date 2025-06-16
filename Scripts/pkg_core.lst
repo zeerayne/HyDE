@@ -75,13 +75,17 @@ nwg-displays                                           # monitor management util
 fzf                                                    # Command-line fuzzy finder
 
 # --------------------------------------------------- // Shell
+fastfetch                                              # system information fetch tool
+## -------------------------------------------------- // zsh
 eza|zsh                                                # file lister for zsh
-duf|zsh                                                # prettier version of df for zsh
 sheldon|zsh                                            # plugin manager for zsh
+duf|zsh                                                # prettier version of df for zsh
+bat|zsh                                                # enhanced version of cat
+## -------------------------------------------------- // fish
 eza|fish                                               # file lister for fish
 starship|fish                                          # customizable shell prompt
 duf|fish                                               # prettier version of df for fish
-fastfetch                                              # system information fetch tool
+bat|fish                                               # enhanced version of cat
 
 # --------------------------------------------------- // HyDE
 hypridle                                               # idle daemon
