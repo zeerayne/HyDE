@@ -80,7 +80,6 @@ starship|zsh                                           # customizable shell prom
 eza|fish                                               # file lister for fish
 starship|fish                                          # customizable shell prompt
 duf|fish                                               # prettier version of df for fish
-bat|fish                                               # enhanced version of cat
 fastfetch                                              # system information fetch tool
 
 # --------------------------------------------------- // HyDE
