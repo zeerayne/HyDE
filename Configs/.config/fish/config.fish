@@ -27,9 +27,9 @@ if type -q eza
 end
 
 if type -q bat
-    abbr -a --position anywhere -- --help '--help | bat --language=help --style=plain --paging=never'
-    abbr -a --position anywhere -- -h '-h | bat --language=help --style=plain --paging=never'
-    abbr cat 'bat --style=plain --paging=never'
+    abbr -a --position anywhere -- --help '--help | bat --language=help --style=plain --paging=never --color always'
+    abbr -a --position anywhere -- -h '-h | bat --language=help --style=plain --paging=never --color always'
+    abbr cat 'bat --style=plain --paging=never --color auto'
 end
 
 # Handy change dir shortcuts
