@@ -76,8 +76,8 @@ nwg-displays                                           # monitor management util
 fzf                                                    # Command-line fuzzy finder
 
 # --------------------------------------------------- // Shell
-starship|zsh                                           # customizable shell prompt written in Rust
-# starship-git                                         # The cross-shell prompt for astronauts
+# starship|zsh                                         # customizable shell prompt written in Rust
+# starship-git                                         # The cross-shell prompt for astronauts  
 starship|fish                                          # customizable shell prompt
 
 fastfetch                                              # system information fetch tool
