@@ -12,6 +12,19 @@
 # And ensures that we have an obstruction-free .zshrc file
 # This also ensures that the proper HyDE $ENVs are loaded
 
+function _load_common() {
+
+    for file in "${ZDOTDIR:-$HOME/.config/zsh}/completions/"*.zsh; do
+        [ -r "$file" ] && source "$file"
+    done
+
+    # Load all custom function files // Directories are ignored
+    for file in "${ZDOTDIR:-$HOME/.config/zsh}/functions/"*.zsh; do
+        [ -r "$file" ] && source "$file"
+    done
+
+}
+
 function _dedup_zsh_plugins {
     unset -f _dedup_zsh_plugins
     # Oh-my-zsh installation path
@@ -54,14 +67,7 @@ function _defer_omz_after_prompt_before_input() {
 
     _comp_options+=(globdots) # tab complete hidden files
 
-    for file in "${ZDOTDIR:-$HOME/.config/zsh}/completions/"*.zsh; do
-        [ -r "$file" ] && source "$file"
-    done
-
-    # Load all custom function files // Directories are ignored
-    for file in "${ZDOTDIR:-$HOME/.config/zsh}/functions/"*.zsh; do
-        [ -r "$file" ] && source "$file"
-    done
+    _load_common
 
     # zsh-autosuggestions won't work on first prompt when deferred
     if typeset -f _zsh_autosuggest_start >/dev/null; then
@@ -80,8 +86,6 @@ function _load_deferred_plugin_system_by_hyde() {
         return
     fi
 
-    # Load plugins
-    _dedup_zsh_plugins
     # Defer oh-my-zsh loading until after prompt appears
     # Load oh-my-zsh when line editor initializes // before user input
     if [[ -n $DEFER_OMZ_LOAD ]]; then
@@ -91,7 +95,7 @@ function _load_deferred_plugin_system_by_hyde() {
     fi
     #  Below this line are the commands that are executed after the prompt appears
 
-    autoload -Uz add-zsh-hook
+    # autoload -Uz add-zsh-hook
     # add-zsh-hook zshaddhistory load_omz_deferred # loads after the first command is added to history
     # add-zsh-hook precmd load_omz_deferred # Loads when shell is ready to accept commands
     # add-zsh-hook preexec load_omz_deferred # Loads before the first command executes
@@ -100,6 +104,11 @@ function _load_deferred_plugin_system_by_hyde() {
     # for these aliases please manually add the following lines to your .zshrc file.(Using yay as the aur helper)
     # pc='yay -Sc' # remove all cached packages
     # po='yay -Qtdq | ${PM_COMMAND[@]} -Rns -' # remove orphaned packages
+
+    # zsh-autosuggestions won't work on first prompt when deferred
+    if typeset -f _zsh_autosuggest_start >/dev/null; then
+        _zsh_autosuggest_start
+    fi
 
     # Some binds won't work on first prompt when deferred
     bindkey '\e[H' beginning-of-line
@@ -170,7 +179,15 @@ fi
 # Try to load prompts immediately
 [[ -f $ZDOTDIR/conf.d/hyde/prompt.zsh ]] && source $ZDOTDIR/conf.d/hyde/prompt.zsh
 
-_load_deferred_plugin_system_by_hyde
+# Deduplicate omz plugins()
+_dedup_zsh_plugins
+
+if [[ "$HYDE_ZSH_OMZ_DEFER" == "1" ]]; then
+    _load_deferred_plugin_system_by_hyde
+else
+    [[ -r $ZSH/oh-my-zsh.sh ]] && source $ZSH/oh-my-zsh.sh
+    _load_common
+fi
 
 alias c='clear' \
     in='${PM_COMMAND[@]} install' \

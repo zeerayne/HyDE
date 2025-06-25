@@ -7,7 +7,7 @@
 # oh-my-zsh plugins are loaded  in $ZDOTDIR/.user.zsh file, see the file for more information
 
 #  Aliases 
-# Override aliases here in '$ZDOTDIR/.zshrc' (already set in .zshenv)
+# Override aliases here in '$ZDOTDIR/.zshrc' (already set in $ZDOTDIR/conf.d/hyde.zsh)
 
 # # Helpful aliases
 # alias c='clear'                                                        # clear terminal
