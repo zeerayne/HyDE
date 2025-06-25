@@ -152,6 +152,7 @@ function do_render {
 
 HYDE_ZSH_DEFER="1"  #Unset this variable in $ZDOTDIR/user.zsh to disable HyDE's deferred Zsh loading.
 HYDE_ZSH_PROMPT="1" #Unset this variable in $ZDOTDIR/user.zsh to disable HyDE's prompt customization.
+HYDE_ZSH_NO_PLUGINS="1" #Unset this variable in $ZDOTDIR/user.zsh to disable HyDE's deferred Zsh loading.
 
 ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 
@@ -179,14 +180,16 @@ fi
 # Try to load prompts immediately
 [[ -f $ZDOTDIR/conf.d/hyde/prompt.zsh ]] && source $ZDOTDIR/conf.d/hyde/prompt.zsh
 
-# Deduplicate omz plugins()
-_dedup_zsh_plugins
+if [[ ${HYDE_ZSH_NO_PLUGINS} == "1" ]]; then
+    # Deduplicate omz plugins()
+    _dedup_zsh_plugins
 
-if [[ "$HYDE_ZSH_OMZ_DEFER" == "1" ]]; then
-    _load_deferred_plugin_system_by_hyde
-else
-    [[ -r $ZSH/oh-my-zsh.sh ]] && source $ZSH/oh-my-zsh.sh
-    _load_common
+    if [[ "$HYDE_ZSH_OMZ_DEFER" == "1" ]]; then
+        _load_deferred_plugin_system_by_hyde
+    else
+        [[ -r $ZSH/oh-my-zsh.sh ]] && source $ZSH/oh-my-zsh.sh
+        _load_common
+    fi
 fi
 
 alias c='clear' \
