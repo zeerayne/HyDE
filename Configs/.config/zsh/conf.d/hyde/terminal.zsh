@@ -61,7 +61,6 @@ function _defer_omz_after_prompt_before_input() {
         _zsh_autosuggest_start
     fi
 
-    chmod +r $ZDOTDIR/.zshrc # Make sure .zshrc is readable
     [[ -r $ZDOTDIR/.zshrc ]] && source $ZDOTDIR/.zshrc
 }
 
@@ -77,7 +76,6 @@ function _load_deferred_plugin_system_by_hyde() {
     # Load oh-my-zsh when line editor initializes // before user input
     if [[ -n $DEFER_OMZ_LOAD ]]; then
         unset DEFER_OMZ_LOAD
-        [[ ${VSCODE_INJECTION} == 1 ]] || chmod -r $ZDOTDIR/.zshrc # let vscode read .zshrc
         zle -N zle-line-init _defer_omz_after_prompt_before_input  # Loads when the line editor initializes // The best option
     fi
     #  Below this line are the commands that are executed after the prompt appears
@@ -173,11 +171,7 @@ export HISTFILE ZSH_AUTOSUGGEST_STRATEGY
 PM_COMMAND=(hyde-shell pm)
 
 # Optionally load user configuration // useful for customizing the shell without modifying the main file
-if [[ -f $HOME/.hyde.zshrc ]]; then
-    source $HOME/.hyde.zshrc # for backward compatibility
-elif [[ -f $HOME/.user.zsh ]]; then
-    source $HOME/.user.zsh # renamed to .user.zsh for intuitiveness that it is a user config
-elif [[ -f $ZDOTDIR/user.zsh ]]; then
+if [[ -f $ZDOTDIR/user.zsh ]]; then
     source $ZDOTDIR/user.zsh
 fi
 
