@@ -14,12 +14,12 @@
 
 function _load_common() {
 
-    for file in "${ZDOTDIR:-$HOME/.config/zsh}/completions/"*.zsh; do
+    # Load all custom function files // Directories are ignored
+    for file in "${ZDOTDIR:-$HOME/.config/zsh}/functions/"*.zsh; do
         [ -r "$file" ] && source "$file"
     done
 
-    # Load all custom function files // Directories are ignored
-    for file in "${ZDOTDIR:-$HOME/.config/zsh}/functions/"*.zsh; do
+    for file in "${ZDOTDIR:-$HOME/.config/zsh}/completions/"*.zsh; do
         [ -r "$file" ] && source "$file"
     done
 
@@ -52,20 +52,7 @@ function _defer_omz_after_prompt_before_input() {
     # Add your completions directory to fpath
     fpath=($ZDOTDIR/completions "${fpath[@]}")
 
-    # Initialize completions with optimized performance
-    autoload -Uz compinit
-
-    # Enable extended glob for the qualifier to work
-    setopt EXTENDED_GLOB
-
-    # Fastest - use glob qualifiers on directory pattern
-    if [[ -n ${ZDOTDIR}/.zcompdump(#qN.mh+${HYDE_ZSH_COMPINIT_CHECK:-1}) ]]; then
-        compinit
-    else
-        compinit -C
-    fi
-
-    _comp_options+=(globdots) # tab complete hidden files
+    _load_compinit
 
     _load_common
 
@@ -146,12 +133,29 @@ function do_render {
     esac
 }
 
+function _load_compinit() {
+    # Initialize completions with optimized performance
+    autoload -Uz compinit
+
+    # Enable extended glob for the qualifier to work
+    setopt EXTENDED_GLOB
+
+    # Fastest - use glob qualifiers on directory pattern
+    if [[ -n ${ZDOTDIR}/.zcompdump(#qN.mh+${HYDE_ZSH_COMPINIT_CHECK:-1}) ]]; then
+        compinit
+    else
+        compinit -C
+    fi
+
+    _comp_options+=(globdots) # tab complete hidden files
+}
+
 #? Override this environment variable in ~/.zshrc
 # cleaning up home folder
 # ZSH Plugin Configuration
 
-HYDE_ZSH_DEFER="1"  #Unset this variable in $ZDOTDIR/user.zsh to disable HyDE's deferred Zsh loading.
-HYDE_ZSH_PROMPT="1" #Unset this variable in $ZDOTDIR/user.zsh to disable HyDE's prompt customization.
+HYDE_ZSH_DEFER="1"      #Unset this variable in $ZDOTDIR/user.zsh to disable HyDE's deferred Zsh loading.
+HYDE_ZSH_PROMPT="1"     #Unset this variable in $ZDOTDIR/user.zsh to disable HyDE's prompt customization.
 HYDE_ZSH_NO_PLUGINS="1" #Unset this variable in $ZDOTDIR/user.zsh to disable HyDE's deferred Zsh loading.
 
 ZSH_AUTOSUGGEST_STRATEGY=(history completion)
@@ -177,8 +181,12 @@ elif [[ -f $ZDOTDIR/user.zsh ]]; then
     source $ZDOTDIR/user.zsh
 fi
 
-# Try to load prompts immediately
-[[ -f $ZDOTDIR/conf.d/hyde/prompt.zsh ]] && source $ZDOTDIR/conf.d/hyde/prompt.zsh
+_load_compinit
+
+    # Try to load prompts immediately
+if ! source ${ZDOTDIR}/prompt.zsh; then
+    [[ -f $ZDOTDIR/conf.d/hyde/prompt.zsh ]] && source $ZDOTDIR/conf.d/hyde/prompt.zsh
+fi
 
 if [[ ${HYDE_ZSH_NO_PLUGINS} == "1" ]]; then
     # Deduplicate omz plugins()
