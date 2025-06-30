@@ -1,3 +1,4 @@
+# TODO: I am describing every step as shell syntaxes are worst.
 # Define a Zsh widget to append '--help' to the current command and execute it, but allow natural use of `?` when the buffer is insignificant
 function append_help_and_run() {
     if [[ -n $BUFFER ]]; then
