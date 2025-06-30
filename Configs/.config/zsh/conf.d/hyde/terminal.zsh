@@ -193,12 +193,12 @@ _load_compinit
 
 
 if [[ ${HYDE_ZSH_NO_PLUGINS} == "1" ]]; then
-    _load_prompt # This disables transient prompts sadly
     # Deduplicate omz plugins()
     _dedup_zsh_plugins
 
     if [[ "$HYDE_ZSH_OMZ_DEFER" == "1" ]]; then
         _load_deferred_plugin_system_by_hyde
+        _load_prompt # This disables transient prompts sadly
     else
         [[ -r $ZSH/oh-my-zsh.sh ]] && source $ZSH/oh-my-zsh.sh
         _load_prompt
