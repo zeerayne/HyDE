@@ -150,6 +150,14 @@ function _load_compinit() {
     _comp_options+=(globdots) # tab complete hidden files
 }
 
+function _load_prompt() {
+    # Try to load prompts immediately
+if ! source ${ZDOTDIR}/prompt.zsh > /dev/null 2>&1; then
+    [[ -f $ZDOTDIR/conf.d/hyde/prompt.zsh ]] && source $ZDOTDIR/conf.d/hyde/prompt.zsh
+fi
+
+}
+
 #? Override this environment variable in ~/.zshrc
 # cleaning up home folder
 # ZSH Plugin Configuration
@@ -183,12 +191,9 @@ fi
 
 _load_compinit
 
-    # Try to load prompts immediately
-if ! source ${ZDOTDIR}/prompt.zsh; then
-    [[ -f $ZDOTDIR/conf.d/hyde/prompt.zsh ]] && source $ZDOTDIR/conf.d/hyde/prompt.zsh
-fi
 
 if [[ ${HYDE_ZSH_NO_PLUGINS} == "1" ]]; then
+    _load_prompt # This disables transient prompts sadly
     # Deduplicate omz plugins()
     _dedup_zsh_plugins
 
@@ -196,9 +201,12 @@ if [[ ${HYDE_ZSH_NO_PLUGINS} == "1" ]]; then
         _load_deferred_plugin_system_by_hyde
     else
         [[ -r $ZSH/oh-my-zsh.sh ]] && source $ZSH/oh-my-zsh.sh
+        _load_prompt
         _load_common
+
     fi
 fi
+
 
 alias c='clear' \
     in='${PM_COMMAND[@]} install' \
