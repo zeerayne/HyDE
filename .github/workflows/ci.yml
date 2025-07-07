@@ -4,6 +4,7 @@ on:
     branches:
       - dev
       - master
+      - rc
   pull_request:
 
 jobs:
