@@ -1,6 +1,6 @@
 #!/bin/bash
 
-COMMIT_LIST=$(git log --pretty=format:"* %s (%h) by %an" origin/master..rc |
+COMMIT_LIST=$(git log --pretty=format:"* %s (%h) by %an" origin/rc..dev |
     while IFS= read -r line; do
         if [[ ! $line =~ ^"* feat"* && ! $line =~ ^"* fix"* && ! $line =~ ^"* docs"* ]]; then
             echo "* chore${line:1}"
@@ -13,18 +13,18 @@ if [ -z "$COMMIT_LIST" ]; then
     COMMIT_LIST="No new commits - branches may be identical"
 fi
 
-MERGE_DATE="1st or 3rd Friday of the month"
+MERGE_DATE="Freeze Week (see release policy)"
 
 echo "$COMMIT_LIST" >commit_list.txt
 
 cat <<EOF >>$GITHUB_ENV
 PR_BODY<<EOT
-This is an automated PR to promote changes from \`rc\` to \`master\`.
+This is an automated PR to promote changes from \`dev\` to \`rc\`.
 Please review and test before merging.
 
 See [TESTING.md](./TESTING.md) for complete testing instructions.
 
-According to our release policy, this PR is expected to be merged on: **$MERGE_DATE**
+According to our release policy, this PR is expected to be merged during: **$MERGE_DATE**
 Testers are encouraged to test the changes before merging.
 Please note that this schedule may be adjusted based on the needs of the project.
 
