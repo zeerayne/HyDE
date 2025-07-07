@@ -4,7 +4,9 @@ on:
     branches:
       - dev
       - master
+      - rc
   pull_request:
+  workflow_dispatch:
 
 jobs:
   dev-to-rc-pr:
