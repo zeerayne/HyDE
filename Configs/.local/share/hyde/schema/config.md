@@ -49,6 +49,16 @@ brightnesscontrol.sh configuration.
 | notify | Enable notifications for brightness control. | true |
 | steps | Number of steps to increase/decrease brightness. | 5 |
 
+### [cava]
+
+Cava visualizer configuration.
+
+| Key | Description | Default |
+| --- | ----------- | ------- |
+| channels | Audio channels: stereo or mono. | stereo |
+| range | Bar sensitivity | 8 |
+| reverse | Reverse spectrum movement (0 or 1). | 1 |
+
 ### [cava.hyprlock]
 
 'cava.sh hyprlock' configuration.
