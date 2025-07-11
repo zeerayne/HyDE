@@ -622,6 +622,35 @@
                 }
             }
         },
+        "cava": {
+            "description": "Cava visualizer configuration.",
+            "type": "object",
+            "properties": {
+                "channels": {
+                    "default": "stereo",
+                    "description": "Audio channels: stereo or mono.",
+                    "options": [
+                        "stereo",
+                        "mono"
+                    ],
+                    "type": "string"
+                },
+                "reverse": {
+                    "default": 1,
+                    "description": "Reverse spectrum movement (0 or 1).",
+                    "options": [
+                        0,
+                        1
+                    ],
+                    "type": "integer"
+                },
+                "range": {
+                    "default": "8",
+                    "description": "Bar sensitivity",
+                    "type": "string"
+                }
+            }
+        },
         "hypr.config": {
             "description": "Hypr configuration.",
             "type": "object",

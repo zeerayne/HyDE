@@ -153,6 +153,12 @@ range = 7  # Number of bars minus one.
 standby = "🎶"  # Standby character for cava.
 bar_array = ["◜", "◝", "◞", "◟", "◠", "◡", "◢", "◣"]  # Bar array for waybar preset.
 
+# Cava visualizer configuration.
+[cava]
+channels = "stereo"  # Audio channels: stereo or mono.
+reverse = 1  # Reverse spectrum movement (0 or 1).
+range = "8"  # Bar sensitivity
+
 # Hypr configuration.
 [hypr.config]
 sanitize = [".*rgba\(.*,.*,.*,.*\)"]  # List of regex to sanitize in the theme.config.

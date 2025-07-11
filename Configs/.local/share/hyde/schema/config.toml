@@ -474,7 +474,7 @@ type      = "object"
     type        = "array"
 
 [properties."cava.stdout".properties.bar_array.items]
-    type = "string"
+    type        = "string"
 
 [properties."cava.hyprlock"]
     description = "'cava.sh hyprlock' configuration."
@@ -506,7 +506,7 @@ type      = "object"
     type        = "array"
 
 [properties."cava.hyprlock".properties.bar_array.items]
-    type = "string"
+    type        = "string"
 
 [properties."cava.waybar"]
     description = "'cava.sh waybar' configuration."
@@ -538,7 +538,28 @@ type      = "object"
     type        = "array"
 
 [properties."cava.waybar".properties.bar_array.items]
-    type = "string"
+    type        = "string"
+
+[properties."cava"]
+    description = "Cava visualizer configuration."
+    type        = "object"
+
+[properties.cava.properties.channels]
+    default     = "stereo"
+    description = "Audio channels: stereo or mono."
+    options     = [ "stereo", "mono" ]
+    type        = "string"
+
+[properties.cava.properties.reverse]
+    default     = 1
+    description = "Reverse spectrum movement (0 or 1)."
+    options     = [ 0, 1 ]
+    type        = "integer"
+
+[properties.cava.properties.range]
+    default     = "8"
+    description = "Bar sensitivity"
+    type        = "string"
 
 [properties."hypr.config"]
     description = "Hypr configuration."
@@ -550,7 +571,7 @@ type      = "object"
     type        = "array"
 
 [properties."hypr.config".properties.sanitize.items]
-    type = "string"
+    type        = "string"
 
 [properties.volume]
     description = "volumecontrol.sh configuration."
