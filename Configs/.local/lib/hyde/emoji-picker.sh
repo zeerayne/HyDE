@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+# shellcheck disable=SC1090
 if ! source "$(command -v hyde-shell)"; then
     echo "[wallbash] code :: Error: hyde-shell not found."
     echo "[wallbash] code :: Is HyDE installed?"
@@ -44,12 +45,12 @@ get_emoji_selection() {
     local size_override=""
 
     if [[ -n ${use_rofile} ]]; then
-        awk '!seen[$0]++' "${recent_data}" "${emoji_data}" | rofi -dmenu -i -config "${use_rofile}" \
+        awk '!seen[$0]++' "${recent_data}" "${emoji_data}" | rofi -dmenu -i "${ROFI_EMOJI_ARGS[@]}" -config "${use_rofile}" \
             -matching fuzzy -no-custom
     else
         case ${style_type} in
         2 | grid)
-            awk '!seen[$0]++' "${recent_data}" "${emoji_data}" | rofi -dmenu -i -display-columns 1 \
+            awk '!seen[$0]++' "${recent_data}" "${emoji_data}" | rofi -dmenu -i "${ROFI_EMOJI_ARGS[@]/-multi-select/}" -display-columns 1 \
                 -display-column-separator " " \
                 -theme-str "listview {columns: 10;}" \
                 -theme-str "entry { placeholder: \" 🔎 Emoji\";} ${rofi_position} ${r_override}" \
@@ -59,14 +60,14 @@ get_emoji_selection() {
                 -matching fuzzy -no-custom
             ;;
         1 | list)
-            awk '!seen[$0]++' "${recent_data}" "${emoji_data}" | rofi -dmenu -i \
+            awk '!seen[$0]++' "${recent_data}" "${emoji_data}" | rofi -dmenu -i "${ROFI_EMOJI_ARGS[@]}" \
                 -theme-str "entry { placeholder: \" 🔎 Emoji\";} ${rofi_position} ${r_override}" \
                 -theme-str "${font_override}" \
                 -theme "clipboard" \
                 -matching fuzzy -no-custom
             ;;
         *)
-            awk '!seen[$0]++' "${recent_data}" "${emoji_data}" | rofi -dmenu -i \
+            awk '!seen[$0]++' "${recent_data}" "${emoji_data}" | rofi -dmenu -i "${ROFI_EMOJI_ARGS[@]}" \
                 -theme-str "entry { placeholder: \" 🔎 Emoji\";} ${rofi_position} ${r_override}" \
                 -theme-str "${font_override}" \
                 -theme "${style_type:-clipboard}" \
@@ -126,7 +127,7 @@ main() {
     [[ -z "${data_emoji}" ]] && exit 0
 
     local selected_emoji_char=""
-    selected_emoji_char=$(printf "%s" "${data_emoji}" | cut -d' ' -f1)
+    selected_emoji_char=$(printf "%s" "${data_emoji}" | cut -d' ' -f1 | xargs)
 
     if [[ -n "${selected_emoji_char}" ]]; then
         wl-copy "${selected_emoji_char}"

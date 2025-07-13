@@ -31,6 +31,7 @@ scale = 10  # Scaling for animation.
 # glyph-picker.sh configuration.
 [rofi.glyph]
 scale = 10  # Scaling for glyph picker.
+args = ["-multi-select"]  # Additional arguments for glyph picker.
 
 # rofilaunch.sh configuration.
 [rofi.launch]
@@ -56,6 +57,7 @@ scale = 10  # Scaling for wallpaper.
 [rofi.emoji]
 style = 1  # Style for emoji picker.
 scale = 10  # Scaling for emoji picker.
+args = ["-multi-select"]  # Additional arguments for emoji picker.
 
 # themeselect.sh configuration.
 [rofi.theme]
