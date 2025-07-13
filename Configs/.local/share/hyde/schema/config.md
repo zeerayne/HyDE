@@ -49,6 +49,16 @@ brightnesscontrol.sh configuration.
 | notify | Enable notifications for brightness control. | true |
 | steps | Number of steps to increase/decrease brightness. | 5 |
 
+### [cava]
+
+Cava visualizer configuration.
+
+| Key | Description | Default |
+| --- | ----------- | ------- |
+| channels | Audio channels: stereo or mono. | stereo |
+| range | Bar sensitivity | 8 |
+| reverse | Reverse spectrum movement (0 or 1). | 1 |
+
 ### [cava.hyprlock]
 
 'cava.sh hyprlock' configuration.
@@ -194,6 +204,7 @@ emoji-picker.sh configuration.
 
 | Key | Description | Default |
 | --- | ----------- | ------- |
+| args | Additional arguments for emoji picker. | ["-multi-select"] |
 | scale | Scaling for emoji picker. | 10 |
 | style | Style for emoji picker. | 1 |
 
@@ -203,6 +214,7 @@ glyph-picker.sh configuration.
 
 | Key | Description | Default |
 | --- | ----------- | ------- |
+| args | Additional arguments for glyph picker. | ["-multi-select"] |
 | scale | Scaling for glyph picker. | 10 |
 
 ### [rofi.hyprlock]
