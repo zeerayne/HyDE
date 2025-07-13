@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+# shellcheck disable=SC1090
 if ! source "$(command -v hyde-shell)"; then
     echo "[wallbash] code :: Error: hyde-shell not found."
     echo "[wallbash] code :: Is HyDE installed?"
@@ -37,22 +38,27 @@ setup_rofi_config() {
 
     local hypr_width=${hypr_width:-"$(hyprctl -j getoption general:border_size | jq '.int')"}
     r_override="window{border:${hypr_width}px;border-radius:${wind_border}px;}listview{border-radius:${elem_border}px;} element{border-radius:${elem_border}px;}"
+
+    rofi_args+=(
+        "${ROFI_GLYPH_ARGS[@]}" 
+        -i
+        -matching fuzzy
+        -no-custom
+        -theme-str "entry { placeholder: \"   Glyph\";} ${rofi_position}"
+        -theme-str "${font_override}"
+        -theme-str "${r_override}"
+        -theme "${ROFI_GLYPH_STYLE:-clipboard}"
+    )
 }
 
 get_glyph_selection() {
-    awk '!seen[$0]++' "${recent_data}" "${glyph_data}" | rofi -dmenu -i \
-        -matching fuzzy \
-        -no-custom \
-        -theme-str "entry { placeholder: \"   Glyph\";} ${rofi_position}" \
-        -theme-str "${font_override}" \
-        -theme-str "${r_override}" \
-        -theme "${ROFI_GLYPH_STYLE:-clipboard}"
+    awk '!seen[$0]++' "${recent_data}" "${glyph_data}" | rofi -dmenu "${rofi_args[@]}"
 }
 
 main() {
     if [[ ! -f "${recent_data}" ]]; then
         mkdir -p "$(dirname "${recent_data}")"
-        echo " Arch linux - I use Arch, BTW" >"${recent_data}"
+        printf "\tArch linux - I use Arch, BTW\n" >"${recent_data}"
     fi
 
     setup_rofi_config
@@ -62,7 +68,7 @@ main() {
     [[ -z "${data_glyph}" ]] && exit 0
 
     local sel_glyph=""
-    sel_glyph=$(printf "%s" "${data_glyph}" | cut -d$'\t' -f1)
+    sel_glyph=$(printf "%s" "${data_glyph}" | cut -d$'\t' -f1 | xargs)
 
     if [[ -n "${sel_glyph}" ]]; then
         wl-copy "${sel_glyph}"

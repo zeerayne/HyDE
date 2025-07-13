@@ -97,6 +97,16 @@
                             "default": 10,
                             "description": "Scaling for glyph picker.",
                             "type": "integer"
+                        },
+                        "args": {
+                            "default": [
+                                "-multi-select"
+                            ],
+                            "description": "Additional arguments for glyph picker.",
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
                         }
                     }
                 },
@@ -202,6 +212,16 @@
                             "default": 10,
                             "description": "Scaling for emoji picker.",
                             "type": "integer"
+                        },
+                        "args": {
+                            "default": [
+                                "-multi-select"
+                            ],
+                            "description": "Additional arguments for emoji picker.",
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
                         }
                     }
                 },

@@ -204,6 +204,7 @@ emoji-picker.sh configuration.
 
 | Key | Description | Default |
 | --- | ----------- | ------- |
+| args | Additional arguments for emoji picker. | ["-multi-select"] |
 | scale | Scaling for emoji picker. | 10 |
 | style | Style for emoji picker. | 1 |
 
@@ -213,6 +214,7 @@ glyph-picker.sh configuration.
 
 | Key | Description | Default |
 | --- | ----------- | ------- |
+| args | Additional arguments for glyph picker. | ["-multi-select"] |
 | scale | Scaling for glyph picker. | 10 |
 
 ### [rofi.hyprlock]
