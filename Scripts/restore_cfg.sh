@@ -218,5 +218,12 @@ json)
 esac
 echo ""
 
+print_log -g "[python env]" -b " :: " "Rebuilding HyDE Python environment..."
+if command -v hyde-shell >/dev/null 2>&1; then
+    hyde-shell pyinit
+  else
+  "${HOME}/.local/bin/hyde-shell" pyinit
+fi  
+
 print_log -g "[version]" -b " :: " "saving version info..."
 "${scrDir}/version.sh" --cache || echo "Failed to save version info."
