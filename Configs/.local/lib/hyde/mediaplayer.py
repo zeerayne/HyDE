@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import os
-from re import split
-from warnings import catch_warnings
+# from re import split
+# from warnings import catch_warnings
 import gi
 
 gi.require_version("Playerctl", "2.0")
@@ -26,7 +26,7 @@ logger = logger.get_logger()
 # for each player.  Key = player_name
 #
 players_data = {}
-currentplayer = None
+current_player = None
 
 
 def load_env_file(filepath: str) -> None:
@@ -177,7 +177,7 @@ def on_player_appeared(manager, player, selected_players=None):
 
 def on_player_vanished(manager, player, loop):
     logger.info("Player has vanished")
-    if currentplayer.props.player_name == player.props.player_name:
+    if current_player.props.player_name == player.props.player_name:
         if manager.props.players:
             set_player(manager, manager.props.players[0])
             on_metadata(player, player.props.metadata, manager)
@@ -368,15 +368,16 @@ def main():
         found[players.index(player.name)] = p
     if found:
         found = list(filter(lambda x: x is not None, found))
-        try:
-            p = next(player for player in found if player.props.status == "Playing")
-        except StopIteration:
-            p = None
-        if not p:
-            p = found[0]
-        set_player(manager, p)
-        player_found = True
-    # If no player is found, generate the standby output
+        if found:
+            try:
+                p = next(player for player in found if player.props.status == "Playing")
+            except StopIteration:
+                p = None
+            if not p:
+                p = found[0]
+            set_player(manager, p)
+            player_found = True
+    # If no player is found, generate the standby output and continue running the loop
     if not player_found:
         output = {
             "text": standby_text,
@@ -384,10 +385,8 @@ def main():
             "alt": "player-closed",
             "tooltip": "",
         }
-
         sys.stdout.write(json.dumps(output) + "\n")
         sys.stdout.flush()
-
     # Set up a single 1-second timer to update song position
     GLib.timeout_add_seconds(1, update_positions, manager)
 
@@ -395,17 +394,17 @@ def main():
 
 
 def set_player(manager, player):
-    global currentplayer
-    if currentplayer:
-        if currentplayer.props.player_name != player.props.player_name:
-            currentplayer.pause()
-    currentplayer = player
+    global current_player
+    if current_player:
+        if current_player.props.player_name != player.props.player_name:
+            current_player.pause()
+    current_player = player
     manager.move_player_to_top(player)
 
 
 def control_music(sig, frame, action):
-    if currentplayer:
-        getattr(currentplayer, action)()
+    if current_player:
+        getattr(current_player, action)()
 
 
 def escape(string):
