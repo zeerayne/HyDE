@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased] v25.7.3
 
+We use a dedicated Python environment to keep HyDE clean and dependency-free. Just run your scripts with `hyde-shell`—it handles the environment for you.
+
+Examples:  
+  `hyde-shell mediaplayer.py`  
+  `hyde-shell waybar`
+
 
 ### Added
 
@@ -13,6 +19,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Features and fixes for mediaplayer. #865
 - HyDE's python environment rebuild on installation
 - PyGObject for the python environment
+- Mediaplayer: Add support for generic MPRIS metadata
+- Mediaplayer: RIght click menu for mediaplayer
+- Mediaplayer: Scroll up/down to seek
 
 ### Changed
 
