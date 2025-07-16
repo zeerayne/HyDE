@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+pkill rofi && exit 0
 # shellcheck disable=SC1090
 if ! source "$(command -v hyde-shell)"; then
     echo "[wallbash] code :: Error: hyde-shell not found."

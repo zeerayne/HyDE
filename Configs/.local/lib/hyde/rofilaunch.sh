@@ -2,6 +2,7 @@
 
 #// set variables
 
+pkill rofi && exit 0
 scrDir="$(dirname "$(realpath "$0")")"
 confDir="${confDir}/config"
 # shellcheck source=/dev/null
