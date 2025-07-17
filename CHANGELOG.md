@@ -9,9 +9,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 We use a dedicated Python environment to keep HyDE clean and dependency-free. Just run your scripts with `hyde-shell`—it handles the environment for you.
 
 Examples:  
-  `hyde-shell mediaplayer.py`  
-  `hyde-shell waybar`
-
+ `hyde-shell mediaplayer.py`  
+ `hyde-shell waybar`
 
 ### Added
 
@@ -22,6 +21,14 @@ Examples:
 - Mediaplayer: Add support for generic MPRIS metadata
 - Mediaplayer: RIght click menu for mediaplayer
 - Mediaplayer: Scroll up/down to seek
+- Waybar: Added a POC implementation of drawers in group modules
+- Waybar: Made mpris comparable to custom/mediaplayer. Should be noted mpris is not very customizable.
+- Waybar: Added generic gamemode module which detects if games are running in feral mode
+- Waybar: 'hyde-shell waybar --select' now will ask for **layout and style** options.
+
+### Removed
+
+- Waybar: Remove test layouts.
 
 ### Changed
 
@@ -31,4 +38,4 @@ Examples:
 
 - Waybar: Avoid multi user process conflict
 - Mediaplayer: crash when player is not playing.
-
+- Waybar: QOL fixes.
