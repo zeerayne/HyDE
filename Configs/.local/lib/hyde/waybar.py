@@ -544,11 +544,152 @@ def ensure_directory_exists(filepath):
         os.makedirs(directory)
 
 
+def rofi_file_selector(
+    dirs, extension, prompt, current_selection=None, extra_flags=None, display_func=None, recursive=True
+):
+    """
+    Generic rofi file selector for files in given dirs with given extension.
+    Returns the selected file's path, or None if cancelled.
+    display_func: function(path, root_dir) -> str, for custom display names
+    recursive: if True, search recursively; if False, only depth 1
+    """
+    files = []
+    file_roots = []
+    for d in dirs:
+        if recursive:
+            found = [f for f in glob.glob(os.path.join(d, f"**/*{extension}"), recursive=True)
+                     if "/backup/" not in f and "\\backup\\" not in f]
+        else:
+            found = [f for f in glob.glob(os.path.join(d, f"*{extension}"), recursive=False)
+                     if "/backup/" not in f and "\\backup\\" not in f]
+        files.extend(found)
+        file_roots.extend([d] * len(found))
+    # Remove duplicates
+    seen = set()
+    unique = []
+    unique_roots = []
+    for f, r in zip(files, file_roots):
+        if f not in seen:
+            unique.append(f)
+            unique_roots.append(r)
+            seen.add(f)
+    files = unique
+    file_roots = unique_roots
+    if not files:
+        logger.error(f"No files found for extension {extension} in {dirs}")
+        return None
+    if display_func:
+        names = [display_func(f, r) for f, r in zip(files, file_roots)]
+    else:
+        def strip_prefix(s):
+            return os.path.splitext(os.path.basename(s))[0]
+        names = [strip_prefix(f) for f in files]
+    if current_selection:
+        if display_func:
+            # Try to match current_selection to display_func output
+            current_name = None
+            for f, r in zip(files, file_roots):
+                if os.path.abspath(f) == os.path.abspath(current_selection):
+                    current_name = display_func(f, r)
+                    break
+            if not current_name:
+                current_name = names[0]
+        else:
+            def strip_prefix(s):
+                return os.path.splitext(os.path.basename(s))[0]
+            current_name = strip_prefix(current_selection)
+    else:
+        current_name = names[0]
+    hyprland = HYPRLAND.HyprctlWrapper()
+    override_string = hyprland.get_rofi_override_string()
+    rofi_pos_string = hyprland.get_rofi_pos()
+    rofi_flags = [
+        "-p", prompt,
+        "-select", current_name,
+        "-theme", "clipboard",
+        "-theme-str", override_string,
+        "-theme-str", rofi_pos_string,
+    ]
+    if extra_flags:
+        rofi_flags.extend(extra_flags)
+    selected = rofi_dmenu(names, rofi_flags)
+    logger.debug(f"Selected {prompt}: {selected}")
+    if selected:
+        for f, n in zip(files, names):
+            if n == selected:
+                return f
+    return None
+
+
+def rofi_style_selector(current_layout=None):
+    """Show all styles in rofi and apply the selected one."""
+    current_style_path = get_state_value("WAYBAR_STYLE_PATH")
+    selected_style = rofi_file_selector(
+        STYLE_DIRS, ".css", "Select style:", current_style_path, recursive=False
+    )
+    if selected_style:
+        style_filepath = os.path.join(str(xdg_config_home()), "waybar", "style.css")
+        write_style_file(style_filepath, selected_style)
+        set_state_value("WAYBAR_STYLE_PATH", selected_style)
+        update_icon_size()
+        update_border_radius()
+        generate_includes()
+        update_global_css()
+        notify.send("Waybar", f"Style changed to {os.path.basename(selected_style)}", replace_id=9)
+        run_waybar_command("killall waybar; waybar & disown")
+    sys.exit(0)
+
+
 def rofi_selector():
-    """List all layout names in a rofi selector."""
+    """Show all layouts in rofi and apply the selected one."""
+    layouts_data = list_layouts()
+    layout_files = [pair["layout"] for pair in layouts_data["layouts"]]
+    layout_roots = []
+    for f in layout_files:
+        for layout_dir in LAYOUT_DIRS:
+            if f.startswith(layout_dir):
+                layout_roots.append(layout_dir)
+                break
+        else:
+            layout_roots.append("")
+    current_layout_path = get_state_value("WAYBAR_LAYOUT_PATH")
+    def display_func(f, root):
+        rel = os.path.relpath(f, root) if root else os.path.basename(f)
+        return rel.replace(".jsonc", "")
+    selected_layout = rofi_file_selector(
+        LAYOUT_DIRS, ".jsonc", "Select layout:", current_layout_path, display_func=display_func
+    )
+    if selected_layout:
+        # Find the layout pair
+        for pair in layouts_data["layouts"]:
+            if pair["layout"] == selected_layout:
+                if pair.get("is_backup_entry", False):
+                    handle_backup_display()
+                    return
+                style_path = pair["style"]
+                break
+        else:
+            style_path = resolve_style_path(selected_layout)
+        shutil.copyfile(selected_layout, CONFIG_JSONC)
+        set_state_value("WAYBAR_LAYOUT_PATH", selected_layout)
+        set_state_value("WAYBAR_LAYOUT_NAME", os.path.basename(selected_layout).replace(".jsonc", ""))
+        set_state_value("WAYBAR_STYLE_PATH", style_path)
+        style_filepath = os.path.join(str(xdg_config_home()), "waybar", "style.css")
+        write_style_file(style_filepath, style_path)
+        update_icon_size()
+        update_border_radius()
+        generate_includes()
+        update_global_css()
+        notify.send("Waybar", f"Layout changed to {display_func(selected_layout, os.path.dirname(selected_layout))}", replace_id=9)
+        run_waybar_command("killall waybar; waybar & disown")
+    ensure_state_file()
+    sys.exit(0)
+
+
+def rofi_selector_no_exit():
+    """List all layout names in a rofi selector, but do not exit after selection."""
     layouts_data = list_layouts()
     layout_names = [pair["name"] for pair in layouts_data["layouts"]]
-
     current_layout_name = get_state_value("WAYBAR_LAYOUT_NAME")
     if not current_layout_name:
         current_layout_path = get_state_value("WAYBAR_LAYOUT_PATH")
@@ -556,14 +697,10 @@ def rofi_selector():
             current_layout_name = os.path.basename(current_layout_path).replace(
                 ".jsonc", ""
             )
-
     logger.debug(f"Current layout from state: {current_layout_name}")
-
     hyprland = HYPRLAND.HyprctlWrapper()
-
     override_string = hyprland.get_rofi_override_string()
     rofi_pos_string = hyprland.get_rofi_pos()
-
     rofi_flags = [
         "-p",
         "Select layout:",
@@ -583,23 +720,21 @@ def rofi_selector():
     logger.debug(f"Selected layout: {selected_layout}")
     if selected_layout:
         selected_layout_path = None
+        style_path = None
         for pair in layouts_data["layouts"]:
             if pair["name"] == selected_layout:
                 if pair.get("is_backup_entry", False):
                     handle_backup_display()
-                    return
+                    return None
                 selected_layout_path = pair["layout"]
                 style_path = pair["style"]
                 break
-
         if selected_layout_path:
             logger.debug(f"Updating config with layout: {selected_layout_path}")
             shutil.copyfile(selected_layout_path, CONFIG_JSONC)
-
             set_state_value("WAYBAR_LAYOUT_PATH", selected_layout_path)
             set_state_value("WAYBAR_LAYOUT_NAME", selected_layout)
             set_state_value("WAYBAR_STYLE_PATH", style_path)
-
             style_filepath = os.path.join(str(xdg_config_home()), "waybar", "style.css")
             write_style_file(style_filepath, style_path)
             update_icon_size()
@@ -608,11 +743,21 @@ def rofi_selector():
             update_global_css()
             notify.send("Waybar", f"Layout changed to {selected_layout}", replace_id=9)
             run_waybar_command("killall waybar; waybar & disown")
+            ensure_state_file()
+            return selected_layout_path
         else:
             logger.error(f"Could not find layout path for {selected_layout}")
-
     ensure_state_file()
-    sys.exit(0)
+    return None
+
+
+def select_layout_and_style():
+    """Select layout, then style."""
+    selected_layout = rofi_selector_no_exit()
+    if selected_layout:
+        rofi_style_selector(selected_layout)
+    else:
+        sys.exit(0)
 
 
 def backup_layout(layout_name):
@@ -1337,7 +1482,13 @@ def main():
         "--json", "-j", action="store_true", help="List all layouts in JSON format"
     )
     parser.add_argument(
-        "--select", "-S", action="store_true", help="List all layout names"
+        "--select-layout", "-L", action="store_true", help="Select a layout using rofi"
+    )
+    parser.add_argument(
+        "--select-style", "-Y", action="store_true", help="Select a style using rofi"
+    )
+    parser.add_argument(
+        "--select", "-S", action="store_true", help="Select layout and then style"
     )
     parser.add_argument(
         "--kill",
@@ -1391,8 +1542,12 @@ def main():
         )
     if args.json:
         list_layouts_json()
-    if args.select:
+    if args.select_layout:
         rofi_selector()
+    if args.select_style:
+        rofi_style_selector()
+    if args.select:
+        select_layout_and_style()
 
     if args.hide is not None:
         if args.hide == "1":
