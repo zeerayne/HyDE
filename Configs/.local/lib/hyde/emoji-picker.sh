@@ -1,11 +1,6 @@
 #!/usr/bin/env bash
 
-# shellcheck disable=SC1090
-if ! source "$(command -v hyde-shell)"; then
-    echo "[wallbash] code :: Error: hyde-shell not found."
-    echo "[wallbash] code :: Is HyDE installed?"
-    exit 1
-fi
+[[ "${HYDE_SHELL_INIT}" -ne 1 ]] && eval "$(hyde-shell init)"
 
 emoji_dir=${HYDE_DATA_HOME:-$HOME/.local/share/hyde}
 emoji_data="${emoji_dir}/emoji.db"
