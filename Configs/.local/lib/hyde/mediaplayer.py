@@ -285,7 +285,6 @@ def update_positions(manager):
                 create_tooltip_text(
                     artist, track, position, duration_seconds, p_name, loop_status, shuffle_status
                 )
-                + "\n\n"
             )
         player = manager.props.players[0]
         p_name = player.props.player_name
