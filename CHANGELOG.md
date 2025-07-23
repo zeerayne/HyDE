@@ -35,6 +35,7 @@ Examples:
 
 - Launch Scripts using 'hyde-shell' instead of '$scrPath/'
 - Hyprland: Remove dconf setting in Hyprland config and add a separate dconf stack on color setup. This removes some hiccups on hyprctl reload.
+- Updated `hyq` hyprquery v0.6.3r2
 
 ### Fixed
 
