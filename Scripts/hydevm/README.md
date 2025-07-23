@@ -20,7 +20,7 @@ HydeVM is a streamlined development tool that automatically sets up HyDE in a vi
     - [Killing http server](#killing-http-server)
   - [VM Host Guide](#vm-host-guide)
     - [Hardware Requirements (Detailed)](#hardware-requirements-detailed)
-    - [Non-NixOS Hosts](#non-nixos-hosts)
+    - [Non-NixOS Hosts using Nix](#non-nixos-hosts-using-nix)
     - [AMD GPU + Any CPU ✅](#amd-gpu--any-cpu-)
     - [Intel CPU with iGPU ✅](#intel-cpu-with-igpu-)
     - [NVIDIA GPU + Any CPU ⚠️](#nvidia-gpu--any-cpu-️)
@@ -199,7 +199,7 @@ HyDE uses Hyprland, which has specific requirements for VM environments. Hyprlan
 - ⚠️ **NVIDIA**: GTX 600+ series (proprietary drivers may cause issues)
 - **OpenGL 3.3+ support required**
 
-### Non-NixOS Hosts
+### Non-NixOS Hosts using Nix
 
 For non-NixOS hosts, use [nixGL](https://github.com/nix-community/nixGL) for better graphics support:
 
