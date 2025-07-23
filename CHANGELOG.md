@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased] v25.7.3
 
-We use a dedicated Python environment to keep HyDE clean and dependency-free. Just run your scripts with `hyde-shell`—it handles the environment for you.
+We use a dedicated Python environment to keep HyDE clean and dependency-free. Just run your scripts with `hyde-shell`— this handles the environment for you.
 
 Examples:  
  `hyde-shell mediaplayer.py`  
@@ -25,6 +25,7 @@ Examples:
 - Waybar: Made mpris comparable to custom/mediaplayer. Should be noted mpris is not very customizable.
 - Waybar: Added generic gamemode module which detects if games are running in feral mode
 - Waybar: 'hyde-shell waybar --select' now will ask for **layout and style** options.
+- Core:Solid theming fallback
 
 ### Removed
 
@@ -33,9 +34,11 @@ Examples:
 ### Changed
 
 - Launch Scripts using 'hyde-shell' instead of '$scrPath/'
+- Hyprland: Remove dconf setting in Hyprland config and add a separate dconf stack on color setup. This removes some hiccups on hyprctl reload.
 
 ### Fixed
 
 - Waybar: Avoid multi user process conflict
 - Mediaplayer: crash when player is not playing.
 - Waybar: QOL fixes.
+- Rofi: Fallback scaling for some script to not rely with hyprland
