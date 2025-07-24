@@ -1,6 +1,18 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC2154
 
+[[ "${HYDE_SHELL_INIT}" -ne 1 ]] && eval "$(hyde-shell init)"
+
+# Hook commands to always run for theming and colors
+load_dconf_kdeglobals() {
+
+    wallbash.hypr.sh #<--- hyprland hook
+    toml_write "${confDir}/kdeglobals" "Colors:View" "BackgroundNormal" "#${dcol_pry1:-000000}FF"
+    toml_write "${confDir}/Kvantum/wallbash/wallbash.kvconfig" '%General' 'reduce_menu_opacity' 0
+    dconf.set.sh
+
+}
+
 # Function to create wallbash substitutions
 create_wallbash_substitutions() {
     local use_inverted=$1
@@ -220,20 +232,19 @@ fi
 [ "${dcol_mode}" == "dark" ] && dcol_invt="light" || dcol_invt="dark"
 set +a
 
-if [ -z "$GTK_THEME" ]; then
-    if [ "${enableWallDcol}" -eq 0 ]; then
-        GTK_THEME="$(get_hyprConf "GTK_THEME")"
-    else
-        GTK_THEME="Wallbash-Gtk"
-    fi
-fi
-[ -z "$GTK_ICON" ] && GTK_ICON="$(get_hyprConf "ICON_THEME")"
-[ -z "$CURSOR_THEME" ] && CURSOR_THEME="$(get_hyprConf "CURSOR_THEME")"
-export GTK_THEME GTK_ICON CURSOR_THEME
-
 # Preprocess substitutions once before processing any templates
 preprocess_substitutions
 print_log -sec "wallbash" -stat "preprocessed" "color substitutions"
+
+#  Theme mode: detects the color-scheme set in hypr.theme and falls back if nothing is parsed.
+revert_colors=0
+[ "${enableWallDcol}" -eq 0 ] && { grep -q "${dcol_mode}" <<<"$(get_hyprConf "COLOR_SCHEME")" || revert_colors=1; }
+export revert_colors
+
+# Run dconf and kdeglobals commands
+# Add configuration hooks
+load_dconf_kdeglobals
+export GTK_THEME GTK_ICON CURSOR_THEME COLOR_SCHEME
 
 #// deploy wallbash colors
 
@@ -291,14 +302,5 @@ elif [ "${enableWallDcol}" -gt 0 ]; then
     find "${wallbashDirs[@]}" -type f -path "*/theme*" -name "*.dcol" 2>/dev/null | awk '!seen[substr($0, match($0, /[^/]+$/))]++' | parallel fn_wallbash {} || true
 fi
 
-#  Theme mode: detects the color-scheme set in hypr.theme and falls back if nothing is parsed.
-revert_colors=0
-[ "${enableWallDcol}" -eq 0 ] && { grep -q "${dcol_mode}" <<<"$(get_hyprConf "COLOR_SCHEME")" || revert_colors=1; }
-export revert_colors
-
 # Process "always" templates in parallel
 find "${wallbashDirs[@]}" -type f -path "*/always*" -name "*.dcol" 2>/dev/null | sort | awk '!seen[substr($0, match($0, /[^/]+$/))]++' | parallel fn_wallbash {} || true
-
-# Add configuration hooks
-toml_write "${confDir}/kdeglobals" "Colors:View" "BackgroundNormal" "#${dcol_pry1:-000000}FF"
-toml_write "${confDir}/Kvantum/wallbash/wallbash.kvconfig" '%General' 'reduce_menu_opacity' 0
