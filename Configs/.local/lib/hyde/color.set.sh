@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC2154
+# shellcheck disable=SC1091
 
 [[ "${HYDE_SHELL_INIT}" -ne 1 ]] && eval "$(hyde-shell init)"
 
@@ -11,10 +12,12 @@
 # Hook commands to always run for theming and colors
 load_dconf_kdeglobals() {
 
-    wallbash.hypr.sh #<--- hyprland hook
-    toml_write "${confDir}/kdeglobals" "Colors:View" "BackgroundNormal" "#${dcol_pry1:-000000}FF"
-    toml_write "${confDir}/Kvantum/wallbash/wallbash.kvconfig" '%General' 'reduce_menu_opacity' 0
-    dconf.set.sh #< --- sets gtk stuff
+    source "${LIB_DIR}/hyde/wallbash.hypr.sh" #<--- hyprland hook
+    source "${LIB_DIR}/hyde/dconf.set.sh"
+
+    # QT and KDE settings
+    toml_write "${XDG_CONFIG_HOME}/kdeglobals" "Colors:View" "BackgroundNormal" "#${dcol_pry1:-000000}FF"
+    toml_write "${XDG_CONFIG_HOME}/Kvantum/wallbash/wallbash.kvconfig" '%General' 'reduce_menu_opacity' 0
     [[ -n "${HYPRLAND_INSTANCE_SIGNATURE}" ]] && shaders.sh reload
 }
 

@@ -49,7 +49,7 @@ get_emoji_selection() {
         2 | grid)
             awk '!seen[$0]++' "${recent_data}" "${emoji_data}" | rofi -dmenu -i "${ROFI_EMOJI_ARGS[@]/-multi-select/}" -display-columns 1 \
                 -display-column-separator " " \
-                -theme-str "listview {columns: 10;}" \
+                -theme-str "listview {columns: 9;}" \
                 -theme-str "entry { placeholder: \" 🔎 Emoji\";} ${rofi_position} ${r_override}" \
                 -theme-str "${font_override}" \
                 -theme-str "${size_override}" \

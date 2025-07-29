@@ -299,17 +299,13 @@ source = ${hyde_hyprlock_conf}
 #│   - otherwise, it will output the splash command.                          │
 #│                                                                            │
 #│   cmd [update:1] \$CAVA_CMD                                                │
-#│   - The command to be executed to get the CAVA output.                     │
+#│   - This functionality does not work anymore.                              │
 #│   - ⚠️ (Use with caution as it eats up the CPU.)                           │
 #│                                                                            │
 #│   cmd [update:5000] \$BATTERY_ICON                                         │
 #│   - The battery icon to be displayed on the lock screen.                   │
 #│   - Only works if the battery is available.                                │
-#│                                                                            │
-#│   cmd [update:1000] \$KEYBOARD_LAYOUT                                      │
-#│   - The current keyboard layout                                            │
-#│   - SUPER + K to change the keyboard layout (or any binding you set)       │
-#│                                                                            │
+#│                                                                            │                                                                    │
 #└────────────────────────────────────────────────────────────────────────────┘
 
 CONF
