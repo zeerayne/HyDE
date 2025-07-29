@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - Core: Added 'app2unit.sh' as core script. This is a wrapper for the 'app' e.g. 'hyde-shell app mediaplayer.py' this runs the script as systemd scope. Using app2unit.sh as 'uwsm app' is slower.
 - Core: Added 'xdg-terminal-exec' as core script. Added this in here because the upstream xdg-terminal-exec is not yet available officially.
+- Development: Added 'Scripts/hydevm' for development. See its README.md for more info.
 
 ### Fixed
 
@@ -30,7 +31,7 @@ Examples:
 
 ### Added
 
-- CHANGELOG.md to track notable changes
+- CHANGELOG.md to track notable changes.
 - Features and fixes for mediaplayer. #865
 - HyDE's python environment rebuild on installation
 - PyGObject for the python environment
