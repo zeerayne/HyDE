@@ -1,15 +1,17 @@
 #!/usr/bin/env bash
 
-[[ "${HYDE_SHELL_INIT}" -ne 1 ]] && eval "$(hyde-shell init)"
-
+# set variables
 MODE=${1}
+scrDir=$(dirname "$(realpath "$0")")
+source $scrDir/globalcontrol.sh
+# ThemeSet="${confDir}/hypr/themes/theme.conf"
 
 if [[ "$MODE" =~ ^[0-9]+$ ]]; then
   RofiConf="gamelauncher_${MODE}"
 else
   RofiConf="${MODE:-$ROFI_GAMELAUNCHER_STYLE}"
 fi
-RofiConf=${RofiConf:-"gamelauncher_5"}
+RofiConf=${RofiConf:-"steam_deck"}
 
 # set rofi override
 elem_border=$((hypr_border * 2))
