@@ -27,7 +27,7 @@ USAGE() {
                             : \$CAVA_CMD
       --art              - Prints the path to the mpris art"
                             : \$MPRIS_ART
-      --select      -s     - Selects the hyprlock layout"
+      --select      -S     - Selects the hyprlock layout"
                             : \$LAYOUT_PATH
       --help       -h    - Displays this help message"
 EOF
@@ -122,7 +122,7 @@ mpris_thumb() { # Generate thumbnail for mpris
 fn_cava() {
   local tempFile=/tmp/hyprlock-cava
   [ -f "${tempFile}" ] && tail -n 1 "${tempFile}"
-  config_file="$HYDE_RUNTIME_DIR/cava.hyprlock"
+  config_file="${XDG_RUNTIME_DIR}/hyde/cava.hyprlock"
   if [ "$(pgrep -c -f "cava -p ${config_file}")" -eq 0 ]; then
     trap 'rm -f ${tempFile}' EXIT
     "$scrDir/cava.sh" hyprlock >${tempFile} 2>&1
@@ -325,7 +325,7 @@ LONGOPTS="select,background,profile,mpris:,cava,art,help"
 
 # Parse options
 PARSED=$(
-  if ! getopt --options shb --longoptions $LONGOPTS --name "$0" -- "$@"; then
+  if ! getopt --options Shb --longoptions $LONGOPTS --name "$0" -- "$@"; then
     exit 2
   fi
 )
@@ -335,7 +335,7 @@ eval set -- "$PARSED"
 
 while true; do
   case "$1" in
-  select | -s | --select)
+  select | -S | --select)
     fn_select
     exit 0
     ;;

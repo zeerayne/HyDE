@@ -393,7 +393,7 @@ generate_completions() {
 }
 
 run_command() {
-
+    python_activate
     # Convert to array, deduplicate, and filter out empty entries
     IFS=':' read -ra RAW_DIRS <<<"$HYDE_SCRIPTS_PATH"
     declare -A seen_dirs
@@ -415,7 +415,6 @@ run_command() {
             exec bash "$dir/${1}.sh" "${@:2}"
         # Try .py extension
         elif [[ -f "$dir/${1}.py" ]]; then
-            python_activate
             exec python "$dir/${1}.py" "${@:2}"
         # Try exact name (executable)
         elif [[ -f "$dir/${1}" && -x "$dir/${1}" ]]; then
@@ -459,6 +458,7 @@ export BIN_DIR LIB_DIR SHARE_DIR PATH HYDE_SCRIPTS_PATH
 #*--------------------------------------------------------------------------------
 if [[ "${1}" == "app" ]]; then
     export PATH="${HYDE_SCRIPTS_PATH}:${PATH}"
+    [[ "${HYDEPY}" -eq 1 ]] && python_activate
     shift
     exec app2unit.sh "$@"
 fi

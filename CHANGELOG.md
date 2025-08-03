@@ -4,22 +4,33 @@ All notable changes to `HyDE` will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to _Modified_ [CalVer](https://calver.org/). See [Versioning](https://github.com/HyDE-Project/HyDE/blob/master/RELEASE_POLICY.md#versioning-yymq) For more info
 
-## v25.8.1
+## v25.8.1 (Unreleased)
+
+Big CHANGE in HyDE! We are now using `uwsm` for session management and app2unit for application management.
+
+**PLEASE run install.sh again to upgrade and install missing dependencies!!!**
 
 ### Changed
 
 - Hyprlock: Sourcing hyprlock/HyDE.conf as default theme
 - Core: Improved theming script stack
+- Removed `xdg-config/hypr/hyde.conf` as it is too brittle. Use hyprland.conf instead!
+- Moved all core hypr stuff to `~/.local/share/hypr`
 
 ### Added
 
 - Core: Added 'app2unit.sh' as core script. This is a wrapper for the 'app' e.g. 'hyde-shell app mediaplayer.py' this runs the script as systemd scope. Using app2unit.sh as 'uwsm app' is slower.
 - Core: Added 'xdg-terminal-exec' as core script. Added this in here because the upstream xdg-terminal-exec is not yet available officially.
 - Development: Added 'Scripts/hydevm' for development. See its README.md for more info.
+- Package: UWSM as dependency for HyDE.
+- Core: app2unit.sh and xdg-terminal-exec as as static dependencies. These tools are not widely available and are not part of the core dependencies.
+- The ~/.config/xdg-terminals.list file is now used to determine which terminal to use.
 
 ### Fixed
 
 - Waybar: Some fixes for modules
+- Waybar: gpuinfo throws errors eg broken pipe
+- LibL Clean up variables that are using HYDE*, we will try to use the XDG\_* variables instead.
 
 ## v25.7.3
 
