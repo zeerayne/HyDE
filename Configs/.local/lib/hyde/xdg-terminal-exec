@@ -59,7 +59,7 @@ if check_bool "${DEBUG-0}"; then
 		# print each arg at new line, prefix each printed line with 'D: '
 		while IFS='' read -r debug_line; do
 			printf 'D: %s\n' "$debug_line"
-		done <<- EOF >&2
+		done <<-EOF >&2
 			$(printf '%s\n' "$@")
 		EOF
 	}
@@ -75,14 +75,14 @@ shcat() {
 }
 
 usage() {
-	shcat <<- EOF
+	shcat <<-EOF
 		Usage:
 		  $SELF_NAME [options] [--] [command [arguments ...]]
 	EOF
 }
 
 help() {
-	shcat <<- EOF
+	shcat <<-EOF
 		$SELF_NAME - Shell-based default terminal launcher.
 
 		Implementation of the proposed Default Terminal Specification.
@@ -94,33 +94,33 @@ help() {
 		Options for modifying terminal behavior (if supported by terminals's
 		entry):
 
-		  --app-id=app-id	set app-id (Wayland) or window class (X11)
-		  --title=title		set tile of terminal.
-		  --dir=workdir		set workdir of terminal.
-		  --hold		instruct terminal to hold after command ends.
+		  --app-id=app-id set app-id (Wayland) or window class (X11)
+		  --title=title    set tile of terminal.
+		  --dir=workdir    set workdir of terminal.
+		  --hold           instruct terminal to hold after command ends.
 
 		Options for printing data instead of executing terminal:
 
 		  --print-id
-		  	print selected Desktop Entry ID. Action is appended delimited
-		  	by ":".
+		   print selected Desktop Entry ID. Action is appended delimited
+		   by ":".
 
 		  --print-path
-		  	print path to selected Desktop Entry. Action is appended
-		  	delimited by ":".
+		   print path to selected Desktop Entry. Action is appended
+		   delimited by ":".
 
 		  --print-content
-		  	print content of selected Desktop Entry. Conflicts with --print-cmd.
+		   print content of selected Desktop Entry. Conflicts with --print-cmd.
 
 		  --print-cmd[=printf_sequence]
-		  	print resulting command line, delimited by given printf sequence,
-		  	"\\n" by default. If sequence is "\\n", output is also terminated with
-		  	a newline.
+		   print resulting command line, delimited by given printf sequence,
+		   "\\n" by default. If sequence is "\\n", output is also terminated with
+		   a newline.
 
 		  --print-delimiter=printf_sequence
-		  	printf sequence to be used as the delimiter between multiple requested
-		  	print statements, "\\n" by default. If sequence is "\\n", output is
-		  	also terminated with a newline.
+		   printf sequence to be used as the delimiter between multiple requested
+		   print statements, "\\n" by default. If sequence is "\\n", output is
+		   also terminated with a newline.
 
 		Configuration:
 
@@ -174,7 +174,7 @@ gen_hash() {
 	# return md5 of custom string, XDG_CURRENT_DESKTOP and ls -LRl output for config and data paths
 	# md5 is 4x faster than sha*, and there is no need for cryptography here
 	# shellcheck disable=SC2034
-	read -r hash _drop <<- EOH
+	read -r hash _drop <<-EOH
 		$(
 			hash_paths="${CONFIGS}:${APPLICATIONS_DIRS}"
 			{
@@ -185,8 +185,8 @@ gen_hash() {
 				# shellcheck disable=SC2086
 				debug ">     hashing '${XDG_CURRENT_DESKTOP-}' and listing of:" $hash_paths "^     end of hash listing"
 				# shellcheck disable=SC2012,SC2086
-				LANG=C ls -LRl ${hash_paths} 2> /dev/null
-			} | md5sum 2> /dev/null
+				LANG=C ls -LRl ${hash_paths} 2>/dev/null
+			} | md5sum 2>/dev/null
 		)
 	EOH
 	case "$hash" in
@@ -243,7 +243,7 @@ read_cache() {
 				esac
 				;;
 			esac
-		done < "${CACHE_FILE}"
+		done <"${CACHE_FILE}"
 		if [ "$finished" = "1" ]; then
 			debug "got cache:" \
 				"hash=${cached_hash}" \
@@ -258,7 +258,7 @@ read_cache() {
 				"holdarg=${cached_holdarg}" \
 				"exec_usep=${cached_exec_usep}"
 			HASH=$(gen_hash) || return 1
-			if [ "$HASH" = "$cached_hash" ] && command -v "$cached_cmd" > /dev/null; then
+			if [ "$HASH" = "$cached_hash" ] && command -v "$cached_cmd" >/dev/null; then
 				debug "cache is actual"
 				EXEC_USEP=${cached_exec_usep}
 				ENTRY_PATH=${cached_entry_path}
@@ -315,7 +315,7 @@ save_cache() {
 			"${TITLEARG}" \
 			"${DIRARG}" \
 			"${HOLDARG}" \
-			"${EXEC_USEP}${RSEP}END_OF_EXEC_USEP" > "${CACHE_FILE}"
+			"${EXEC_USEP}${RSEP}END_OF_EXEC_USEP" >"${CACHE_FILE}"
 		umask "$UM"
 		debug ">     saved cache:" "${HASH}" "${EXEC_USEP}" "${EXECARG}" "${1}" "^     end of saved cache"
 	else
@@ -384,7 +384,7 @@ read_config_paths() {
 					debug "ignored directive '$line' (strict mode)"
 					continue
 				fi
-				IFS=':' read -r _directive entry_id execarg_default <<- EOF
+				IFS=':' read -r _directive entry_id execarg_default <<-EOF
 					$line
 				EOF
 				if validate_entry_id "${entry_id}"; then
@@ -413,7 +413,7 @@ read_config_paths() {
 				*) exclusion='' ;;
 				esac
 				# consider only the first ':' as a delimiter
-				IFS=':' read -r entry_id action_id <<- EOL
+				IFS=':' read -r entry_id action_id <<-EOL
 					$line
 				EOL
 				if validate_entry_id "${entry_id}" && validate_action_id "${action_id}"; then
@@ -450,7 +450,7 @@ read_config_paths() {
 
 			esac
 			# By default empty lines and comments get ignored
-		done < "$config_path"
+		done <"$config_path"
 	done
 }
 # Mask IFS withing function to allow temporary changes
@@ -667,7 +667,10 @@ de_tokenize_exec() {
 		;;
 	esac
 	# shellcheck disable=SC2086
-	debug "tokenizer ended:" "$(IFS=$USEP; printf '  >%s<\n' $EXEC_USEP)"
+	debug "tokenizer ended:" "$(
+		IFS=$USEP
+		printf '  >%s<\n' $EXEC_USEP
+	)"
 }
 
 de_strip_fields() {
@@ -770,10 +773,10 @@ find_entry_paths() {
 		# Add as a fallback ID regardles if it's a duplicate
 		FALLBACK_ENTRY_IDS=${entry_id}${FALLBACK_ENTRY_IDS:+${N}${FALLBACK_ENTRY_IDS}}
 		debug "added fallback ID '$entry_id'"
-	done <<- EOE
+	done <<-EOE
 		$(
 			# Don't complain about nonexistent directories
-			find -L "$@" 2> /dev/null |
+			find -L "$@" 2>/dev/null |
 				# Print entry path and convert it into an ID and print that too
 				awk '{ print; sub(".*/[.]/", ""); gsub("/", "-"); print }'
 		)
@@ -912,7 +915,7 @@ check_entry_key() {
 	'TryExec'*=*)
 		de_expand_str "$value"
 		debug "checking TryExec executable '$EXPANDED_STR'"
-		command -v "$(printf '%b' "$EXPANDED_STR")" > /dev/null || return 1
+		command -v "$(printf '%b' "$EXPANDED_STR")" >/dev/null || return 1
 		;;
 	'Hidden'*=*)
 		debug "checking boolean Hidden '$value'"
@@ -940,7 +943,7 @@ check_entry_key() {
 		# Get first word from read Exec value
 		EXEC0=${EXEC_USEP%%"$USEP"*}
 		debug "checking Exec[0] executable '$EXEC0'"
-		command -v "$EXEC0" > /dev/null || return 1
+		command -v "$EXEC0" >/dev/null || return 1
 		;;
 	esac
 	# By default unrecognised keys, empty lines and comments get ignored
@@ -990,7 +993,7 @@ read_entry_path() {
 		'['*) [ "$read_exec" = "true" ] && break ;;
 		esac
 		# By default empty lines and comments get ignored
-	done < "$entry_path"
+	done <"$entry_path"
 }
 
 validate_entry_id() {
@@ -1053,7 +1056,7 @@ find_entry() {
 
 		debug "matching path for entry ID '$entry_id'"
 		# Check if a matching path was found for ID
-		alias "$entry_id" > /dev/null 2>&1 || continue
+		alias "$entry_id" >/dev/null 2>&1 || continue
 		# Evaluates the alias, it sets $entry_path
 		eval "$entry_id"
 		# Unset the alias, so duplicate entries are skipped
@@ -1097,7 +1100,7 @@ get_default_execarg() {
 			return 0
 			;;
 		esac
-	done <<- EOF
+	done <<-EOF
 		$EXECARG_DEFAULTS
 	EOF
 	printf '%s' '-e'
@@ -1208,7 +1211,7 @@ while [ "$#" -gt "0" ]; do
 		;;
 	--app-id=*)
 		debug "found option $1"
-		IFS='=' read -r _opt APPIDVAL <<- EOF
+		IFS='=' read -r _opt APPIDVAL <<-EOF
 			$1
 		EOF
 		debug "set app-id option to $APPIDVAL"
@@ -1216,7 +1219,7 @@ while [ "$#" -gt "0" ]; do
 		;;
 	--title=*)
 		debug "found option $1"
-		IFS='=' read -r _opt TITLEVAL <<- EOF
+		IFS='=' read -r _opt TITLEVAL <<-EOF
 			$1
 		EOF
 		debug "set title option to $TITLEVAL"
@@ -1224,7 +1227,7 @@ while [ "$#" -gt "0" ]; do
 		;;
 	--dir=*)
 		debug "found option $1"
-		IFS='=' read -r _opt DIRVAL <<- EOF
+		IFS='=' read -r _opt DIRVAL <<-EOF
 			$1
 		EOF
 		debug "set dir option to $DIRVAL"
@@ -1269,7 +1272,7 @@ while [ "$#" -gt "0" ]; do
 	--print-cmd=*)
 		debug "found option $1"
 		PRINT_DATA="$PRINT_DATA cmd"
-		IFS='=' read -r _arg PRINT_CMD_DELIMITER <<- EOF
+		IFS='=' read -r _arg PRINT_CMD_DELIMITER <<-EOF
 			$1
 		EOF
 		debug "set PRINT_DATA=$PRINT_DATA" "set PRINT_CMD_DELIMITER=$PRINT_CMD_DELIMITER"
@@ -1277,7 +1280,7 @@ while [ "$#" -gt "0" ]; do
 		;;
 	--print-delimiter=*)
 		debug "found option $1"
-		IFS='=' read -r _arg PRINT_DELIMITER <<- EOF
+		IFS='=' read -r _arg PRINT_DELIMITER <<-EOF
 			$1
 		EOF
 		debug "set PRINT_DELIMITER=$PRINT_DELIMITER"
@@ -1332,7 +1335,7 @@ case " $PRINT_DATA " in
 	false) printf '%b' "$PRINT_DELIMITER" ;;
 	esac
 
-	shcat < "${ENTRY_PATH}"
+	shcat <"${ENTRY_PATH}"
 
 	PRINT_FIRST=false
 	;;
