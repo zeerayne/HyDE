@@ -169,6 +169,21 @@ deploy_psv() {
     done <"${1}"
 }
 
+hyprland_hook() {
+
+    local hyde_config="${cloneDir}/Configs/.config/hypr/hyprland.conf"
+    local hyprland_default_config="${XDG_CONFIG_HOME:-$HOME/.config}/hypr/hyprland.conf"
+    local hyq_exec="${cloneDir}/Configs/.local/lib/hyde/hyq"
+    if ! "${hyq_exec}" "${hyprland_default_config}" --query "\$HYDE_HYPRLAND"; then
+        mkdir -p "$(dirname "${hyprland_default_config}")" "${BkpDir}/.config/hypr"
+        print_log -g "[hook] " -b "hyprland :: " "No HYDE_HYPRLAND variable found in ${hyprland_default_config}, restoring default HyDE marker..."
+        [[ ${flg_DryRun} -ne 1 ]] && cp -f "${hyprland_default_config}" "${BkpDir}/.config/hypr/hyprland.conf"
+        print_log -r "[backup] :: " "${hyprland_default_config} to ${BkpDir}/.config/hypr/hyprland.conf"
+        [[ ${flg_DryRun} -ne 1 ]] && cp -f "${hyde_config}" "${hyprland_default_config}"
+        print_log -g "[restore] :: " "${hyde_config} to ${hyprland_default_config}"
+    fi
+}
+
 # shellcheck disable=SC2034
 log_section="deploy"
 flg_DryRun=${flg_DryRun:-0}
@@ -201,6 +216,8 @@ if [ -d "${BkpDir}" ]; then
 else
     [[ ${flg_DryRun} -ne 1 ]] && mkdir -p "${BkpDir}"
 fi
+
+hyprland_hook
 
 file_extension="${CfgLst##*.}"
 echo ""
