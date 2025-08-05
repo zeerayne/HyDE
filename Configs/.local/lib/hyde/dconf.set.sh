@@ -6,7 +6,7 @@
 [[ "${HYDE_SHELL_INIT}" -ne 1 ]] && eval "$(hyde-shell init)"
 
 # Stores default values for the theme to avoid breakages.
-source "${SHARE_DIR}/hyde/theme-env"
+source "${SHARE_DIR}/hyde/env-theme"
 
 dconf_populate() {
     # Build the dconf content
@@ -29,12 +29,11 @@ exec='$(command -v "${TERMINAL}")'
 [org/gnome/desktop/wm/preferences]
 button-layout='$BUTTON_LAYOUT'
 EOF
-
 }
+
 # HYDE_THEME="$(hyq "${HYPRLAND_CONFIG}" --source --query 'hyde:theme')"
 COLOR_SCHEME="prefer-${dcol_mode}"
 GTK_THEME="Wallbash-Gtk"
-HYPRLAND_CONFIG=${HYPRLAND_CONFIG:-"${XDG_CONFIG_HOME:-$(xdg-user-dir CONFIG)}/hypr/hyprland.conf"}
 
 # Populate variables from hyprland config if exists
 if [[ -r "${HYPRLAND_CONFIG}" ]] &&
@@ -43,6 +42,7 @@ if [[ -r "${HYPRLAND_CONFIG}" ]] &&
     eval "$(
         hyq "${HYPRLAND_CONFIG}" --source --export env \
             -Q 'hyde:gtk-theme' \
+            -Q 'hyde:color-scheme' \
             -Q 'hyde:icon-theme' \
             -Q 'hyde:cursor-theme' \
             -Q 'hyde:cursor-size' \
@@ -88,6 +88,8 @@ fi
 
 DCONF_FILE="${XDG_CACHE_HOME:-$HOME/.cache}/hyde/dconf"
 
+# Finalize the env variables
+
 { dconf load -f / <"${DCONF_FILE}" && print_log -sec "dconf" -stat "preserve" "${DCONF_FILE}"; } || print_log -sec "dconf" -warn "failed to preserve" "${DCONF_FILE}"
 { dconf_populate >"${DCONF_FILE}" && print_log -sec "dconf" -stat "populated" "${DCONF_FILE}"; } || print_log -sec "dconf" -warn "failed to populate" "${DCONF_FILE}"
 { dconf reset -f / <"${DCONF_FILE}" && print_log -sec "dconf" -stat "reset" "${DCONF_FILE}"; } || print_log -sec "dconf" -warn "failed to reset" "${DCONF_FILE}"
@@ -99,3 +101,8 @@ print_log -sec "dconf" -stat "Loaded dconf settings"
 print_log -y "#-----------------------------------------------#"
 dconf_populate
 print_log -y "#-----------------------------------------------#"
+
+# Finalize the env variables
+export GTK_THEME ICON_THEME COLOR_SCHEME CURSOR_THEME CURSOR_SIZE TERMINAL \
+    FONT FONT_SIZE DOCUMENT_FONT DOCUMENT_FONT_SIZE MONOSPACE_FONT MONOSPACE_FONT_SIZE \
+    BAR_FONT MENU_FONT NOTIFICATION_FONT BUTTON_LAYOUT

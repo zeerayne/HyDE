@@ -12,7 +12,7 @@ source "$scrDir/globalcontrol.sh"
 get_aurhlpr
 export -f pkg_installed
 fpk_exup="pkg_installed flatpak && flatpak update"
-temp_file="$HYDE_RUNTIME_DIR/update_info"
+temp_file="$XDG_RUNTIME_DIR/hyde/update_info"
 # shellcheck source=/dev/null
 [ -f "$temp_file" ] && source "$temp_file"
 
