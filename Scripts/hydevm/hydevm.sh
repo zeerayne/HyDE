@@ -10,7 +10,7 @@ CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/hydevm"
 BASE_IMAGE="$CACHE_DIR/archbase.qcow2"
 SNAPSHOTS_DIR="$CACHE_DIR/snapshots"
 HYDE_REPO="https://github.com/HyDE-Project/HyDE.git"
-ARCH_IMAGE_URL="https://geo.mirror.pkgbuild.com/images/v20250415.336224/Arch-Linux-x86_64-basic-20250415.336224.qcow2"
+ARCH_IMAGE_URL="https://geo.mirror.pkgbuild.com/images/v20250801.393962/Arch-Linux-x86_64-basic-20250801.393962.qcow2"
 
 # Required packages for Arch Linux
 ARCH_PACKAGES=(
