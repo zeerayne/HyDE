@@ -177,7 +177,11 @@ hyprland_hook() {
     if ! "${hyq_exec}" "${hyprland_default_config}" --query "\$HYDE_HYPRLAND"; then
         mkdir -p "$(dirname "${hyprland_default_config}")" "${BkpDir}/.config/hypr"
         print_log -g "[hook] " -b "hyprland :: " "No HYDE_HYPRLAND variable found in ${hyprland_default_config}, restoring default HyDE marker..."
-        [[ ${flg_DryRun} -ne 1 ]] && cp -f "${hyprland_default_config}" "${BkpDir}/.config/hypr/hyprland.conf"
+
+        if [[ ${flg_DryRun} -ne 1 && -f "${hyprland_default_config}" ]]; then
+            cp -f "${hyprland_default_config}" "${BkpDir}/.config/hypr/hyprland.conf"
+        fi
+
         print_log -r "[backup] :: " "${hyprland_default_config} to ${BkpDir}/.config/hypr/hyprland.conf"
         [[ ${flg_DryRun} -ne 1 ]] && cp -f "${hyde_config}" "${hyprland_default_config}"
         print_log -g "[restore] :: " "${hyde_config} to ${hyprland_default_config}"
@@ -217,8 +221,6 @@ else
     [[ ${flg_DryRun} -ne 1 ]] && mkdir -p "${BkpDir}"
 fi
 
-hyprland_hook
-
 file_extension="${CfgLst##*.}"
 echo ""
 print_log -g "[file extension]" -b " :: " "${file_extension}"
@@ -234,6 +236,8 @@ json)
     ;;
 esac
 echo ""
+
+hyprland_hook
 
 print_log -g "[python env]" -b " :: " "Rebuilding HyDE Python environment..."
 if command -v hyde-shell >/dev/null 2>&1; then
