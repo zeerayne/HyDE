@@ -1,11 +1,8 @@
 #!/usr/bin/env bash
 
-# shellcheck disable=SC1090
-if ! source "$(command -v hyde-shell)"; then
-    echo "[wallbash] code :: Error: hyde-shell not found."
-    echo "[wallbash] code :: Is HyDE installed?"
-    exit 1
-fi
+pkill -u "$USER" rofi && exit 0
+
+[[ "${HYDE_SHELL_INIT}" -ne 1 ]] && eval "$(hyde-shell init)"
 
 emoji_dir=${HYDE_DATA_HOME:-$HOME/.local/share/hyde}
 emoji_data="${emoji_dir}/emoji.db"
@@ -52,7 +49,7 @@ get_emoji_selection() {
         2 | grid)
             awk '!seen[$0]++' "${recent_data}" "${emoji_data}" | rofi -dmenu -i "${ROFI_EMOJI_ARGS[@]/-multi-select/}" -display-columns 1 \
                 -display-column-separator " " \
-                -theme-str "listview {columns: 10;}" \
+                -theme-str "listview {columns: 9;}" \
                 -theme-str "entry { placeholder: \" 🔎 Emoji\";} ${rofi_position} ${r_override}" \
                 -theme-str "${font_override}" \
                 -theme-str "${size_override}" \

@@ -1,9 +1,7 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC2154
 
-scrDir="$(dirname "$(realpath "$0")")"
-# shellcheck disable=SC1091
-source "${scrDir}/globalcontrol.sh"
+[[ "${HYDE_SHELL_INIT}" -ne 1 ]] && eval "$(hyde-shell init)"
 
 # // Help message
 show_help() {
@@ -44,12 +42,19 @@ EOF
 #// Set and Cache Wallpaper
 
 Wall_Cache() {
+
+    # Experimental, set to 1 if stable
+    if [[ "${WALLPAPER_RELOAD_ALL:-1}" -eq 1 ]] && [[ ${wallpaper_setter_flag} != "link" ]]; then
+        print_log -sec "wallpaper" "Reloading themes and wallpapers"
+        export reload_flag=1
+    fi
+
     ln -fs "${wallList[setIndex]}" "${wallSet}"
     ln -fs "${wallList[setIndex]}" "${wallCur}"
     if [ "${set_as_global}" == "true" ]; then
         print_log -sec "wallpaper" "Setting Wallpaper as global"
-        "${scrDir}/swwwallcache.sh" -w "${wallList[setIndex]}" &>/dev/null
-        "${scrDir}/color.set.sh" "${wallList[setIndex]}" &
+        "${LIB_DIR}/hyde/swwwallcache.sh" -w "${wallList[setIndex]}" &>/dev/null
+        "${LIB_DIR}/hyde/color.set.sh" "${wallList[setIndex]}" &
         ln -fs "${thmbDir}/${wallHash[setIndex]}.sqre" "${wallSqr}"
         ln -fs "${thmbDir}/${wallHash[setIndex]}.thmb" "${wallTmb}"
         ln -fs "${thmbDir}/${wallHash[setIndex]}.blur" "${wallBlr}"
@@ -129,6 +134,11 @@ Wall_Select() {
     mon_data=$(hyprctl -j monitors)
     mon_x_res=$(jq '.[] | select(.focused==true) | if (.transform % 2 == 0) then .width else .height end' <<<"${mon_data}")
     mon_scale=$(jq '.[] | select(.focused==true) | .scale' <<<"${mon_data}" | sed "s/\.//")
+
+    # Add fallback size
+    mon_x_res=${mon_x_res:-1920}
+    mon_scale=${mon_scale:-1}
+
     mon_x_res=$((mon_x_res * 100 / mon_scale))
 
     #// generate config
@@ -258,9 +268,9 @@ main() {
     fi
 
     # Apply wallpaper to  backend
-    if [ -f "${scrDir}/wallpaper.${wallpaper_backend}.sh" ] && [ -n "${wallpaper_backend}" ]; then
+    if [ -f "${LIB_DIR}/hyde/wallpaper.${wallpaper_backend}.sh" ] && [ -n "${wallpaper_backend}" ]; then
         print_log -sec "wallpaper" "Using backend: ${wallpaper_backend}"
-        "${scrDir}/wallpaper.${wallpaper_backend}.sh" "${wallSet}"
+        "${LIB_DIR}/hyde/wallpaper.${wallpaper_backend}.sh" "${wallSet}"
     else
         if command -v "wallpaper.${wallpaper_backend}.sh" >/dev/null; then
             "wallpaper.${wallpaper_backend}.sh" "${wallSet}"
@@ -322,7 +332,7 @@ while true; do
         exit 0
         ;;
     -S | --select)
-        "${scrDir}/swwwallcache.sh" w &>/dev/null &
+        "${LIB_DIR}/hyde/swwwallcache.sh" w &>/dev/null &
         wallpaper_setter_flag=select
         shift
         ;;

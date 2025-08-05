@@ -21,6 +21,7 @@ export THEMES_DIR="${XDG_DATA_HOME}/themes"
 
 #legacy hyde envs // should be deprecated
 
+export scrDir="${LIB_DIR:-$HOME/.local/lib}/hyde"
 export confDir="${XDG_CONFIG_HOME:-$HOME/.config}"
 export hydeConfDir="$HYDE_CONFIG_HOME"
 export cacheDir="$HYDE_CACHE_HOME"
@@ -240,7 +241,7 @@ get_themes() {
     fi
 }
 
-[ -f "${HYDE_RUNTIME_DIR}/environment" ] && source "${HYDE_RUNTIME_DIR}/environment"
+[ -f "${XDG_RUNTIME_DIR}/hyde/environment" ] && source "${XDG_RUNTIME_DIR}/hyde/environment"
 [ -f "$HYDE_STATE_HOME/staterc" ] && source "$HYDE_STATE_HOME/staterc"
 [ -f "$HYDE_STATE_HOME/config" ] && source "$HYDE_STATE_HOME/config"
 
@@ -272,10 +273,9 @@ export HYDE_THEME \
 if [ -n "$HYPRLAND_INSTANCE_SIGNATURE" ]; then
     hypr_border="$(hyprctl -j getoption decoration:rounding | jq '.int')"
     hypr_width="$(hyprctl -j getoption general:border_size | jq '.int')"
-
-    export hypr_border=${hypr_border:-0}
-    export hypr_width=${hypr_width:-0}
 fi
+export hypr_border=${hypr_border:-${HYDE_BORDER_RADIUS:-2}}
+export hypr_width=${hypr_width:-${HYDE_BORDER_WIDTH:-2}}
 
 #// extra fns
 
@@ -522,3 +522,22 @@ accepted_mime_types() {
     done
 
 }
+
+dconf_write() {
+    local key="$1"
+    local value="$2"
+    if dconf write "${key}" "'${value}'"; then
+        print_log -sec "dconf" -stat "set" "${key} to ${value}"
+    else
+        print_log -sec "dconf" -warn "failed to set" "${key}"
+    fi
+}
+
+export -f get_hyprConf get_rofi_pos \
+    is_hovered toml_write \
+    get_hashmap get_aurhlpr \
+    set_conf set_hash check_package \
+    get_themes print_log \
+    pkg_installed paste_string \
+    extract_thumbnail accepted_mime_types \
+    dconf_write
