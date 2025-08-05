@@ -1,16 +1,24 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC2154
+# shellcheck disable=SC1091
 
 [[ "${HYDE_SHELL_INIT}" -ne 1 ]] && eval "$(hyde-shell init)"
+
+[[ -n $HYPRLAND_INSTANCE_SIGNATURE ]] && {
+    hyprctl keyword misc:disable_autoreload 1 -q
+    trap "hyprctl reload config-only -q" EXIT
+}
 
 # Hook commands to always run for theming and colors
 load_dconf_kdeglobals() {
 
-    wallbash.hypr.sh #<--- hyprland hook
-    toml_write "${confDir}/kdeglobals" "Colors:View" "BackgroundNormal" "#${dcol_pry1:-000000}FF"
-    toml_write "${confDir}/Kvantum/wallbash/wallbash.kvconfig" '%General' 'reduce_menu_opacity' 0
-    dconf.set.sh
+    source "${LIB_DIR}/hyde/wallbash.hypr.sh" #<--- hyprland hook
+    source "${LIB_DIR}/hyde/dconf.set.sh"
 
+    # QT and KDE settings
+    toml_write "${XDG_CONFIG_HOME}/kdeglobals" "Colors:View" "BackgroundNormal" "#${dcol_pry1:-000000}FF"
+    toml_write "${XDG_CONFIG_HOME}/Kvantum/wallbash/wallbash.kvconfig" '%General' 'reduce_menu_opacity' 0
+    [[ -n "${HYPRLAND_INSTANCE_SIGNATURE}" ]] && shaders.sh reload
 }
 
 # Function to create wallbash substitutions
@@ -278,10 +286,6 @@ fi
 
 #// switch theme <//> wall based colors
 
-[[ -n $HYPRLAND_INSTANCE_SIGNATURE ]] && {
-    hyprctl keyword misc:disable_autoreload 1 -q
-    trap "hyprctl reload config-only -q" EXIT
-}
 # shellcheck disable=SC2154
 if [ "${enableWallDcol}" -eq 0 ] && [[ "${reload_flag}" -eq 1 ]]; then
 
@@ -303,4 +307,4 @@ elif [ "${enableWallDcol}" -gt 0 ]; then
 fi
 
 # Process "always" templates in parallel
-find "${wallbashDirs[@]}" -type f -path "*/always*" -name "*.dcol" 2>/dev/null | sort | awk '!seen[substr($0, match($0, /[^/]+$/))]++' | parallel fn_wallbash {} || true
+find "${wallbashDirs[@]}" -type f -path "*/always*" -name "*.dcol" 2>/dev/null | awk '!seen[substr($0, match($0, /[^/]+$/))]++' | parallel fn_wallbash {} || true

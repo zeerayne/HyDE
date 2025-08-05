@@ -77,7 +77,7 @@ check_content() {
         cliphist decode <<<"$line" | wl-copy
         local img_idx
         img_idx=$(awk -F '\t' '{print $1}' <<<"$line")
-        local temp_preview="${HYDE_RUNTIME_DIR}/pastebin-preview_${img_idx}"
+        local temp_preview="${XDG_RUNTIME_DIR}/hyde/pastebin-preview_${img_idx}"
         wl-paste >"${temp_preview}"
         notify-send -a "Pastebin:" "Preview: ${img_idx}" -i "${temp_preview}" -t 2000
         return 1
