@@ -10,6 +10,8 @@ Big CHANGE in HyDE! We are now using `uwsm` for session management and app2unit 
 
 **PLEASE run install.sh again to upgrade and install missing dependencies!!!**
 
+Upon opening in you SDDM, Please choose `Hyprland (UWSM Managed)` as your session. Or else you will handle the session yourself!
+
 ### Changed
 
 - Hyprlock: Sourcing hyprlock/HyDE.conf as default theme
