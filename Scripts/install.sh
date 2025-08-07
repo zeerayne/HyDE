@@ -314,3 +314,9 @@ if [ $flg_Install -eq 1 ] ||
         echo "The system will not reboot"
     fi
 fi
+
+if [[ -z "${HYPRLAND_CONFIG:-}" ]] || [[ ! -f "${HYPRLAND_CONFIG}" ]]; then
+    print_log -sec "hyprland" -warn "No Hyprland config file found" "Please set HYPRLAND_CONFIG environment variable to your Hyprland config file path."
+    print_log -sec "hyprland" -warn "No Hyprland config file found" "Maybe Broken HyDE installation?"
+    print_log -sec "hyprland" -warn " " "Or you just need to reboot the system."
+fi
