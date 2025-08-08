@@ -6,7 +6,7 @@
 
 [ -z "${HYDE_THEME}" ] && echo "ERROR: unable to detect theme" && exit 1
 get_themes
-confDir="${XDG_CONFIG_HOME:-$(xdg-user-dir CONFIG)}"
+confDir="${XDG_CONFIG_HOME:-$HOME/.config}"
 #// define functions
 
 Theme_Change() {
@@ -131,8 +131,26 @@ if [[ -r "${HYPRLAND_CONFIG}" ]]; then
   [[ -n $HYPRLAND_INSTANCE_SIGNATURE ]] && hyprctl keyword misc:disable_autoreload 1 -q
   [[ -r "${HYDE_THEME_DIR}/hypr.theme" ]] && sanitize_hypr_theme "${HYDE_THEME_DIR}/hypr.theme" "${XDG_CONFIG_HOME}/hypr/themes/theme.conf"
 
+  #? Load theme specific variables
   eval "$(
     hyq "${HYDE_THEME_DIR}/hypr.theme" \
+      --export env \
+      -Q "\$GTK_THEME[string]" \
+      -Q "\$ICON_THEME[string]" \
+      -Q "\$CURSOR_THEME[string]" \
+      -Q "\$CURSOR_SIZE[int]" \
+      -Q "\$FONT[string]" \
+      -Q "\$FONT_SIZE[int]" \
+      -Q "\$FONT_STYLE[string]" \
+      -Q "\$DOCUMENT_FONT[string]" \
+      -Q "\$DOCUMENT_FONT_SIZE[int]" \
+      -Q "\$MONOSPACE_FONT[string]" \
+      -Q "\$MONOSPACE_FONT_SIZE[int]"
+  )"
+
+  #? Load User's hyprland overrides
+  eval "$(
+    hyq "${XDG_STATE_DIR:-$HOME/.local/state}/hyde/hyprland.conf" \
       --export env \
       -Q "\$GTK_THEME[string]" \
       -Q "\$ICON_THEME[string]" \
@@ -235,7 +253,11 @@ else
   print_log -sec "theme" -stat "use" "'Wallbash-Gtk' as gtk4 theme"
 fi
 rm -rf "${confDir}/gtk-4.0"
-ln -s "${themesDir}/${gtk4Theme}/gtk-4.0" "${confDir}/gtk-4.0"
+if [ -d "${themesDir}/${gtk4Theme}/gtk-4.0" ]; then
+  ln -s "${themesDir}/${gtk4Theme}/gtk-4.0" "${confDir}/gtk-4.0"
+else
+  print_log -sec "theme" -warn "gtk4" "theme directory '${themesDir}/${gtk4Theme}/gtk-4.0' does not exist"
+fi
 
 #// flatpak GTK
 
@@ -294,6 +316,11 @@ if [ -f "$HOME/.Xdefaults" ]; then
   # Add if they don't exist
   grep -q "^Xcursor\.theme:" "$HOME/.Xdefaults" || echo "Xcursor.theme: ${CURSOR_THEME}" >>"$HOME/.Xdefaults"
   grep -q "^Xcursor\.size:" "$HOME/.Xdefaults" || echo "Xcursor.size: 30" >>"$HOME/.Xdefaults"
+fi
+
+#? Workaround for gtk-4 having settings.ini!
+if [ -f "${confDir}/gtk-4.0/settings.ini" ]; then
+  rm "${confDir}/gtk-4.0/settings.ini"
 fi
 
 #// wallpaper
