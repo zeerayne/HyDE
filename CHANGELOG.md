@@ -10,7 +10,7 @@ Big CHANGE in HyDE! We are now using `uwsm` for session management and app2unit 
 
 **PLEASE run install.sh again to upgrade and install missing dependencies!!!**
 
-Upon opening in you SDDM, Please choose `Hyprland (UWSM Managed)` as your session. Or else you will handle the session yourself!
+In SDDM, please choose `Hyprland (UWSM Managed)` as your session. Or else you will handle the session yourself!
 
 ### Changed
 
@@ -32,7 +32,8 @@ Upon opening in you SDDM, Please choose `Hyprland (UWSM Managed)` as your sessio
 
 - Waybar: Some fixes for modules
 - Waybar: gpuinfo throws errors eg broken pipe
-- LibL Clean up variables that are using HYDE*, we will try to use the XDG\_* variables instead.
+- Lib: Clean up variables that are using HYDE*, we will try to use the XDG\_* variables instead.
+- Core: Fixed some issues with the theming script stack.
 
 ## v25.7.3
 
