@@ -304,6 +304,12 @@ if [ $flg_Install -eq 1 ] ||
     [ $flg_Restore -eq 1 ] ||
     [ $flg_Service -eq 1 ] &&
     [ $flg_DryRun -ne 1 ]; then
+
+    if [[ -z "${HYPRLAND_CONFIG:-}" ]] || [[ ! -f "${HYPRLAND_CONFIG}" ]]; then
+        print_log -warn "Hyprland config not found! Might be a new install or upgrade."
+        print_log -warn "Please reboot the system to apply new changes."
+    fi
+
     print_log -stat "HyDE" "It is not recommended to use newly installed or upgraded HyDE without rebooting the system. Do you want to reboot the system? (y/N)"
     read -r answer
 
@@ -313,10 +319,4 @@ if [ $flg_Install -eq 1 ] ||
     else
         echo "The system will not reboot"
     fi
-fi
-
-if [[ -z "${HYPRLAND_CONFIG:-}" ]] || [[ ! -f "${HYPRLAND_CONFIG}" ]]; then
-    print_log -sec "hyprland" -warn "No Hyprland config file found" "Please set HYPRLAND_CONFIG environment variable to your Hyprland config file path."
-    print_log -sec "hyprland" -warn "No Hyprland config file found" "Maybe Broken HyDE installation?"
-    print_log -sec "hyprland" -warn " " "Or you just need to reboot the system."
 fi
