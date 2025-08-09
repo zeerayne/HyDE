@@ -451,7 +451,7 @@ SETUP_EOF
     # Start simple HTTP server in background to serve the setup script
     cd "$CACHE_DIR"
     # TODO: feat(hydevm) migrate from the python http server to a pure ssh solution, no setup script needed
-    $python_cmd -m http.server 8000 &
+    $python_cmd -m http.server 8000 --bind 127.0.0.1 &
     local server_pid=$!
 
     # Start VM for setup
