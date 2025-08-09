@@ -152,10 +152,10 @@ Restore Date: $HYDE_VERSION_LAST_CHECKED
 Last Commit Message: $HYDE_VERSION_COMMIT_MSG
 
 Tools:
-hydectl: $(hydectl version || echo "hydectl not found")
-$(hyprland -v | head -n1 || echo "hyprland not found")
+hydectl: $(hydectl version 2>/dev/null || echo "hydectl not found")
+$(hyprland -v 2>/dev/null | head -n1 || echo "hyprland not found")
 $(if hyprctl_output=$(hyprctl version 2>/dev/null | head -n1); then echo "$hyprctl_output (Running Instance)"; else echo "hyprctl not found or not running"; fi)
-$(hyde-ipc --version || echo "hyde-ipc not found")
+$(hyde-ipc --version 2>/dev/null || echo "hyde-ipc not found")
 
 
 HyDE updates every friday, so please check for updates regularly.
