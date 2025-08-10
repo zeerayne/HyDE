@@ -63,8 +63,8 @@ EOF
         spotify_path="${shareDir}/spotify-launcher/install/usr/bin/spotify"
     elif [ -d /opt/spotify ]; then
         spotify_path='/opt/spotify'
-    elif [ -d /var/lib/flatpak/app/com.spotify.Client/x86_64/stable/active/files/extra/share/spotify/ ]; then
-        spotify_path='/var/lib/flatpak/app/com.spotify.Client/x86_64/stable/active/files/extra/share/spotify/'
+    elif [ -d /var/lib/flatpak/app/com.spotify.Client/x86_64/stable/active/files/extra/share/spotify ]; then
+        spotify_path='/var/lib/flatpak/app/com.spotify.Client/x86_64/stable/active/files/extra/share/spotify'
     fi
     if [ ! -w "${spotify_path}" ] || [ ! -w "${spotify_path}/Apps" ]; then
         notify_and_set_permissions "${spotify_path}"
