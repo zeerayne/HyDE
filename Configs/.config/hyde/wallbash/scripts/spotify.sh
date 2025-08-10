@@ -39,6 +39,7 @@ configure_spicetify() {
     spicetify backup apply
     spicetify config current_theme Sleek
     spicetify config color_scheme Wallbash
+    spicetify config sidebar_config 0
     spicetify restore backup
     spicetify backup apply
 }
