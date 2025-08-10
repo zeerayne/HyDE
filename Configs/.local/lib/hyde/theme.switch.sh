@@ -6,7 +6,7 @@
 
 [ -z "${HYDE_THEME}" ] && echo "ERROR: unable to detect theme" && exit 1
 get_themes
-confDir="${XDG_CONFIG_HOME:-$(xdg-user-dir CONFIG)}"
+confDir="${XDG_CONFIG_HOME:-$HOME/.config}"
 #// define functions
 
 Theme_Change() {
@@ -46,6 +46,44 @@ Menu font: ${MENU_FONT}
 Notification font: ${NOTIFICATION_FONT}
 
 EOF
+}
+
+load_hypr_variables() {
+  local hypr_file="${1}"
+
+  #? Load theme specific variables
+  eval "$(
+    hyq "${hypr_file}" \
+      --export env \
+      -Q "\$GTK_THEME[string]" \
+      -Q "\$ICON_THEME[string]" \
+      -Q "\$CURSOR_THEME[string]" \
+      -Q "\$CURSOR_SIZE[int]" \
+      -Q "\$FONT[string]" \
+      -Q "\$FONT_SIZE[int]" \
+      -Q "\$FONT_STYLE[string]" \
+      -Q "\$DOCUMENT_FONT[string]" \
+      -Q "\$DOCUMENT_FONT_SIZE[int]" \
+      -Q "\$MONOSPACE_FONT[string]" \
+      -Q "\$MONOSPACE_FONT_SIZE[int]"
+  )"
+
+  GTK_THEME=${__GTK_THEME:-$GTK_THEME}
+  ICON_THEME=${__ICON_THEME:-$ICON_THEME}
+  CURSOR_THEME=${__CURSOR_THEME:-$CURSOR_THEME}
+  CURSOR_SIZE=${__CURSOR_SIZE:-$CURSOR_SIZE}
+  TERMINAL=${__TERMINAL:-$TERMINAL}
+  FONT=${__FONT:-$FONT}
+  FONT_STYLE=${__FONT_STYLE:-''} # using hyprland this should be empty by default
+  FONT_SIZE=${__FONT_SIZE:-$FONT_SIZE}
+  DOCUMENT_FONT=${__DOCUMENT_FONT:-$DOCUMENT_FONT}
+  DOCUMENT_FONT_SIZE=${__DOCUMENT_FONT_SIZE:-$DOCUMENT_FONT_SIZE}
+  MONOSPACE_FONT=${__MONOSPACE_FONT:-$MONOSPACE_FONT}
+  MONOSPACE_FONT_SIZE=${__MONOSPACE_FONT_SIZE:-$MONOSPACE_FONT_SIZE}
+  BAR_FONT=${__BAR_FONT:-$BAR_FONT}
+  MENU_FONT=${__MENU_FONT:-$MENU_FONT}
+  NOTIFICATION_FONT=${__NOTIFICATION_FONT:-$NOTIFICATION_FONT}
+
 }
 
 sanitize_hypr_theme() {
@@ -131,37 +169,11 @@ if [[ -r "${HYPRLAND_CONFIG}" ]]; then
   [[ -n $HYPRLAND_INSTANCE_SIGNATURE ]] && hyprctl keyword misc:disable_autoreload 1 -q
   [[ -r "${HYDE_THEME_DIR}/hypr.theme" ]] && sanitize_hypr_theme "${HYDE_THEME_DIR}/hypr.theme" "${XDG_CONFIG_HOME}/hypr/themes/theme.conf"
 
-  eval "$(
-    hyq "${HYDE_THEME_DIR}/hypr.theme" \
-      --export env \
-      -Q "\$GTK_THEME[string]" \
-      -Q "\$ICON_THEME[string]" \
-      -Q "\$CURSOR_THEME[string]" \
-      -Q "\$CURSOR_SIZE[int]" \
-      -Q "\$FONT[string]" \
-      -Q "\$FONT_SIZE[int]" \
-      -Q "\$FONT_STYLE[string]" \
-      -Q "\$DOCUMENT_FONT[string]" \
-      -Q "\$DOCUMENT_FONT_SIZE[int]" \
-      -Q "\$MONOSPACE_FONT[string]" \
-      -Q "\$MONOSPACE_FONT_SIZE[int]"
-  )"
+  #? Load theme specific variables
+  load_hypr_variables "${HYDE_THEME_DIR}/hypr.theme"
 
-  GTK_THEME=${__GTK_THEME:-$GTK_THEME}
-  ICON_THEME=${__ICON_THEME:-$ICON_THEME}
-  CURSOR_THEME=${__CURSOR_THEME:-$CURSOR_THEME}
-  CURSOR_SIZE=${__CURSOR_SIZE:-$CURSOR_SIZE}
-  TERMINAL=${__TERMINAL:-$TERMINAL}
-  FONT=${__FONT:-$FONT}
-  FONT_STYLE=${__FONT_STYLE:-''} # using hyprland this should be empty by default
-  FONT_SIZE=${__FONT_SIZE:-$FONT_SIZE}
-  DOCUMENT_FONT=${__DOCUMENT_FONT:-$DOCUMENT_FONT}
-  DOCUMENT_FONT_SIZE=${__DOCUMENT_FONT_SIZE:-$DOCUMENT_FONT_SIZE}
-  MONOSPACE_FONT=${__MONOSPACE_FONT:-$MONOSPACE_FONT}
-  MONOSPACE_FONT_SIZE=${__MONOSPACE_FONT_SIZE:-$MONOSPACE_FONT_SIZE}
-  BAR_FONT=${__BAR_FONT:-$BAR_FONT}
-  MENU_FONT=${__MENU_FONT:-$MENU_FONT}
-  NOTIFICATION_FONT=${__NOTIFICATION_FONT:-$NOTIFICATION_FONT}
+  #? Load User's hyprland overrides
+  load_hypr_variables "${XDG_STATE_DIR:-$HOME/.local/state}/hyde/hyprland.conf"
 
 fi
 
@@ -235,7 +247,11 @@ else
   print_log -sec "theme" -stat "use" "'Wallbash-Gtk' as gtk4 theme"
 fi
 rm -rf "${confDir}/gtk-4.0"
-ln -s "${themesDir}/${gtk4Theme}/gtk-4.0" "${confDir}/gtk-4.0"
+if [ -d "${themesDir}/${gtk4Theme}/gtk-4.0" ]; then
+  ln -s "${themesDir}/${gtk4Theme}/gtk-4.0" "${confDir}/gtk-4.0"
+else
+  print_log -sec "theme" -warn "gtk4" "theme directory '${themesDir}/${gtk4Theme}/gtk-4.0' does not exist"
+fi
 
 #// flatpak GTK
 
@@ -294,6 +310,11 @@ if [ -f "$HOME/.Xdefaults" ]; then
   # Add if they don't exist
   grep -q "^Xcursor\.theme:" "$HOME/.Xdefaults" || echo "Xcursor.theme: ${CURSOR_THEME}" >>"$HOME/.Xdefaults"
   grep -q "^Xcursor\.size:" "$HOME/.Xdefaults" || echo "Xcursor.size: 30" >>"$HOME/.Xdefaults"
+fi
+
+#? Workaround for gtk-4 having settings.ini!
+if [ -f "${confDir}/gtk-4.0/settings.ini" ]; then
+  rm "${confDir}/gtk-4.0/settings.ini"
 fi
 
 #// wallpaper
