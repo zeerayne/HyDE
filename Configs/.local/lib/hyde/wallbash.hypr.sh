@@ -6,6 +6,10 @@
 
 [[ "${HYDE_SHELL_INIT}" -ne 1 ]] && eval "$(hyde-shell init)"
 
+if [[ "${WALLBASH_STARTUP:-0}" -eq 1 ]]; then
+    exit 0
+fi
+
 confDir="${confDir:-$XDG_CONFIG_HOME}"
 cacheDir="${cacheDir:-$XDG_CACHE_HOME/hyde}"
 HYDE_THEME="${HYDE_THEME:-}"

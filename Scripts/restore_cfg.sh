@@ -174,6 +174,10 @@ hyprland_hook() {
     local hyde_config="${cloneDir}/Configs/.config/hypr/hyprland.conf"
     local hyprland_default_config="${XDG_CONFIG_HOME:-$HOME/.config}/hypr/hyprland.conf"
     local hyq_exec="${cloneDir}/Configs/.local/lib/hyde/hyq"
+    if [[ ! -x "${hyq_exec}" ]]; then
+        print_log -r "[error] :: " "Required executable '${hyq_exec}' not found or not executable. Please ensure it exists and has execute permissions."
+        return 1
+    fi
     if ! "${hyq_exec}" "${hyprland_default_config}" --query "\$HYDE_HYPRLAND"; then
         mkdir -p "$(dirname "${hyprland_default_config}")" "${BkpDir}/.config/hypr"
         print_log -g "[hook] " -b "hyprland :: " "No HYDE_HYPRLAND variable found in ${hyprland_default_config}, restoring default HyDE marker..."
