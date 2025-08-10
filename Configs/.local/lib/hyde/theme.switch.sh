@@ -48,6 +48,44 @@ Notification font: ${NOTIFICATION_FONT}
 EOF
 }
 
+load_hypr_variables() {
+  local hypr_file="${1}"
+
+  #? Load theme specific variables
+  eval "$(
+    hyq "${hypr_file}" \
+      --export env \
+      -Q "\$GTK_THEME[string]" \
+      -Q "\$ICON_THEME[string]" \
+      -Q "\$CURSOR_THEME[string]" \
+      -Q "\$CURSOR_SIZE[int]" \
+      -Q "\$FONT[string]" \
+      -Q "\$FONT_SIZE[int]" \
+      -Q "\$FONT_STYLE[string]" \
+      -Q "\$DOCUMENT_FONT[string]" \
+      -Q "\$DOCUMENT_FONT_SIZE[int]" \
+      -Q "\$MONOSPACE_FONT[string]" \
+      -Q "\$MONOSPACE_FONT_SIZE[int]"
+  )"
+
+  GTK_THEME=${__GTK_THEME:-$GTK_THEME}
+  ICON_THEME=${__ICON_THEME:-$ICON_THEME}
+  CURSOR_THEME=${__CURSOR_THEME:-$CURSOR_THEME}
+  CURSOR_SIZE=${__CURSOR_SIZE:-$CURSOR_SIZE}
+  TERMINAL=${__TERMINAL:-$TERMINAL}
+  FONT=${__FONT:-$FONT}
+  FONT_STYLE=${__FONT_STYLE:-''} # using hyprland this should be empty by default
+  FONT_SIZE=${__FONT_SIZE:-$FONT_SIZE}
+  DOCUMENT_FONT=${__DOCUMENT_FONT:-$DOCUMENT_FONT}
+  DOCUMENT_FONT_SIZE=${__DOCUMENT_FONT_SIZE:-$DOCUMENT_FONT_SIZE}
+  MONOSPACE_FONT=${__MONOSPACE_FONT:-$MONOSPACE_FONT}
+  MONOSPACE_FONT_SIZE=${__MONOSPACE_FONT_SIZE:-$MONOSPACE_FONT_SIZE}
+  BAR_FONT=${__BAR_FONT:-$BAR_FONT}
+  MENU_FONT=${__MENU_FONT:-$MENU_FONT}
+  NOTIFICATION_FONT=${__NOTIFICATION_FONT:-$NOTIFICATION_FONT}
+
+}
+
 sanitize_hypr_theme() {
   input_file="${1}"
   output_file="${2}"
@@ -132,54 +170,10 @@ if [[ -r "${HYPRLAND_CONFIG}" ]]; then
   [[ -r "${HYDE_THEME_DIR}/hypr.theme" ]] && sanitize_hypr_theme "${HYDE_THEME_DIR}/hypr.theme" "${XDG_CONFIG_HOME}/hypr/themes/theme.conf"
 
   #? Load theme specific variables
-  eval "$(
-    hyq "${HYDE_THEME_DIR}/hypr.theme" \
-      --export env \
-      -Q "\$GTK_THEME[string]" \
-      -Q "\$ICON_THEME[string]" \
-      -Q "\$CURSOR_THEME[string]" \
-      -Q "\$CURSOR_SIZE[int]" \
-      -Q "\$FONT[string]" \
-      -Q "\$FONT_SIZE[int]" \
-      -Q "\$FONT_STYLE[string]" \
-      -Q "\$DOCUMENT_FONT[string]" \
-      -Q "\$DOCUMENT_FONT_SIZE[int]" \
-      -Q "\$MONOSPACE_FONT[string]" \
-      -Q "\$MONOSPACE_FONT_SIZE[int]"
-  )"
+  load_hypr_variables "${HYDE_THEME_DIR}/hypr.theme"
 
   #? Load User's hyprland overrides
-  eval "$(
-    hyq "${XDG_STATE_DIR:-$HOME/.local/state}/hyde/hyprland.conf" \
-      --export env \
-      -Q "\$GTK_THEME[string]" \
-      -Q "\$ICON_THEME[string]" \
-      -Q "\$CURSOR_THEME[string]" \
-      -Q "\$CURSOR_SIZE[int]" \
-      -Q "\$FONT[string]" \
-      -Q "\$FONT_SIZE[int]" \
-      -Q "\$FONT_STYLE[string]" \
-      -Q "\$DOCUMENT_FONT[string]" \
-      -Q "\$DOCUMENT_FONT_SIZE[int]" \
-      -Q "\$MONOSPACE_FONT[string]" \
-      -Q "\$MONOSPACE_FONT_SIZE[int]"
-  )"
-
-  GTK_THEME=${__GTK_THEME:-$GTK_THEME}
-  ICON_THEME=${__ICON_THEME:-$ICON_THEME}
-  CURSOR_THEME=${__CURSOR_THEME:-$CURSOR_THEME}
-  CURSOR_SIZE=${__CURSOR_SIZE:-$CURSOR_SIZE}
-  TERMINAL=${__TERMINAL:-$TERMINAL}
-  FONT=${__FONT:-$FONT}
-  FONT_STYLE=${__FONT_STYLE:-''} # using hyprland this should be empty by default
-  FONT_SIZE=${__FONT_SIZE:-$FONT_SIZE}
-  DOCUMENT_FONT=${__DOCUMENT_FONT:-$DOCUMENT_FONT}
-  DOCUMENT_FONT_SIZE=${__DOCUMENT_FONT_SIZE:-$DOCUMENT_FONT_SIZE}
-  MONOSPACE_FONT=${__MONOSPACE_FONT:-$MONOSPACE_FONT}
-  MONOSPACE_FONT_SIZE=${__MONOSPACE_FONT_SIZE:-$MONOSPACE_FONT_SIZE}
-  BAR_FONT=${__BAR_FONT:-$BAR_FONT}
-  MENU_FONT=${__MENU_FONT:-$MENU_FONT}
-  NOTIFICATION_FONT=${__NOTIFICATION_FONT:-$NOTIFICATION_FONT}
+  load_hypr_variables "${XDG_STATE_DIR:-$HOME/.local/state}/hyde/hyprland.conf"
 
 fi
 
