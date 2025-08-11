@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 Big CHANGE in HyDE! We are now using `uwsm` for session management and app2unit for application management.
 
-**PLEASE run install.sh again to upgrade and install missing dependencies!!!**
+**PLEASE run install.sh again to upgrade and install missing dependencies and REBOOT!**
 
 In SDDM, please choose `Hyprland (UWSM Managed)` as your session. Or else you will handle the session yourself!
 
