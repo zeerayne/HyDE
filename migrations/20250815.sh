@@ -3,3 +3,5 @@
 
 echo "Reloading Hyde shell shaders..."
 hyde-shell shaders --reload
+
+

@@ -73,7 +73,7 @@ Usage: $0 [options]
             m : no the[m]e reinstallations
             t : [t]est run without executing (-irst to dry run all)
 
-NOTE: 
+NOTE:
         running without args is equivalent to -irs
         to ignore nvidia, run -irsn
 
@@ -277,6 +277,25 @@ if [ ${flg_Install} -eq 1 ] && [ ${flg_Restore} -eq 1 ]; then
 EOF
 
     "${scrDir}/install_pst.sh"
+fi
+
+
+#---------------------------#
+# run migrations            #
+#---------------------------#
+if [ ${flg_Restore} -eq 1 ]; then
+
+migrationDir="$(realpath "$(dirname "$(realpath "$0")")/../migrations")"
+
+echo "Running migrations from: ${migrationDir}"
+
+migrationFile=$(ls "${migrationDir}" | sort -r | head -n 1)
+
+echo "Found migration file: ${migrationFile}"
+
+sh "${migrationDir}/${migrationFile}"
+
+
 fi
 
 #------------------------#
