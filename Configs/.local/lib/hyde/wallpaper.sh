@@ -14,6 +14,7 @@ options:
     -p, --previous            Set previous wallpaper
     -r, --random              Set random wallpaper
     -s, --set <file>          Set specified wallpaper
+        --start               Start/apply current wallpaper to backend
     -g, --get                 Get current wallpaper of specified backend
     -o, --output <file>       Copy current wallpaper to specified file
         --link                Resolved the linked wallpaper according to the theme
@@ -191,7 +192,8 @@ main() {
     if [ -z "$wallpaper_backend" ] &&
         [ "$wallpaper_setter_flag" != "o" ] &&
         [ "$wallpaper_setter_flag" != "g" ] &&
-        [ "$wallpaper_setter_flag" != "select" ]; then
+        [ "$wallpaper_setter_flag" != "select" ] &&
+        [ "$wallpaper_setter_flag" != "start" ]; then
         print_log -sec "wallpaper" -err "No backend specified"
         print_log -sec "wallpaper" " Please specify a backend, try '--backend swww'"
         print_log -sec "wallpaper" " See available commands: '--help | -h'"
@@ -238,6 +240,17 @@ main() {
                 exit 1
             fi
             get_hashmap "${wallpaper_path}"
+            Wall_Cache
+            ;;
+        start)
+            # Start/apply current wallpaper to backend
+            if [ ! -e "${wallSet}" ]; then
+                print_log -err "wallpaper" "No current wallpaper found: ${wallSet}"
+                exit 1
+            fi
+            export WALLPAPER_RELOAD_ALL=0 WALLBASH_STARTUP=1
+            current_wallpaper="$(realpath "${wallSet}")"
+            get_hashmap "${current_wallpaper}"
             Wall_Cache
             ;;
         g)
@@ -301,7 +314,7 @@ if [ -z "${*}" ]; then
 fi
 
 # Define long options
-LONGOPTS="link,global,select,json,next,previous,random,set:,backend:,get,output:,help,filetypes:"
+LONGOPTS="link,global,select,json,next,previous,random,set:,start,backend:,get,output:,help,filetypes:"
 
 # Parse options
 PARSED=$(
@@ -352,6 +365,10 @@ while true; do
         wallpaper_setter_flag=s
         wallpaper_path="${2}"
         shift 2
+        ;;
+    --start)
+        wallpaper_setter_flag=start
+        shift
         ;;
     -g | --get)
         wallpaper_setter_flag=g
