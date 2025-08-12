@@ -285,7 +285,12 @@ fi
 #---------------------------#
 if [ ${flg_Restore} -eq 1 ]; then
 
-migrationDir="$(realpath "$(dirname "$(realpath "$0")")/../migrations")"
+# migrationDir="$(realpath "$(dirname "$(realpath "$0")")/../migrations")"
+migrationDir="${scrDir}/migrations"
+
+if [ ! -d "${migrationDir}" ]; then
+    print_log -warn "Migrations" "Directory not found: ${migrationDir}"
+fi
 
 echo "Running migrations from: ${migrationDir}"
 
