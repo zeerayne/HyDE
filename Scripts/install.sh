@@ -289,15 +289,13 @@ migrationDir="$(realpath "$(dirname "$(realpath "$0")")/../migrations")"
 
 echo "Running migrations from: ${migrationDir}"
 
-migrationFile=$(ls "${migrationDir}" | sort -r | head -n 1)
-
-echo "Found migration file: ${migrationFile}"
-
-sh "${migrationDir}/${migrationFile}"
-
-
+if [ -d "${migrationDir}" ] && find "${migrationDir}" -type f | grep -q .; then
+    migrationFile=$(ls "${migrationDir}" | sort -r | head -n 1)
+    echo "Found migration file: ${migrationFile}"
+    sh "${migrationDir}/${migrationFile}"
+else
+    echo "No migration files found in ${migrationDir}. Skipping migrations."
 fi
-
 #------------------------#
 # enable system services #
 #------------------------#
