@@ -34,6 +34,7 @@ In SDDM, please choose `Hyprland (UWSM Managed)` as your session. Or else you wi
 - Core: app2unit.sh and xdg-terminal-exec as as static dependencies. These tools are not widely available and are not part of the core dependencies.
 - The ~/.config/xdg-terminals.list file is now used to determine which terminal to use.
 - Wallbash: Added spotify flatpak support
+- Migration script implementation
 
 ### Fixed
 
