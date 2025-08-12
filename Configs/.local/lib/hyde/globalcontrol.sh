@@ -32,6 +32,13 @@ export themesDir="$THEMES_DIR"
 export fontsDir="$FONTS_DIR"
 export hashMech="sha1sum"
 
+
+#? avoid notify-send to stall the script
+send_notifs () {
+    local args=("$@")
+    notify-send "${args[@]}" &
+}
+
 print_log() {
     # [ -t 1 ] && return 0 # Skip if not in the terminal
     while (("$#")); do
@@ -101,6 +108,8 @@ print_log() {
     done
     echo "" >&2
 }
+
+
 
 get_hashmap() {
     unset wallHash
@@ -540,4 +549,4 @@ export -f get_hyprConf get_rofi_pos \
     get_themes print_log \
     pkg_installed paste_string \
     extract_thumbnail accepted_mime_types \
-    dconf_write
+    dconf_write send_notifs
