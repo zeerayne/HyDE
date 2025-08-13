@@ -70,11 +70,15 @@ deploy_list() {
 }
 
 deploy_psv() {
-
+    print_log -g "[file extension]" -b " :: " "File: ${CfgLst}"
     while read -r lst; do
 
         # Skip lines that do not have exactly 4 columns
         if [ "$(awk -F '|' '{print NF}' <<<"${lst}")" -ne 4 ]; then
+            if [[ "${lst}" =~ ^\  ]]; then
+                echo ""
+                print_log -b "${lst}"
+            fi
             continue
         fi
         # Skip lines that start with '#' or any space followed by '#'
@@ -90,7 +94,7 @@ deploy_psv() {
 
         # Check if ctlFlag is not one of the values 'O', 'R', 'B', 'S', or 'P'
         if [[ "${ctlFlag}" = "I" ]]; then
-            print_log -r "[ignore] //" "${pth}/${cfg}"
+            print_log -r "[ignore] :: " "${pth}/${cfg}"
             continue 2
         fi
 
@@ -165,6 +169,29 @@ deploy_psv() {
     done <"${1}"
 }
 
+hyprland_hook() {
+
+    local hyde_config="${cloneDir}/Configs/.config/hypr/hyprland.conf"
+    local hyprland_default_config="${XDG_CONFIG_HOME:-$HOME/.config}/hypr/hyprland.conf"
+    local hyq_exec="${cloneDir}/Configs/.local/lib/hyde/hyq"
+    if [[ ! -x "${hyq_exec}" ]]; then
+        print_log -r "[error] :: " "Required executable '${hyq_exec}' not found or not executable. Please ensure it exists and has execute permissions."
+        return 1
+    fi
+    if ! "${hyq_exec}" "${hyprland_default_config}" --query "\$HYDE_HYPRLAND"; then
+        mkdir -p "$(dirname "${hyprland_default_config}")" "${BkpDir}/.config/hypr"
+        print_log -g "[hook] " -b "hyprland :: " "No HYDE_HYPRLAND variable found in ${hyprland_default_config}, restoring default HyDE marker..."
+
+        if [[ ${flg_DryRun} -ne 1 && -f "${hyprland_default_config}" ]]; then
+            cp -f "${hyprland_default_config}" "${BkpDir}/.config/hypr/hyprland.conf"
+        fi
+
+        print_log -r "[backup] :: " "${hyprland_default_config} to ${BkpDir}/.config/hypr/hyprland.conf"
+        [[ ${flg_DryRun} -ne 1 ]] && cp -f "${hyde_config}" "${hyprland_default_config}"
+        print_log -g "[restore] :: " "${hyde_config} to ${hyprland_default_config}"
+    fi
+}
+
 # shellcheck disable=SC2034
 log_section="deploy"
 flg_DryRun=${flg_DryRun:-0}
@@ -213,3 +240,19 @@ json)
     ;;
 esac
 echo ""
+
+hyprland_hook
+
+print_log -g "[python env]" -b " :: " "Rebuilding HyDE Python environment..."
+if command -v hyde-shell >/dev/null 2>&1; then
+    hyde-shell pyinit
+else
+    "${HOME}/.local/bin/hyde-shell" pyinit
+fi
+
+print_log -g "[version]" -b " :: " "saving version info..."
+"${scrDir}/version.sh" --cache || echo "Failed to save version info."
+
+state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/hyde"
+clone_dir=$(git rev-parse --show-toplevel 2>/dev/null || echo "${HOME}/HyDE")
+[[ -f ${clone_dir}/CHANGELOG.md ]] && cp -f "${clone_dir}/CHANGELOG.md" "${state_dir}/CHANGELOG.md"
