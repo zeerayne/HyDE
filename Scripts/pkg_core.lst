@@ -1,4 +1,5 @@
 # --------------------------------------------------- // System
+uwsm                                                   # A standalone Wayland session manager
 pipewire                                               # audio/video server
 pipewire-alsa                                          # pipewire alsa client
 pipewire-audio                                         # pipewire audio client
@@ -75,9 +76,7 @@ nwg-displays                                           # monitor management util
 fzf                                                    # Command-line fuzzy finder
 
 # --------------------------------------------------- // Shell
-eza|zsh                                                # file lister for zsh
 starship|zsh                                           # customizable shell prompt written in Rust
-duf|zsh                                                # prettier version of df for zsh
 # starship-git                                         # The cross-shell prompt for astronauts  
 eza|fish                                               # file lister for fish
 starship|fish                                          # customizable shell prompt
