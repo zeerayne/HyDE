@@ -4,13 +4,19 @@ All notable changes to `HyDE` will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to _Modified_ [CalVer](https://calver.org/). See [Versioning](https://github.com/HyDE-Project/HyDE/blob/master/RELEASE_POLICY.md#versioning-yymq) For more info
 
-## v25.8.1 (Unreleased)
+## v25.8.3 (Unreleased)
+
+### Fixed
+
+- Typos,spelling and and cleanup
+
+## v25.8.2
 
 Big CHANGE in HyDE! We are now using `uwsm` for session management and app2unit for application management.
 
-**PLEASE run install.sh again to upgrade and install missing dependencies!!!**
+**PLEASE run install.sh again to upgrade and install missing dependencies and REBOOT!**
 
-Upon opening in you SDDM, Please choose `Hyprland (UWSM Managed)` as your session. Or else you will handle the session yourself!
+In SDDM, please choose `Hyprland (UWSM Managed)` as your session. Or else you will handle the session yourself!
 
 ### Changed
 
@@ -27,12 +33,15 @@ Upon opening in you SDDM, Please choose `Hyprland (UWSM Managed)` as your sessio
 - Package: UWSM as dependency for HyDE.
 - Core: app2unit.sh and xdg-terminal-exec as as static dependencies. These tools are not widely available and are not part of the core dependencies.
 - The ~/.config/xdg-terminals.list file is now used to determine which terminal to use.
+- Wallbash: Added spotify flatpak support
+- Migration script implementation
 
 ### Fixed
 
 - Waybar: Some fixes for modules
 - Waybar: gpuinfo throws errors eg broken pipe
-- LibL Clean up variables that are using HYDE*, we will try to use the XDG\_* variables instead.
+- Lib: Clean up variables that are using HYDE*, we will try to use the XDG\_* variables instead.
+- Core: Fixed some issues with the theming script stack.
 
 ## v25.7.3
 
