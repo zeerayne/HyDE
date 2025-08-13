@@ -514,7 +514,7 @@ function run_vm() {
 function list_snapshots() {
     echo "📸 Available HyDE snapshots:"
     if [ -d "$SNAPSHOTS_DIR" ]; then
-        find "$SNAPSHOTS_DIR" -L -name "hyde-*.qcow2" -exec basename {} \; | \
+        find "$SNAPSHOTS_DIR" -name "hyde-*.qcow2" -exec basename {} \; | \
             sed 's/^hyde-//' | sed 's/\.qcow2$//' | sort
     else
         echo "No snapshots found"
