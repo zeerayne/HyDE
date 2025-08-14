@@ -32,9 +32,8 @@ export themesDir="$THEMES_DIR"
 export fontsDir="$FONTS_DIR"
 export hashMech="sha1sum"
 
-
 #? avoid notify-send to stall the script
-send_notifs () {
+send_notifs() {
     local args=("$@")
     notify-send "${args[@]}" &
 }
@@ -109,8 +108,6 @@ print_log() {
     echo "" >&2
 }
 
-
-
 get_hashmap() {
     unset wallHash
     unset wallList
@@ -134,6 +131,15 @@ get_hashmap() {
 
     }
 
+    list_skipped_path() {
+        local skip_path=(
+            "*/logo/*"
+            "*/wall.hyprlock.png/*" #TODO avoid using extensions that is under supported filetypes
+        )
+        # output a list of paths to be skipped in find snippet
+        printf -- "! -path \"%s\" " "${skip_path[@]}" | sed 's/ $//'
+    }
+
     find_wallpapers() {
         local wallSource="$1"
 
@@ -143,7 +149,7 @@ get_hashmap() {
         fi
 
         local find_command
-        find_command="find -L \"${wallSource}\" -type f \\( $(list_extensions) \\) ! -path \"*/logo/*\" -exec \"${hashMech}\" {} +"
+        find_command="find -L \"${wallSource}\" -type f \\( $(list_extensions) \\) $(list_skipped_path) -exec \"${hashMech}\" {} +"
 
         [ "${LOG_LEVEL}" == "debug" ] && print_log -g "DEBUG:" -b "Running command:" "${find_command}"
 
