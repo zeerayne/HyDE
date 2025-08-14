@@ -9,6 +9,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Fixed
 
 - Typos,spelling and and cleanup
+- Dunst: Fix dunst crashing when the font cannot handle unsupported characters -- Thanks to [#1131](https://github.com/HyDE-Project/HyDE/issues/1131)
+
+### Changed
+
+- Core: Move wallbash to ~/.local/share/wallbash
 
 ## v25.8.2
 
