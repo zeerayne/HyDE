@@ -134,7 +134,6 @@ get_hashmap() {
     list_skipped_path() {
         local skip_path=(
             "*/logo/*"
-            "*/wall.hyprlock.png/*" #TODO avoid using extensions that is under supported filetypes
         )
         # output a list of paths to be skipped in find snippet
         printf -- "! -path \"%s\" " "${skip_path[@]}" | sed 's/ $//'
@@ -149,7 +148,7 @@ get_hashmap() {
         fi
 
         local find_command
-        find_command="find -L \"${wallSource}\" -type f \\( $(list_extensions) \\) $(list_skipped_path) -exec \"${hashMech}\" {} +"
+        find_command="find -H \"${wallSource}\" -type f \\( $(list_extensions) \\) $(list_skipped_path) -exec \"${hashMech}\" {} +"
 
         [ "${LOG_LEVEL}" == "debug" ] && print_log -g "DEBUG:" -b "Running command:" "${find_command}"
 
@@ -240,7 +239,7 @@ get_themes() {
         [ -f "${thmDir}/.sort" ] && thmSortS+=("$(head -1 "${thmDir}/.sort")") || thmSortS+=("0")
         thmWallS+=("${realWallPath}")
         thmListS+=("${thmDir##*/}") # Use this instead of basename
-    done < <(find -L "${HYDE_CONFIG_HOME}/themes" -mindepth 1 -maxdepth 1 -type d)
+    done < <(find -H "${HYDE_CONFIG_HOME}/themes" -mindepth 1 -maxdepth 1 -type d)
 
     while IFS='|' read -r sort theme wall; do
         thmSort+=("${sort}")
