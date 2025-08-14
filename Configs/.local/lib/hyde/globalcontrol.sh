@@ -272,7 +272,9 @@ fi
 
 HYDE_THEME_DIR="${HYDE_CONFIG_HOME}/themes/${HYDE_THEME}"
 wallbashDirs=(
-    "${HYDE_CONFIG_HOME}/wallbash"
+    "${XDG_CONFIG_HOME}/wallbash"
+    "${XDG_CONFIG_HOME}/hyde/wallbash"
+    "${XDG_DATA_HOME}/wallbash"
     "${XDG_DATA_HOME}/hyde/wallbash"
     "/usr/local/share/hyde/wallbash"
     "/usr/share/hyde/wallbash"
