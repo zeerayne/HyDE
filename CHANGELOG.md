@@ -4,7 +4,24 @@ All notable changes to `HyDE` will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to _Modified_ [CalVer](https://calver.org/). See [Versioning](https://github.com/HyDE-Project/HyDE/blob/master/RELEASE_POLICY.md#versioning-yymq) For more info
 
-## v25.8.2
+## v25.8.3 (Unreleased)
+
+### Fixed
+
+- Typos,spelling and and cleanup
+- Dunst: Fix dunst crashing when the font cannot handle unsupported characters -- Thanks to [#1131](https://github.com/HyDE-Project/HyDE/issues/1131)
+
+### Changed
+
+- Core: Move wallbash to ~/.local/share/wallbash
+- wlogout: Add support for for uwsm
+
+### Added
+
+- hyde-shell: Add `logout` command to handle with/out uwsm
+
+
+## v25.8.1
 
 Big CHANGE in HyDE! We are now using `uwsm` for session management and app2unit for application management.
 
@@ -28,6 +45,7 @@ In SDDM, please choose `Hyprland (UWSM Managed)` as your session. Or else you wi
 - Core: app2unit.sh and xdg-terminal-exec as as static dependencies. These tools are not widely available and are not part of the core dependencies.
 - The ~/.config/xdg-terminals.list file is now used to determine which terminal to use.
 - Wallbash: Added spotify flatpak support
+- Migration script implementation
 
 ### Fixed
 
