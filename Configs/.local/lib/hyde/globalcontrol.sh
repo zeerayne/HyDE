@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC1091
+# shellcheck disable=SC1090
 
 # xdg resolution
 export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
@@ -161,7 +162,7 @@ get_hashmap() {
 
     for wallSource in "$@"; do
 
-        [ "${LOG_LEVEL}" == "debug" ] && print_log -g "DEBUG:" -b "arg:" "${wallSource}"
+        [ "${LOG_LEVEL}" == "debug" ] && print_log -g "DEBUG:" -b "wallpaper source path:" "${wallSource}"
 
         [ -z "${wallSource}" ] && continue
         [ "${wallSource}" == "--no-notify" ] && no_notify=1 && continue
@@ -255,9 +256,20 @@ get_themes() {
     fi
 }
 
-[ -f "${XDG_RUNTIME_DIR}/hyde/environment" ] && source "${XDG_RUNTIME_DIR}/hyde/environment"
-[ -f "$HYDE_STATE_HOME/staterc" ] && source "$HYDE_STATE_HOME/staterc"
-[ -f "$HYDE_STATE_HOME/config" ] && source "$HYDE_STATE_HOME/config"
+export_hyde_config() {
+    #? This function is used to re-source config files if
+    #? 1. they change since the script was started
+    #? 2. the script is run in a new shell instance
+    #? 3. When you needed the arrays to be available in the current shell session // bash does not export arrays
+
+    local user_conf_state="${XDG_STATE_HOME}/hyde/staterc"
+    local user_conf="${XDG_STATE_HOME}/hyde/config"
+
+    [ -f "${user_conf_state}" ] && source "${user_conf_state}"
+    [ -f "${user_conf}" ] && source "${user_conf}"
+}
+
+export_hyde_config
 
 case "${enableWallDcol}" in
 0 | 1 | 2 | 3) ;;
@@ -556,4 +568,5 @@ export -f get_hyprConf get_rofi_pos \
     get_themes print_log \
     pkg_installed paste_string \
     extract_thumbnail accepted_mime_types \
-    dconf_write send_notifs
+    dconf_write send_notifs \
+    export_hyde_config

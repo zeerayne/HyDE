@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC2154
 
-[[ "${HYDE_SHELL_INIT}" -ne 1 ]] && eval "$(hyde-shell init)"
+if [[ "${HYDE_SHELL_INIT}" -ne 1 ]]; then
+    eval "$(hyde-shell init)"
+else
+    export_hyde_config
+fi
 
 # // Help message
 show_help() {
