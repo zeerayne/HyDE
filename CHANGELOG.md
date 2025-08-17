@@ -10,16 +10,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - Typos,spelling and and cleanup
 - Dunst: Fix dunst crashing when the font cannot handle unsupported characters -- Thanks to [#1131](https://github.com/HyDE-Project/HyDE/issues/1131)
+- UWSM: Clean up the xdg freedesktop.org spec as uwsm handles it
+- Wallpaper: fix #1136 as exporting arrays are not supported in bash
+
 
 ### Changed
 
 - Core: Move wallbash to ~/.local/share/wallbash
 - wlogout: Add support for for uwsm
+- Flatpak: make themes,icons as rw for flatpak --user
 
 ### Added
 
 - hyde-shell: Add `logout` command to handle with/out uwsm
-
+- waybar: Add lighter temperature module (Needs manual setup)
 
 ## v25.8.1
 
