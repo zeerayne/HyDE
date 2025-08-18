@@ -82,7 +82,8 @@
   // Model name:                              AMD Ryzen 7 9700X 8-Core Processor
   // 
   // 3. Take desired `hwmon-path` from the output of the script, replace `thermal-zone` with `hwmon-path` in waybar module config
-  //    i.e. "thermal-zone": 2 -> "hwmon-path": "/sys/class/hwmon/hwmon0"
+  //    i.e. "thermal-zone": 2 -> "hwmon-path": "/sys/class/hwmon/hwmon0/temp1_input"
+  //    p.s. do not forget to add temperature source (`temp1_input` in example above)
   //
   // PERFORMANCE NOTES:
   // - thermal-zone method is FASTER than custom scripts (no subprocess overhead)
