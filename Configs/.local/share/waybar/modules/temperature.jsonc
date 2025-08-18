@@ -42,6 +42,48 @@
   //    - iwlwifi_*: WiFi adapter temperature
   //    - pch_*: Platform Controller Hub
   //
+  // IF NO THERMAL ZONES ARE PRESENT (FOR AMD CPU & GPU):
+  //
+  // AMD hardware does not provide thermal zones and `hwmon-path` should be used instead
+  //
+  // 1. Execute script to detect AMD hardware and hwmon paths
+  //   for hwmon in /sys/class/hwmon/hwmon*; do
+  //     name=$(cat "$hwmon/name" 2>/dev/null)
+  //     case "$name" in
+  //         "k10temp"|"zenpower"|"coretemp")
+  //             echo "\n\e[31m=== $hwmon ===\e[0m"
+  //             echo "$(lscpu | grep "Model name")"
+  //             ;;
+  //         "amdgpu")
+  //             device_link="$hwmon/device"
+  //             if [[ -L "$device_link" ]]; then
+  //                 target=$(readlink -f "$device_link")
+  //                 echo "\n\e[31m=== $hwmon ===\e[0m"
+  //                 pci_id=$(basename $(dirname "$target") | grep -o "0000:[0-9a-f]\+:[0-9a-f]\+\.[0-9a-f]")
+  //                 if [[ -n "$pci_id" ]]; then
+  //                     lspci -s "$pci_id" | cut -d ' ' -f 2-
+  //                 fi
+  //             fi
+  //             ;;
+  //         *)
+  //             ;;
+  //     esac
+  // done
+  //
+  // 2. Output will be similar to:
+  //
+  // === /sys/class/hwmon/hwmon0 ===
+  // PCI bridge: Advanced Micro Devices, Inc. [AMD/ATI] Navi 10 XL Downstream Port of PCI Express Switch (rev 11)
+  // 
+  // === /sys/class/hwmon/hwmon1 ===
+  // PCI bridge: Advanced Micro Devices, Inc. [AMD] Raphael/Granite Ridge Internal GPP Bridge to Bus [C:A]
+  // 
+  // === /sys/class/hwmon/hwmon4 ===
+  // Model name:                              AMD Ryzen 7 9700X 8-Core Processor
+  // 
+  // 3. Take desired `hwmon-path` from the output of the script, replace `thermal-zone` with `hwmon-path` in waybar module config
+  //    i.e. "thermal-zone": 2 -> "hwmon-path": "/sys/class/hwmon/hwmon0"
+  //
   // PERFORMANCE NOTES:
   // - thermal-zone method is FASTER than custom scripts (no subprocess overhead)
   // - hwmon-path method is also fast but less portable
