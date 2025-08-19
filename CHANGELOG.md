@@ -13,12 +13,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - UWSM: Clean up the xdg freedesktop.org spec as uwsm handles it
 - Wallpaper: fix #1136 as exporting arrays are not supported in bash
 
-
 ### Changed
 
 - Core: Move wallbash to ~/.local/share/wallbash
 - wlogout: Add support for for uwsm
 - Flatpak: make themes,icons as rw for flatpak --user
+- Added multi-gpu message to nvidia.conf
 
 ### Added
 
