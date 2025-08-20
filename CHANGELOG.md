@@ -24,6 +24,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - hyde-shell: Add `logout` command to handle with/out uwsm
 - waybar: Add lighter temperature module (Needs manual setup)
+- Add credits page
 
 ## v25.8.1
 
