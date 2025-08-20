@@ -282,7 +282,7 @@ if [ -z "${HYDE_THEME}" ] || [ ! -d "${HYDE_CONFIG_HOME}/themes/${HYDE_THEME}" ]
 fi
 
 HYDE_THEME_DIR="${HYDE_CONFIG_HOME}/themes/${HYDE_THEME}"
-wallbashDirs=(
+WALLBASH_DIRS=(
     "${XDG_CONFIG_HOME}/wallbash"
     "${XDG_CONFIG_HOME}/hyde/wallbash"
     "${XDG_DATA_HOME}/wallbash"
@@ -291,8 +291,11 @@ wallbashDirs=(
     "/usr/share/hyde/wallbash"
 )
 
+wallbashDirs=("${WALLBASH_DIRS[@]}")
+
 export HYDE_THEME \
     HYDE_THEME_DIR \
+    WALLBASH_DIRS \
     wallbashDirs \
     enableWallDcol
 
