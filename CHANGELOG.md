@@ -19,12 +19,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - wlogout: Add support for for uwsm
 - Flatpak: make themes,icons as rw for flatpak --user
 - Added multi-gpu message to nvidia.conf
+- logs now will have '*.log' as extension 
 
 ### Added
 
-- hyde-shell: Add `logout` command to handle with/out uwsm
+- hyde-shell: Add 'logout' command to handle with/out uwsm
 - waybar: Add lighter temperature module (Needs manual setup)
 - Add credits page
+- waybar: Try to force initialization on restore (redundancy) might fix [#1160](https://github.com/HyDE-Project/HyDE/issues/1160)
 
 ## v25.8.1
 
