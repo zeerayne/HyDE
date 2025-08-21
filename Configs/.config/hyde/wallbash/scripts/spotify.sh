@@ -86,7 +86,7 @@ if (pkg_installed spotify && pkg_installed spicetify-cli) || [ -n "$spotify_path
         pkill -x spicetify
         spicetify -q watch -s &
         sleep 3
-        if pgrep -x spicetify >/dev/null; then
+        if pgrep -x spotify >/dev/null; then
             spicetify restart
         fi
     fi
