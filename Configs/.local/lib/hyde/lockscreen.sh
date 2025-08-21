@@ -15,7 +15,7 @@ esac
 #? This fix the zombie process issue when hyprlock is unlocked but still running.
 unit_id=(-u "hyde-lockscreen.scope")
 
-if app2unit.sh --test "${unit_id[@]}"  -- "${lockscreen}.sh" "${@}"; then
+if which "${lockscreen}.sh" 2>/dev/null 1>&2; then
     printf "Executing ${lockscreen} wrapper script : %s\n" "${lockscreen}.sh"
     app2unit.sh  "${unit_id[@]}"  -- "${lockscreen}.sh" "${@}"
 else
