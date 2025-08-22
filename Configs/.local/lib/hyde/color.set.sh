@@ -113,7 +113,7 @@ fn_wallbash() {
         # We don't want themes to launch the exec_command or any arbitrary codes
         # To enable this we should have a *.dcol file as a companion to the theme file
         # IFS=':' read -r -a wallbash_dirs_array <<<"$wallbash_dirs"
-        local template_name 
+        local template_name
         template_name="${template##*/}"
         template_name="${template_name%.*}"
         dcolTemplate=$(find -H "${wallbash_dirs_array[@]}" -type f -path "*/theme*" -name "${template_name}.dcol" 2>/dev/null | awk '!seen[substr($0, match($0, /[^/]+$/))]++')
@@ -125,10 +125,10 @@ fn_wallbash() {
         fi
     fi
 
-    if [[ "${LOG_LEVEL}" == "debug" ]];then
-     print_log -sec "wallbash" -stat "Template:" " ${template}"
-     print_log -sec "wallbash" -stat "Wallbash Directories:" " ${wallbash_dirs_array[*]}"
-     print_log -sec "wallbash" -stat "Wallbash Scripts:" " ${WALLBASH_SCRIPTS}"
+    if [[ "${LOG_LEVEL}" == "debug" ]]; then
+        print_log -sec "wallbash" -stat "Template:" " ${template}"
+        print_log -sec "wallbash" -stat "Wallbash Directories:" " ${wallbash_dirs_array[*]}"
+        print_log -sec "wallbash" -stat "Wallbash Scripts:" " ${WALLBASH_SCRIPTS}"
     fi
 
     # shellcheck disable=SC1091
@@ -287,7 +287,7 @@ fi
 
 # Single template mode
 if [ -n "${single_template}" ]; then
-    fn_wallbash "${single_template}"
+    fn_wallbash "${single_template}" "${wallbashDirs[@]}"
     exit 0
 fi
 
@@ -310,13 +310,12 @@ if [ "${enableWallDcol}" -eq 0 ] && [[ "${reload_flag}" -eq 1 ]]; then
     done < <(find -H "${wallbashDirs[@]}" -type f -path "*/theme*" -name "*.dcol" 2>/dev/null | awk '!seen[substr($0, match($0, /[^/]+$/))]++')
 
     # Process templates in parallel
-    parallel fn_wallbash {} "$wallbashDirs[@]" ::: "${deployList[@]}" || true
-
+    parallel fn_wallbash {} "${wallbashDirs[@]}" ::: "${deployList[@]}" || true
 
 elif [ "${enableWallDcol}" -gt 0 ]; then
     print_log -sec "wallbash" -stat "apply ${dcol_mode} colors" "Wallbash theme"
     # This is the reason we avoid SPACES for the wallbash template names
-    find -H "${wallbashDirs[@]}" -type f -path "*/theme*" -name "*.dcol" 2>/dev/null | awk '!seen[substr($0, match($0, /[^/]+$/))]++' | parallel fn_wallbash {} "${wallbashDirs[@]}"  || true
+    find -H "${wallbashDirs[@]}" -type f -path "*/theme*" -name "*.dcol" 2>/dev/null | awk '!seen[substr($0, match($0, /[^/]+$/))]++' | parallel fn_wallbash {} "${wallbashDirs[@]}" || true
 fi
 
 # Process "always" templates in parallel
