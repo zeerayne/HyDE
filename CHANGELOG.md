@@ -4,7 +4,7 @@ All notable changes to `HyDE` will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to _Modified_ [CalVer](https://calver.org/). See [Versioning](https://github.com/HyDE-Project/HyDE/blob/master/RELEASE_POLICY.md#versioning-yymq) For more info
 
-## v25.8.3 (Unreleased)
+## v25.8.3
 
 ### Fixed
 
@@ -33,6 +33,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Added pyprland boilerplate, no configs for now
 - Hyprland: Graciously handle some of the issues hyprland config issues for unknown SHELL
 - Pyprland: Use nc or socat to communicate with pyprland instead of pure python
+- Pyprland: Add boilerplate config for pyprland
 
 ## v25.8.1
 
