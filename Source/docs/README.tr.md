@@ -6,20 +6,20 @@
 
 ###### _<div align="right"><a id=-design-by-t2></a><sub>// design by t2</sub></div>_
 
-![hyde_banner](Source/assets/hyde_banner.png)
+![hyde_banner](../assets/hyde_banner.png)
 
 <!--
 Multi-language README support
 -->
 
-[![es](https://img.shields.io/badge/lang-es-yellow.svg)](Source/docs/README.es.md)
-[![de](https://img.shields.io/badge/lang-de-black.svg)](Source/docs/README.de.md)
-[![nl](https://img.shields.io/badge/lang-nl-green.svg)](Source/docs/README.nl.md)
-[![中文](https://img.shields.io/badge/lang-中文-orange.svg)](Source/docs/README.zh.md)
-[![fr](https://img.shields.io/badge/lang-fr-blue.svg)](Source/docs/README.fr.md)
-[![ar](https://img.shields.io/badge/lang-AR-orange.svg)](Source/docs/README.ar.md)
-[![pt-br](https://img.shields.io/badge/lang-pt--br-006400.svg)](Source/docs/README.pt-br.md)
-[![tr](https://img.shields.io/badge/lang-tr-e30a17.svg)](Source/docs/README.tr.md)
+[![es](https://img.shields.io/badge/lang-es-yellow.svg)](../docs/README.es.md)
+[![de](https://img.shields.io/badge/lang-de-black.svg)](../docs/README.de.md)
+[![nl](https://img.shields.io/badge/lang-nl-green.svg)](../docs/README.nl.md)
+[![中文](https://img.shields.io/badge/lang-中文-orange.svg)](../docs/README.zh.md)
+[![fr](https://img.shields.io/badge/lang-fr-blue.svg)](../docs/README.fr.md)
+[![ar](https://img.shields.io/badge/lang-AR-orange.svg)](../docs/README.ar.md)
+[![pt-br](https://img.shields.io/badge/lang-pt--br-006400.svg)](../docs/README.pt-br.md)
+[![tr](https://img.shields.io/badge/lang-tr-e30a17.svg)](../docs/README.tr.md)
 
 <div align="center">
 
@@ -39,16 +39,16 @@ Multi-language README support
 
 <div align="center">
   <div style="display: flex; flex-wrap: nowrap; justify-content: center;">
-    <img src="Source/assets/archlinux.png" alt="Arch Linux" style="width: 10%; margin: 10px;"/>
-    <img src="Source/assets/cachyos.png" alt="CachyOS" style="width: 10%; margin: 10px;"/>
-    <img src="Source/assets/endeavouros.png" alt="EndeavourOS" style="width: 10%; margin: 10px;"/>
-    <img src="Source/assets/garuda.png" alt="Garuda" style="width: 10%; margin: 10px;"/>
-    <img src="Source/assets/nixos.png" alt="NixOS" style="width: 10%; margin: 10px;"/>
+    <img src="../assets/archlinux.png" alt="Arch Linux" style="width: 10%; margin: 10px;"/>
+    <img src="../assets/cachyos.png" alt="CachyOS" style="width: 10%; margin: 10px;"/>
+    <img src="../assets/endeavouros.png" alt="EndeavourOS" style="width: 10%; margin: 10px;"/>
+    <img src="../assets/garuda.png" alt="Garuda" style="width: 10%; margin: 10px;"/>
+    <img src="../assets/nixos.png" alt="NixOS" style="width: 10%; margin: 10px;"/>
   </div>
 </div>
 
 Tam not için bu bağlantıya göz atın:
-[HyDE ve ötesine yolculuk](./Hyprdots-to-HyDE.md)
+[HyDE ve ötesine yolculuk](../../Hyprdots-to-HyDE.md)
 
 <!--
 <img alt="Dynamic JSON Badge" src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fdiscordapp.com%2Fapi%2Finvites%2FmT5YqjaJFh%3Fwith_counts%3Dtrue&query=%24.approximate_member_count&suffix=%20members&style=for-the-badge&logo=discord&logoSize=auto&label=The%20HyDe%20Project&labelColor=ebbcba&color=c79bf0">
@@ -291,25 +291,3 @@ Daha fazla bilgi için [HyDE-Project/hyde-themes](https://github.com/HyDE-Projec
    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=hyde-project/hyde&type=Timeline" />
  </picture>
 </a>
-
----
-
-<a id="credits"></a>
-<img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=25&pause=1000&color=CCA9DD&vCenter=true&width=435&height=25&lines=TEŞEKKÜRLER!" width="450"/>
-
-
-- [Krediler sayfasının tamamını buradan görebilirsiniz.](./CREDITS.md).
-
-
-
----
-
-<div align="right">
-  <br>
-  <a href="#-design-by-t2"><kbd> <br> 🡅 <br> </kbd></a>
-</div>
-
-<div align="right">
-  <sub>Son düzenleme tarihi: 27/02/2025<span id="last-edited"></span></sub>
-</div>
-
