@@ -13,6 +13,7 @@ HYDE_ZSH_COMPINIT_CHECK=24 # Set 24 (hours) per compinit security check // lesse
 
 ZSH_THEME=""
 DISABLE_AUTO_TITLE="true"
+DISABLE_UPDATE_PROMPT="true"
 VSCODE_INJECTION=1
 
 if [[ ${HYDE_ZSH_NO_PLUGINS} != "1" ]]; then
