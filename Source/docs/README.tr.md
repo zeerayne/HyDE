@@ -114,20 +114,6 @@ Daha fazla ayrıntı için lütfen [kurulum wiki](https://github.com/HyDE-Projec
   <a href="#-design-by-t2"><kbd> <br> 🡅 <br> </kbd></a>
 </div>
 
-<a id="contributing"></a>
-<img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=25&pause=1000&color=CCA9DD&vCenter=true&width=435&height=25&lines=KATKI SAĞLAMAK" width="450"/>
-
----
-
-Topluluğun katkılarını memnuniyetle karşılıyoruz! Başlamak için:
-
-- Yönergeler için [CONTRIBUTING.md](CONTRIBUTING.md) dosyasını inceleyin.
-- [TEAM_ROLES.md](TEAM_ROLES.md) dosyasında ekip rollerini okuyun.
-- [RELEASE_POLICY.md](RELEASE_POLICY.md) dosyasında yayın sürecimizi inceleyin.
-- İlk PR'ınızı oluştururken kendinizi [CONTRIBUTORS.md](CONTRIBUTORS.md) dosyasına ekleyin.
-
-Kod, test veya dokümantasyon konusunda yardım ediyor olsanız da, HyDE'yi herkes için daha iyi hale getirme çabalarımıza destek olduğunuz için teşekkür ederiz!
-
 <div align="right">
   <br>
   <a href="#-design-by-t2"><kbd> <br> 🡅 <br> </kbd></a>
