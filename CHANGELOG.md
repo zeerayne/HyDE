@@ -11,6 +11,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Turkish documentation.
 - No changes have been made to other codes.
 
+## v25.9.1 (Unreleased)
+
+### Changed
+
+- Waybar: Make temperature background transparent
+- hyde-shell: silent pyinit command
+- Binds: Use `hyde-shell logout` for cleaner session logout
+
 ## v25.8.3
 
 ### Fixed
