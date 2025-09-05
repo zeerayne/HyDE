@@ -17,7 +17,7 @@ _These contributors help with code review, triaging, and development._
 - [@Guillaumecoi](https://github.com/Guillaumecoi)
 - [@rubiin](https://github.com/rubiin)
 - [@Metalhearf](https://github.com/Metalhearf)
-- [@prime-run](https://github.com/prime-run)
+- [@prime-run](https://github.com/prime-run3.)
 - [@heeeeeeeeeeh](https://github.com/heeeeeeeeeeh/)
 
 ## Testers
@@ -27,6 +27,7 @@ _These contributors help with quality assurance and testing._
 - [@amit-0i](https://github.com/amit-0i)
 - [@Prof-Shiba](https://github.com/Prof-Shiba)
 - [@UnaTried](https://github.com/UnaTried)
+- [@Rohit8BitCoder](https://github.com/Rohit8BitCoder) - "Always learning, always building"
 
 ---
 
@@ -35,9 +36,11 @@ _These contributors help with quality assurance and testing._
 1. Fork the repository
 2. Create a new branch for your change
 3. Add your name to the appropriate section in this format:
+
    ```
    - [@your-github-username](https://github.com/your-github-username) - "Your favorite quote"
    ```
+
 4. Submit a pull request with the title "Add [Your Name] as [Collaborator/Tester]"
 5. Include in the PR description your relevant experience and what you hope to contribute
 6. Wait for a maintainer to review and merge your PR
