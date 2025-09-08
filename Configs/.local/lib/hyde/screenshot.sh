@@ -52,7 +52,7 @@ save_file=$(date +'%y%m%d_%Hh%Mm%Ss_screenshot.png')
 annotation_tool=${SCREENSHOT_ANNOTATION_TOOL}
 annotation_args=("-o" "${save_dir}/${save_file}" "-f" "${temp_screenshot}")
 tesseract_default_language=("eng")
-tesseract_languages="${SCREENSHOT_OCR_TESSERACT_LANGUAGES:-$tesseract_default_language}"
+tesseract_languages=("${SCREENSHOT_OCR_TESSERACT_LANGUAGES[@]:-${tesseract_default_language[@]}}")
 tesseract_languages+=("osd")
 
 if [[ -z "$annotation_tool" ]]; then
