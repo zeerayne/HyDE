@@ -51,7 +51,9 @@ save_dir="${2:-$XDG_PICTURES_DIR/Screenshots}"
 save_file=$(date +'%y%m%d_%Hh%Mm%Ss_screenshot.png')
 annotation_tool=${SCREENSHOT_ANNOTATION_TOOL}
 annotation_args=("-o" "${save_dir}/${save_file}" "-f" "${temp_screenshot}")
-tesseract_languages="${SCREENSHOT_OCR_TESSERACT_LANGUAGES:-"eng"}"
+tesseract_default_language=("eng")
+tesseract_languages="${SCREENSHOT_OCR_TESSERACT_LANGUAGES:-$tesseract_default_language}"
+tesseract_languages+=("osd")
 
 if [[ -z "$annotation_tool" ]]; then
 	pkg_installed "swappy" && annotation_tool="swappy"
@@ -98,19 +100,20 @@ ocr_screenshot() {
 
 	# execute grimblast with given args
 	if "$LIB_DIR/hyde/grimblast" "${extra_args[@]}" copysave "$mode" "$temp_screenshot"; then
-		if pkg_installed imagemagick; then
-			magick "${temp_screenshot}" \
+		if pkg_installed graphicsmagick; then
+			gm convert "${temp_screenshot}" \
 				-colorspace gray \
-				-contrast-stretch 0 \
-				-level 15%,85% \
 				-resize 400% \
-				-sharpen 0x1 \
-				-auto-threshold triangle \
-				-morphology close diamond:1 \
-				-deskew 40% \
-				"${temp_screenshot}"
+				-median 2 \
+				-sharpen 1 \
+				-convolve "0,0,1,0,0;0,1,1,1,0;1,1,1,1,1;0,1,1,1,0;0,0,1,0,0" \
+				-normalize \
+				-lat 15x15+5% \
+				-monochrome \
+				-despeckle \
+			"${temp_screenshot}"
 		else
-			notify-send -a "HyDE Alert" "OCR: imagemagick is not installed, recognition accuracy is reduced" -e -i "dialog-warning"
+			notify-send -a "HyDE Alert" "OCR: graphicsmagick is not installed, recognition accuracy is reduced" -e -i "dialog-warning"
 		fi
 		tesseract_package_prefix="tesseract-data-"
 		tesseract_packages=("${tesseract_languages[@]/#/$tesseract_package_prefix}")
@@ -121,12 +124,11 @@ ocr_screenshot() {
 				return 1
 			fi
 		done
-		IFS='+' tesseract_languages=${tesseract_languages[*]}
-		unset IFS
+		tesseract_languages_prepared=$(IFS=+; echo "${tesseract_languages[*]}")
 		tesseract_output=$(tesseract \
 			--psm 6 \
 			--oem 3 \
-			-l ${tesseract_languages} \
+			-l ${tesseract_languages_prepared} \
 			"${temp_screenshot}" \
 			stdout
 			2>/dev/null
@@ -163,7 +165,7 @@ sc) #? 󱉶 Use 'tesseract' to scan image then add to clipboard
 	;;
 esac
 
-[ -f "$temp_screenshot" ] && rm "$temp_screenshot"
+[ -f "${temp_screenshot}" ] && rm "${temp_screenshot}"
 
 if [ -f "${save_dir}/${save_file}" ]; then
 	notify-send -a "HyDE Alert" -i "${save_dir}/${save_file}" "saved in ${save_dir}"
