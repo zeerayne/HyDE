@@ -417,6 +417,15 @@ type      = "object"
 [properties.screenshot.properties.annotation_post_command.items]
     type = "string"
 
+[properties."screenshot.ocr"]
+    description = "OCR configuration."
+    type        = "object"
+
+[properties."screenshot.ocr".properties.tesseract_languages]
+    default     = [ "eng" ]
+    description = "Place desired languages to use for text recognition. To see installed languages run `tesseract --list-langs`."
+    type        = "array"
+
 [properties."rofi.bookmark"]
     description = "Bookmark configuration."
     type        = "object"
