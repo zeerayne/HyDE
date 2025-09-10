@@ -119,6 +119,15 @@
       "contributions": [
         "test"
       ]
+    },
+    {
+      "login": "UnaTried",
+      "name": "UnaTried",
+      "avatar_url": "https://avatars.githubusercontent.com/u/103455203?v=4",
+      "profile": "http://unatried.com",
+      "contributions": [
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7,
