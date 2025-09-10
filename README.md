@@ -13,7 +13,7 @@
 Multi-language README support
 -->
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-7-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-8-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 [![es](https://img.shields.io/badge/lang-es-yellow.svg)](Source/docs/README.es.md)
 [![de](https://img.shields.io/badge/lang-de-black.svg)](Source/docs/README.de.md)
@@ -334,6 +334,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/richen604"><img src="https://avatars.githubusercontent.com/u/56615615?v=4?s=100" width="100px;" alt="Richard Henninger"/><br /><sub><b>Richard Henninger</b></sub></a><br /><a href="https://github.com/HyDE-Project/HyDE/commits?author=richen604" title="Code">💻</a> <a href="https://github.com/HyDE-Project/HyDE/commits?author=richen604" title="Tests">⚠️</a> <a href="https://github.com/HyDE-Project/HyDE/commits?author=richen604" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Guillaumecoi"><img src="https://avatars.githubusercontent.com/u/120651399?v=4?s=100" width="100px;" alt="Guillaume Coigniez"/><br /><sub><b>Guillaume Coigniez</b></sub></a><br /><a href="https://github.com/HyDE-Project/HyDE/commits?author=Guillaumecoi" title="Code">💻</a> <a href="https://github.com/HyDE-Project/HyDE/commits?author=Guillaumecoi" title="Tests">⚠️</a> <a href="https://github.com/HyDE-Project/HyDE/commits?author=Guillaumecoi" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/heeeeeeeeeeh"><img src="https://avatars.githubusercontent.com/u/90989842?v=4?s=100" width="100px;" alt="Silvestre Espinoza"/><br /><sub><b>Silvestre Espinoza</b></sub></a><br /><a href="https://github.com/HyDE-Project/HyDE/commits?author=heeeeeeeeeeh" title="Code">💻</a> <a href="https://github.com/HyDE-Project/HyDE/commits?author=heeeeeeeeeeh" title="Tests">⚠️</a> <a href="https://github.com/HyDE-Project/HyDE/commits?author=heeeeeeeeeeh" title="Documentation">📖</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/prime-run"><img src="https://avatars.githubusercontent.com/u/158470661?v=4?s=100" width="100px;" alt="prime-run"/><br /><sub><b>prime-run</b></sub></a><br /><a href="https://github.com/HyDE-Project/HyDE/commits?author=prime-run" title="Code">💻</a> <a href="https://github.com/HyDE-Project/HyDE/commits?author=prime-run" title="Tests">⚠️</a> <a href="https://github.com/HyDE-Project/HyDE/commits?author=prime-run" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>
