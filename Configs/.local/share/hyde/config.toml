@@ -117,6 +117,10 @@ annotation_tool = "satty"  # Annotation tool for screenshots.
 annotation_pre_command = []  # Pre command for annotation tool.
 annotation_post_command = [""]  # Post command for annotation tool.
 
+# OCR configuration.
+[screenshot.ocr]
+tesseract_languages = ["eng"]  # Place desired languages to use for text recognition. To see installed languages run `tesseract --list-langs`.
+
 # Bookmark configuration.
 [rofi.bookmark]
 
