@@ -13,7 +13,7 @@
 Multi-language README support
 -->
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-11-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-12-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 [![es](https://img.shields.io/badge/lang-es-yellow.svg)](Source/docs/README.es.md)
 [![de](https://img.shields.io/badge/lang-de-black.svg)](Source/docs/README.de.md)
@@ -340,6 +340,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/T-Crypt"><img src="https://avatars.githubusercontent.com/u/132922589?v=4?s=100" width="100px;" alt="Trevin"/><br /><sub><b>Trevin</b></sub></a><br /><a href="https://github.com/HyDE-Project/HyDE/commits?author=T-Crypt" title="Code">💻</a> <a href="https://github.com/HyDE-Project/HyDE/commits?author=T-Crypt" title="Tests">⚠️</a> <a href="https://github.com/HyDE-Project/HyDE/commits?author=T-Crypt" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Prof-Shiba"><img src="https://avatars.githubusercontent.com/u/166961473?v=4?s=100" width="100px;" alt="ProfShiba"/><br /><sub><b>ProfShiba</b></sub></a><br /><a href="https://github.com/HyDE-Project/HyDE/commits?author=Prof-Shiba" title="Tests">⚠️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/amit-0i"><img src="https://avatars.githubusercontent.com/u/208910917?v=4?s=100" width="100px;" alt="amit"/><br /><sub><b>amit</b></sub></a><br /><a href="https://github.com/HyDE-Project/HyDE/commits?author=amit-0i" title="Tests">⚠️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://unatried.com"><img src="https://avatars.githubusercontent.com/u/103455203?v=4?s=100" width="100px;" alt="UnaTried"/><br /><sub><b>UnaTried</b></sub></a><br /><a href="https://github.com/HyDE-Project/HyDE/commits?author=UnaTried" title="Tests">⚠️</a></td>
     </tr>
   </tbody>
 </table>
