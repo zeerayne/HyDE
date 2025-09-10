@@ -35,6 +35,17 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "dieBakterie",
+      "name": "dieBakterie",
+      "avatar_url": "https://avatars.githubusercontent.com/u/50206827?v=4",
+      "profile": "https://github.com/dieBakterie",
+      "contributions": [
+        "code",
+        "test",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
