@@ -6,10 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## Changes
 
+### Changed
+
+- OCR: `imagemagick` screenshot preprocessing tuned for better recognition results
+
 ### Added
 
 - Turkish documentation.
 - No changes have been made to other codes.
+- OCR: `tesseract` now supports explicit language settings via `hyde/config.toml`:
+    ```toml
+    [screenshot.ocr]
+    tesseract_languages = ["eng"]
+    ```
+    To use text recognition bind `hyde-shell screenshot sc` to any hotkey.
 
 ## v25.9.1 (Unreleased)
 
