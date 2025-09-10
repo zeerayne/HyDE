@@ -101,6 +101,15 @@
         "test",
         "doc"
       ]
+    },
+    {
+      "login": "Prof-Shiba",
+      "name": "ProfShiba",
+      "avatar_url": "https://avatars.githubusercontent.com/u/166961473?v=4",
+      "profile": "https://github.com/Prof-Shiba",
+      "contributions": [
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7,
