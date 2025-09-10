@@ -110,6 +110,15 @@
       "contributions": [
         "test"
       ]
+    },
+    {
+      "login": "amit-0i",
+      "name": "amit",
+      "avatar_url": "https://avatars.githubusercontent.com/u/208910917?v=4",
+      "profile": "https://github.com/amit-0i",
+      "contributions": [
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7,
