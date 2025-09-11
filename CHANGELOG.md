@@ -4,7 +4,46 @@ All notable changes to `HyDE` will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to _Modified_ [CalVer](https://calver.org/). See [Versioning](https://github.com/HyDE-Project/HyDE/blob/master/RELEASE_POLICY.md#versioning-yymq) For more info
 
-## v25.8.3 (Unreleased)
+## v25.9.3 (Unreleased)
+
+### Changed
+
+- OCR: `imagemagick` screenshot preprocessing tuned for better recognition results
+
+### Added
+
+- Turkish documentation.
+- No changes have been made to other codes.
+- OCR: `tesseract` now supports explicit language settings via `hyde/config.toml`:
+    ```toml
+    [screenshot.ocr]
+    tesseract_languages = ["eng"]
+    ```
+    To use text recognition bind `hyde-shell screenshot sc` to any hotkey.
+    
+## v25.9.1
+
+This release delivers a new gesture syntax for hyprland v0.51.0. This is a breaking change for users of the previous gesture syntax. Please update HyDE before opening an issue.
+
+For contributors, if you need to make the workspace animation vertical, example the `vertical.conf` animation, please **explicitly** add the following line to file.
+
+
+```
+gesture = 3, horizontal, unset # unsets the default horizontal gesture
+gesture = 3, vertical, workspace
+```
+
+### Changed
+
+- Waybar: Make temperature background transparent
+- hyde-shell: silent pyinit command
+- Binds: Use `hyde-shell logout` for cleaner session logout
+- Gestures: Chase hyprland v0.51.0 gesture syntax
+
+### Added
+- pinch gesture to toggle tile and floating
+
+## v25.8.3
 
 ### Fixed
 
@@ -12,19 +51,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Dunst: Fix dunst crashing when the font cannot handle unsupported characters -- Thanks to [#1131](https://github.com/HyDE-Project/HyDE/issues/1131)
 - UWSM: Clean up the xdg freedesktop.org spec as uwsm handles it
 - Wallpaper: fix #1136 as exporting arrays are not supported in bash
+- Lockscreen: Fix zombie hyprlock
 
 ### Changed
 
 - Core: Move wallbash to ~/.local/share/wallbash
-- wlogout: Add support for for uwsm
+- Wlogout: Add support for for uwsm
 - Flatpak: make themes,icons as rw for flatpak --user
 - Added multi-gpu message to nvidia.conf
+- Logs now will have '\*.log' as extension
+- Waybar: run as a systemd scope unit on startup
+- Wallpaper: run as a systemd scope unit on startup
 
 ### Added
 
-- hyde-shell: Add `logout` command to handle with/out uwsm
+- hyde-shell: Add 'logout' command to handle with/out uwsm
 - waybar: Add lighter temperature module (Needs manual setup)
 - Add credits page
+- waybar: Try to force initialization on restore (redundancy) might fix [#1160](https://github.com/HyDE-Project/HyDE/issues/1160)
+- Added pyprland boilerplate, no configs for now
+- Hyprland: Graciously handle some of the issues hyprland config issues for unknown SHELL
+- Pyprland: Use nc or socat to communicate with pyprland instead of pure python
+- Pyprland: Add boilerplate config for pyprland
 
 ## v25.8.1
 
