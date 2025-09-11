@@ -463,7 +463,7 @@
             "properties": {
                 "tesseract_languages": {
                     "default": [
-                       "eng"
+                        "eng"
                     ],
                     "description": "Place desired languages to use for text recognition. To see installed languages run `tesseract --list-langs`.",
                     "type": "array"
@@ -747,9 +747,6 @@
             "type": "object",
             "properties": {
                 "sanitize": {
-                    "default": [
-                        ".*rgba\\(.*,.*,.*,.*\\)"
-                    ],
                     "description": "List of regex to sanitize in the theme.config.",
                     "type": "array",
                     "items": {
@@ -953,7 +950,7 @@
                 }
             }
         },
-        "hyprland_start": {
+        "hyprland-start": {
             "description": "Hyprland start configuration.",
             "type": "object",
             "properties": {
