@@ -139,6 +139,16 @@
         "test",
         "doc"
       ]
+    },
+    {
+      "login": "zeerayne",
+      "name": "Ilya Bogdanov",
+      "avatar_url": "https://avatars.githubusercontent.com/u/13994839?v=4",
+      "profile": "https://github.com/zeerayne",
+      "contributions": [
+        "bug",
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
