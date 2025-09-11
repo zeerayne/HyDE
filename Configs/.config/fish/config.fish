@@ -1,6 +1,9 @@
 set -g fish_greeting
 
-source ~/.config/fish/hyde_config.fish
+source ~/.config/fish/conf.d/hyde.fish
+source ~/.config/fish/user.fish
+
+
 
 if type -q starship
     starship init fish | source
@@ -8,13 +11,31 @@ if type -q starship
     set -gx STARSHIP_CONFIG $XDG_CONFIG_HOME/starship/starship.toml
 end
 
-# fzf 
+
+if type -q duf
+    function df -d "Run duf with last argument if valid, else run duf"
+        if set -q argv[-1] && test -e $argv[-1]
+            duf $argv[-1]
+        else
+            duf
+        end
+    end
+end
+
+# fzf
 if type -q fzf
-    fzf --fish | source 
+    fzf --fish | source
+    for file in ~/.config/fish/functions/fzf/*.fish
+        source $file
+        # NOTE: these functions are built on top of fzf builtin widgets
+        # they help you navigate through directories and files "Blazingly" fast
+        # to get help on each one, just type `ff` in terminal and press `TAB`
+        # keep in mind all of them require an argument to be passed after the alias
+    end
 end
 
 set fish_pager_color_prefix cyan
-set fish_color_autosuggestion brblack 
+set fish_color_autosuggestion brblack
 
 if type -q eza
     # List Directory
@@ -32,12 +53,17 @@ if type -q bat
     abbr cat 'bat --style=plain --paging=never'
 end
 
-# Handy change dir shortcuts
-abbr .. 'cd ..'
-abbr ... 'cd ../..'
-abbr .3 'cd ../../..'
-abbr .4 'cd ../../../..'
-abbr .5 'cd ../../../../..'
+# Directory navigation shortcuts
+alias ..='cd ..'
+alias ...='cd ../..'
+alias .3='cd ../../..'
+alias .4='cd ../../../..'
+alias .5='cd ../../../../..'
 
-# Always mkdir a path (this doesn't inhibit functionality to make a single dir)
 abbr mkdir 'mkdir -p'
+
+
+
+
+
+
