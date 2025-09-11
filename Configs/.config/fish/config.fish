@@ -34,6 +34,11 @@ if type -q fzf
     end
 end
 
+# NOTE: binds Alt+n to inserting the nth command from history in edit buffer
+# e.g. Alt+4 is same as pressing Up arrow key 4 times
+# really helpful if you get used to it
+bind_M_n_history
+
 set fish_pager_color_prefix cyan
 set fish_color_autosuggestion brblack
 
@@ -52,6 +57,16 @@ if type -q bat
     abbr -a --position anywhere -- -h '-h | bat --language=help --style=plain --paging=never --color always'
     abbr cat 'bat --style=plain --paging=never --color auto'
 end
+
+alias c='clear'
+alias un='$aurhelper -Rns'
+alias up='$aurhelper -Syu'
+alias pl='$aurhelper -Qs'
+alias pa='$aurhelper -Ss'
+alias pc='$aurhelper -Sc'
+alias po='$aurhelper -Qtdq | $aurhelper -Rns -'
+alias vc='code'
+alias fastfetch='fastfetch --logo-type kitty'
 
 # Directory navigation shortcuts
 alias ..='cd ..'
