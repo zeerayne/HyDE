@@ -22,6 +22,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
     ```
     To use text recognition bind `hyde-shell screenshot sc` to any hotkey.
 - Hyprlock: Added hyprlock preview
+- File chooser dialogs in Hyprland now open centered and floating instead of off-screen
 
 ### Fixed
 
@@ -58,7 +59,6 @@ gesture = 3, vertical, workspace
 - UWSM: Clean up the xdg freedesktop.org spec as uwsm handles it
 - Wallpaper: fix #1136 as exporting arrays are not supported in bash
 - Lockscreen: Fix zombie hyprlock
-- File chooser dialogs in Hyprland now open centered and floating instead of off-screen
 
 ### Changed
 
