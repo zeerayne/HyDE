@@ -22,6 +22,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
     ```
     To use text recognition bind `hyde-shell screenshot sc` to any hotkey.
 - Hyprlock: Added hyprlock preview
+- File chooser dialogs in Hyprland now open centered and floating instead of off-screen
 
 ### Fixed
 
