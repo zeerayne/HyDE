@@ -20,7 +20,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
     tesseract_languages = ["eng"]
     ```
     To use text recognition bind `hyde-shell screenshot sc` to any hotkey.
-    
+- Hyprlock: Added hyprlock preview
+
+### Fixed
+
+- Hyprlock: fix hyprlock crashing by handling it as a systemd scope unit
+
 ## v25.9.1
 
 This release delivers a new gesture syntax for hyprland v0.51.0. This is a breaking change for users of the previous gesture syntax. Please update HyDE before opening an issue.
