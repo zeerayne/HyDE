@@ -11,6 +11,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Fish: Pleas Move you configs to `~/.config/fish/conf.d` 
 
 
+### Added
+
+- QT6CT: Added explicit font configuration for QT6 Applications see [#1309](https://github.com/HyDE-Project/HyDE/issues/1309)
+- QT5CT: Added explicit font configuration for QT5 Applications see [#1309](https://github.com/HyDE-Project/HyDE/issues/1309)
+- GTK3: Added explicit font configuration for GTK3 Applications see [#1309](https://github.com/HyDE-Project/HyDE/issues/1309)
+
+
+
 ## v25.9.3
 
 ### Changed
