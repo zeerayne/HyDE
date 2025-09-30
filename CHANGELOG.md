@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Fixed
 - Hyprland: Fix errors when `HYPRLAND_CONFIG` is not set yet
-- Fish: Pleas Move you configs to `~/.config/fish/conf.d` 
+- Fish: Please Move you configs to `~/.config/fish/conf.d`
 
 
 ### Added
@@ -17,7 +17,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - QT5CT: Added explicit font configuration for QT5 Applications see [#1309](https://github.com/HyDE-Project/HyDE/issues/1309)
 - GTK3: Added explicit font configuration for GTK3 Applications see [#1309](https://github.com/HyDE-Project/HyDE/issues/1309)
 
+### Changed
 
+- Audio volume control: use `wpctl` instead of `pamixer` for managing audio volume when PipeWire server is running.
 
 ## v25.9.3
 
