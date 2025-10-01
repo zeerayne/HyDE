@@ -20,6 +20,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Changed
 
 - Audio volume control: use `wpctl` instead of `pamixer` for managing audio volume when PipeWire server is running.
+- Fish: `config.fish` is now user defined config
+- Fish: `confi.d/hyde.fish` is used for HyDE only stuff. To override this create a separate file or use `config.fish` 
+
+
+### Migration
+
+For fish shell users: 
+Please empty your `~/.config/fish/config.fish` and use it to modify fish configurations.
 
 ## v25.9.3
 
