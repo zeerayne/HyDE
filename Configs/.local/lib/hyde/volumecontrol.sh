@@ -84,10 +84,13 @@ change_volume() {
             [ "${srce}" = "" ]                 && srce="@DEFAULT_AUDIO_SINK@"
             if [ "${isVolumeBoost}" = true ]; then
                 $use_swayosd && swayosd-client ${mode} "${delta}${step}" --max-volume "${VOLUME_BOOST_LIMIT:-150}" && exit 0
+                # Convert percentage limit to decimal (150% -> 1.5)
+                boost_limit_decimal=$(awk -v limit="${VOLUME_BOOST_LIMIT:-150}" 'BEGIN {print limit/100}')
+                wpctl set-volume -l "${boost_limit_decimal}" "${srce}" "${step}%${delta}"
             else
                 $use_swayosd && swayosd-client ${mode} "${delta}${step}" && exit 0
+                wpctl set-volume -l 1.0 "${srce}" "${step}%${delta}"
             fi
-            wpctl set-volume "${srce}" "${step}%${delta}"
             vol=$(wpctl get-volume "${srce}" | awk '{print $2 * 100}')
         else
             if [ "${isVolumeBoost}" = true ]; then
@@ -174,21 +177,29 @@ select_output() {
 get_default_sink() {
     local default_sink
     if [[ "${use_pipewire}" == true ]]; then
-        default_sink=$(pw-dump | jq -r '[.[] | select(.info?.props?."media.class" == "Audio/Sink")] | min_by(.info.props."priority.session" // 9999) | .info.props."node.description"')
+        # More reliable method to get the actual default sink
+        default_sink=$(wpctl inspect @DEFAULT_AUDIO_SINK@ | grep -oP 'node.description = "\K[^"]+' | head -1)
+        # Fallback method if above fails
+        if [ -z "$default_sink" ]; then
+            default_sink=$(pw-dump | jq -r '[.[] | select(.info?.props?."media.class" == "Audio/Sink")] | min_by(.info.props."priority.session" // 9999) | .info.props."node.description"')
+        fi
     else
         default_sink=$(pamixer --get-default-sink | awk -F '"' 'END{print $(NF - 1)}')
     fi
-    echo ${default_sink}
+    echo "${default_sink}"
 }
 
 get_default_source() {
     local default_source
     if [[ "${use_pipewire}" == true ]]; then
-        default_source=$(pw-dump | jq -r '[.[] | select(.info?.props?."media.class" == "Audio/Source")] | min_by(.info.props."priority.session" // 9999) | .info.props."node.description"')
+        default_source=$(wpctl inspect @DEFAULT_AUDIO_SOURCE@ | grep -oP 'node.description = "\K[^"]+' | head -1)
+        if [ -z "$default_source" ]; then
+            default_source=$(pw-dump | jq -r '[.[] | select(.info?.props?."media.class" == "Audio/Source")] | min_by(.info.props."priority.session" // 9999) | .info.props."node.description"')
+        fi
     else
         default_source=$(pamixer --list-sources | awk -F '"' 'END {print $(NF - 1)}')
     fi
-    echo ${default_source}
+    echo "${default_source}"
 }
 
 toggle_output() {
@@ -210,7 +221,7 @@ icodir="${iconsDir}/Wallbash-Icon/media"
 step=${VOLUME_STEPS:-5}
 
 # Detect pipewire
-if pactl info | grep -q "PipeWire"; then
+if pactl info | grep -q "PipeWire" || ${VOLUME_PIPEWIRE_ENABLE} == true ; then
     use_pipewire=true
 else
     use_pipewire=false
