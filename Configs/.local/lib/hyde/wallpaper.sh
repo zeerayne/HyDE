@@ -231,7 +231,6 @@ main() {
         Wall_Hash
     fi
 
-
     if [ -n "${wallpaper_setter_flag}" ]; then
         export WALLPAPER_SET_FLAG="${wallpaper_setter_flag}"
         case "${wallpaper_setter_flag}" in
