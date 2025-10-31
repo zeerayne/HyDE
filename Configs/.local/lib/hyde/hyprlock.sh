@@ -350,64 +350,42 @@ source = $hyde_hyprlock_conf
 CONF
 }
 
-# Initialize argparse
+ensure_lockscreen_bg_exist() {
+    if [ ! -f "$HYDE_CACHE_HOME/wallpapers/hyprlock.png" ]; then
+        print_log -sec "hyprlock" -stat "setting" " $HYDE_CACHE_HOME/wallpapers/hyprlock.png"
+        "${LIB_DIR}/hyde/wallpaper.sh" -s "$(readlink "$HYDE_THEME_DIR/wall.set")" --backend hyprlock
+    fi
+}
+
 argparse_init "$@"
 argparse_header "Hyprlock Manager"
 argparse_program "hyde-shell hyprlock"
 argparse_footer "Use 'hyde-shell hyprlock --help' for more information."
 
-# Define arguments
-argparse "background,--background,-b" "BACKGROUND=true" "Converts and ensures background to be a png"
-argparse "profile,--profile" "PROFILE=true" "Generates the profile picture"
-argparse "mpris,--mpris" "MPRIS_USED=true,MPRIS_PLAYER=" "Handles mpris thumbnail generation" "optional=true"
-argparse "cava,--cava" "CAVA=true" "Placeholder function for cava"
-argparse "art,--art" "ART=true" "Prints the path to the mpris art"
-argparse "--select,-S" "SELECT=true" "Selects the hyprlock layout"
-argparse "--test" "TEST_LAYOUT" "Test layout" "parameter=true"
-argparse "--test-preview" "TEST_PREVIEW_LAYOUT" "Test preview layout" "parameter=true"
+argparse "background,--background,-b" "" "Converts and ensures background to be a png"
+argparse "profile,--profile" "" "Generates the profile picture"
+argparse "mpris,--mpris" "MPRIS_PLAYER" "Handles mpris thumbnail generation" "parameter_optional"
+argparse "cava,--cava" "" "Placeholder function for cava"
+argparse "art,--art" "" "Prints the path to the mpris art"
+argparse "--select,-S" "" "Selects the hyprlock layout"
+argparse "--test" "TEST_LAYOUT" "Test layout" "parameter"
+argparse "--test-preview" "TEST_PREVIEW_LAYOUT" "Test preview layout" "parameter"
 
-# Finalize parsing
 argparse_finalize
 
-# Handle the parsed arguments
-[[ $BACKGROUND == true ]] && {
-    fn_background
+case "$ARGPARSE_ACTION" in
+background) fn_background ;;
+profile) fn_profile ;;
+mpris) fn_mpris "$MPRIS_PLAYER" ;;
+cava) fn_cava ;;
+art) fn_art ;;
+select) fn_select ;;
+test) layout_test "$TEST_LAYOUT" ;;
+test-preview) rofi_test_preview "$TEST_PREVIEW_LAYOUT" ;;
+*)
+    ensure_lockscreen_bg_exist
+    check_and_sanitize_process
+    "${LIB_DIR}/hyde/app2unit.sh" -u "$HYPRLOCK_SCOPE_NAME" -t scope -- hyprlock
     exit 0
-}
-[[ $PROFILE == true ]] && {
-    fn_profile
-    exit 0
-}
-[[ $MPRIS_USED == true ]] && {
-    fn_mpris "$MPRIS_PLAYER"
-    exit 0
-}
-[[ $CAVA == true ]] && {
-    fn_cava
-    exit 0
-}
-[[ $ART == true ]] && {
-    fn_art
-    exit 0
-}
-[[ $SELECT == true ]] && {
-    fn_select
-    exit 0
-}
-[[ -n $TEST_LAYOUT ]] && {
-    layout_test "$TEST_LAYOUT"
-    exit 0
-}
-[[ -n $TEST_PREVIEW_LAYOUT ]] && {
-    rofi_test_preview "$TEST_PREVIEW_LAYOUT"
-    exit 0
-}
-
-# Default action if no arguments provided
-if [ ! -f "$HYDE_CACHE_HOME/wallpapers/hyprlock.png" ]; then
-    print_log -sec "hyprlock" -stat "setting" " $HYDE_CACHE_HOME/wallpapers/hyprlock.png"
-    "${LIB_DIR}/hyde/wallpaper.sh" -s "$(readlink "$HYDE_THEME_DIR/wall.set")" --backend hyprlock
-fi
-check_and_sanitize_process
-"${LIB_DIR}/hyde/app2unit.sh" -u "$HYPRLOCK_SCOPE_NAME" -t scope -- hyprlock
-exit 0
+    ;;
+esac

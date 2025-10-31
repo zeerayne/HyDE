@@ -4,37 +4,18 @@ if ! source "$(which hyde-shell)"; then
     echo "[$0] :: Is HyDE installed?"
     exit 1
 fi
+
+# Source argparse.sh for argument parsing
+# shellcheck disable=SC1091
+source "${LIB_DIR}/hyde/shutils/argparse.sh"
+
 confDir="${XDG_CONFIG_HOME:-$HOME/.config}"
 animations_dir="$confDir/hypr/animations"
 if [ ! -d "$animations_dir" ]; then
     notify-send -i "preferences-desktop-display" "Error" "Animations directory does not exist at $animations_dir"
     exit 1
 fi
-show_help() {
-    cat <<HELP
-Usage: $0 [OPTIONS]
 
-Options:
-    --select | -S       Select an animation from the available options  
-    --help   | -h       Show this help message
-HELP
-}
-if [ -z "$*" ]; then
-    echo "No arguments provided"
-    show_help
-fi
-LONGOPTS="select,help"
-PARSED=$(if
-    getopt --options Sh --longoptions "$LONGOPTS" --name "$0" -- "$@"
-then
-    exit 2
-fi)
-eval set -- "$PARSED"
-if [ -z "$1" ]; then
-    echo "No arguments provided"
-    show_help
-    exit 1
-fi
 fn_select() {
     animation_items=$(find -L "$animations_dir" -name "*.conf" ! -name "disable.conf" ! -name "theme.conf" 2>/dev/null | sed 's/\.conf$//')
     if [ -z "$animation_items" ]; then
@@ -80,46 +61,42 @@ $animation_items"
 fn_update() {
     [ -f "$HYDE_STATE_HOME/config" ] && source "$HYDE_STATE_HOME/config"
     [ -f "$HYDE_STATE_HOME/staterc" ] && source "$HYDE_STATE_HOME/staterc"
-    local animDir="$confDir/hypr/animations"
     current_animation=${HYPR_ANIMATION:-"theme"}
     echo "Animation updated to: $current_animation"
-    cat <<EOF >"$confDir/hypr/animations.conf"
+    cat <<-EOF >"$confDir/hypr/animations.conf"
 
-#! ▄▀█ █▄░█ █ █▀▄▀█ ▄▀█ ▀█▀ █ █▀█ █▄░█
-#! █▀█ █░▀█ █ █░▀░█ █▀█ ░█░ █ █▄█ █░▀█
+			#! ▄▀█ █▄░█ █ █▀▄▀█ ▄▀█ ▀█▀ █ █▀█ █▄░█
+			#! █▀█ █░▀█ █ █░▀░█ █▀█ ░█░ █ █▄█ █░▀█
 
 
-#*┌────────────────────────────────────────────────────────────────────────────┐
-#*│ # See https://wiki.hyprland.org/Configuring/Animations/                    │
-#*│ # HyDE Controlled content // DO NOT EDIT                                   │
-#*│ # Edit or add animations in the ./hypr/animations/ directory               │
-#*│ # and run the 'animations.sh --select' command to update this file         │
-#*│                                                                            │
-#*└────────────────────────────────────────────────────────────────────────────┘
+			#*┌────────────────────────────────────────────────────────────────────────────┐
+			#*│ # See https://wiki.hyprland.org/Configuring/Animations/                    │
+			#*│ # HyDE Controlled content // DO NOT EDIT                                   │
+			#*│ # Edit or add animations in the ./hypr/animations/ directory               │
+			#*│ # and run the 'animations.sh --select' command to update this file         │
+			#*│                                                                            │
+			#*└────────────────────────────────────────────────────────────────────────────┘
 
-\$ANIMATION=$current_animation
-\$ANIMATION_PATH=./animations/$current_animation.conf
-source = \$ANIMATION_PATH
-EOF
+			\$ANIMATION=$current_animation
+			\$ANIMATION_PATH=./animations/$current_animation.conf
+			source = \$ANIMATION_PATH
+			EOF
 }
-while true; do
-    case "$1" in
-    -S | --select)
-        fn_select
-        exit 0
-        ;;
-    --help | -h)
-        show_help
-        exit 0
-        ;;
-    --)
-        shift
-        break
-        ;;
-    *)
-        echo "Invalid option: $1"
-        show_help
-        exit 1
-        ;;
-    esac
-done
+
+# Initialize argparse
+argparse_init "$@"
+
+# Set program name and header
+argparse_program "animations.sh"
+argparse_header "HyDE Animation Selector"
+
+# Define arguments
+argparse "--select,-S" "" "Select an animation from the available options"
+
+# Finalize parsing
+argparse_finalize
+
+case $ARGPARSE_ACTION in
+select) fn_select ;;
+*) argparse_help ;;
+esac

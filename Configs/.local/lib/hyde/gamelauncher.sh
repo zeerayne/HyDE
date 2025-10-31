@@ -4,46 +4,30 @@ style=$1
 if [ "$#" -lt 2 ] && [[ $1 =~ ^[0-9]+$ ]]; then
     print_log -y "Please use --backend and --style flags... this usage will be deprecated"
 else
-    SHORTOPTS="s:b:h"
-    LONGOPTS="style:,backend:,help"
-    PARSED=$(getopt --options "$SHORTOPTS" --longoptions "$LONGOPTS" --name "$0" -- "$@")
-    if [[ $? -ne 0 ]]; then
-        exit 2
-    fi
-    eval set -- "$PARSED"
-    while [[ $# -gt 0 ]]; do
-        case $1 in
-        -s | --style)
-            style="$2"
-            shift 2
-            ;;
-        -b | --backend)
-            backend="$2"
-            shift 2
-            ;;
-        -h | --help)
-            cat <<EOF
-Usage: $0 [options]
-  -s, --style   Specify the style
-  -b, --backend Specify the backend
-  -h, --help    Show this help message
-EOF
-            exit 0
-            ;;
-        --)
-            shift
-            break
-            ;;
-        *) shift ;;
-        esac
-    done
+
+    # shellcheck disable=SC1091
+    source "${LIB_DIR}/hyde/shutils/argparse.sh"
+    argparse_init "$@"
+
+    argparse_program "hyde-shell gamelauncher"
+    argparse_header "HyDE Game Launcher"
+
+    argparse "--style,-s" "STYLE" "Specify the style" "parameter"
+    argparse "--backend,-b" "BACKEND" "Specify the backend" "parameter"
+
+    argparse_finalize
+
+    style="${STYLE:-$style}"
+    backend="${BACKEND:-$backend}"
+
 fi
+
 if [[ $style =~ ^[0-9]+$ ]]; then
-    RofiConf="gamelauncher_$style"
+    rofi_config="gamelauncher_$style"
 else
-    RofiConf="${style:-$ROFI_GAMELAUNCHER_STYLE}"
+    rofi_config="${style:-$ROFI_GAMELAUNCHER_STYLE}"
 fi
-RofiConf=${RofiConf:-"steam_deck"}
+rofi_config=${rofi_config:-"steam_deck"}
 elem_border=$((hypr_border * 2))
 icon_border=$((elem_border - 3))
 r_override="element{border-radius:${elem_border}px;} element-icon{border-radius:${icon_border}px;}"
@@ -62,15 +46,17 @@ case ${style:-5} in
     if [ ! -e "$BGfx" ]; then
         magick "$BG" -resize ${monitor_width}x$monitor_height -background none -gravity center -extent ${monitor_width}x$monitor_height "$BGfx"
     fi
-    r_override="window {width: ${monitor_width}px; height: $monitor_height; background-image: url('$BGfx',width);}  
+    r_override="window {width: ${monitor_width}px; height: $monitor_height; background-image: url('$BGfx',width);}
                 element-icon {border-radius:0px;}
                 mainbox { padding: 17% 18%; }
                 "
     ;;
 *) ;;
 esac
+
 backend_command=()
 rofi_args=()
+
 case "$backend" in
 steam)
     backend_command=(python3 "$LIB_DIR/hyde/gamelauncher/steam.py" --rofi-string)
@@ -83,13 +69,16 @@ lutris)
     rofi_args=(-markup-rows)
     ;;
 esac
-CHOICE=$("${backend_command[@]}" | rofi -dmenu -p Catalog \
+
+selected=$("${backend_command[@]}" | rofi -dmenu -p Catalog \
     -theme-str "$r_override" \
     -display-columns 1 \
     "${rofi_args[@]}" \
-    -config "$RofiConf")
-if [ -z "$CHOICE" ]; then
+    -config "$rofi_config")
+if [ -z "$selected" ]; then
     exit 0
 fi
-CMD=${CHOICE#*$'\t'}
-eval exec "$CMD"
+
+cmd=${selected#*$'\t'}
+
+eval exec "$cmd"

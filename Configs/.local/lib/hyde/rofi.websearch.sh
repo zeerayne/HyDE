@@ -5,6 +5,10 @@ if [[ $HYDE_SHELL_INIT -ne 1 ]]; then
 else
     export_hyde_config
 fi
+
+# Source argparse.sh for argument parsing
+source "${LIB_DIR}/hyde/shutils/argparse.sh"
+
 cached_search_dir="${XDG_CACHE_HOME:-$HOME/.cache}/hyde/landing/websearch"
 declare -A SITES SITES_ICON
 search_file=(
@@ -188,46 +192,37 @@ rofi_interactive() {
     fi
 }
 main() {
-    while (($# > 0)); do
-        case $1 in
-        --site | -s)
-            if
-                (($# > 1))
-            then
-                SITE_TO_USE="$2"
-                shift
-            else
-                print_log +r "[error] " +y "--site requires an argument."
-                usage
-            fi
-            ;;
-        --browser | -b)
-            if
-                (($# > 1))
-            then
-                BROWSER="$2"
-                shift
-            else
-                print_log +r "[error] " +y "--browser requires an argument."
-                usage
-            fi
-            ;;
-        --clear-cache)
-            rm -fr "$cached_search_dir"
-            print_log +g "[ok] " +y "cleared cache"
-            exit 0
-            ;;
-        -h | --help)
-            usage
-            ;;
-        *)
-            printf "Unknown option: %s\n" "$1"
-            usage
-            ;;
-        esac
-        shift
-    done
+    # Initialize argparse
+    argparse_init "$@"
+
+    # Set program name and header
+    argparse_program "rofi.websearch.sh"
+    argparse_header "HyDE Web Search"
+
+    # Define arguments
+    argparse "--site,-s" "SITE_TO_USE" "Search-engine to use" "parameter"
+    argparse "--browser,-b" "BROWSER" "Browser to use, defaults to xdg browser" "parameter"
+    argparse "--clear-cache" "" "Reset cache"
+    argparse "--help,-h" "" "Show this help message"
+
+    # Load search engines (needed for usage)
     load_search_engines
-    rofi_interactive
+
+    argparse_finalize
+
+    # Handle arguments
+    case "$ARGPARSE_ACTION" in
+    clear-cache)
+        rm -fr "$cached_search_dir"
+        print_log +g "[ok] " +y "cleared cache"
+        exit 0
+        ;;
+    help)
+        usage
+        ;;
+    *)
+        rofi_interactive
+        ;;
+    esac
 }
 main "$@"
