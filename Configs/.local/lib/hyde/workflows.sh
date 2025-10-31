@@ -4,40 +4,17 @@ if ! source "$(which hyde-shell)"; then
     echo "[$0] :: Is HyDE installed?"
     exit 1
 fi
+
+# Source argparse.sh for argument parsing
+source "${LIB_DIR}/hyde/shutils/argparse.sh"
+
 confDir="${XDG_CONFIG_HOME:-$HOME/.config}"
 workflows_dir="$confDir/hypr/workflows"
 if [ ! -d "$workflows_dir" ]; then
     notify-send -i "preferences-desktop-display" "Error" "Workflows directory does not exist at $workflows_dir"
     exit 1
 fi
-show_help() {
-    cat <<HELP
-Usage: $0 [OPTIONS]
 
-Options:
-    --select | -S       Select a workflow from the available options
-    --set               Set the given workflow
-    --waybar            Get workflow info for Waybar
-    --help   | -h       Show this help message
-    
-HELP
-}
-if [ -z "$*" ]; then
-    echo "No arguments provided"
-    show_help
-fi
-LONG_OPTS="select,set:,waybar,help"
-SHORT_OPTS="Sh"
-PARSED=$(getopt --options $SHORT_OPTS --longoptions "$LONG_OPTS" --name "$0" -- "$@")
-if [ $? -ne 0 ]; then
-    exit 2
-fi
-eval set -- "$PARSED"
-if [ -z "$1" ]; then
-    echo "No arguments provided"
-    show_help
-    exit 1
-fi
 fn_select() {
     default_icon=$(get_hyprConf "WORKFLOW_ICON" "$workflows_dir/default.conf")
     default_icon=${default_icon:0:1}
@@ -122,45 +99,45 @@ handle_waybar() {
     class="custom-workflows"
     echo "{\"text\": \"$text\", \"tooltip\": \"$tooltip\", \"class\": \"$class\"}"
 }
-while true; do
-    case "$1" in
-    -S | --select)
-        fn_select
-        if pgrep -x waybar >/dev/null; then
-            pkill -RTMIN+7 waybar
-        fi
-        exit 0
-        ;;
-    --set)
-        if
-            [ -z "$2" ]
-        then
-            echo "Error: --set requires a workflow name"
-            exit 1
-        fi
-        set_conf "HYPR_WORKFLOW" "$2"
-        fn_update
-        if pgrep -x waybar >/dev/null; then
-            pkill -RTMIN+7 waybar
-        fi
-        exit 0
-        ;;
-    --help | -h)
-        show_help
-        exit 0
-        ;;
-    --waybar)
-        handle_waybar
-        exit 0
-        ;;
-    --)
-        shift
-        break
-        ;;
-    *)
-        echo "Invalid option: $1"
-        show_help
+
+# Initialize argparse
+argparse_init "$@"
+
+# Set program name and header
+argparse_program "hyde-sehll workflows"
+argparse_header "HyDE Workflow Selector"
+
+# Define arguments
+argparse "--set" "WORKFLOW_NAME" "Set the given workflow" "parameter"
+argparse "--select,-S" "" "Select a workflow from the available options"
+argparse "--waybar" "" "Get workflow info for Waybar"
+argparse "--help,-h" "" "Show this help message"
+
+# Finalize parsing
+argparse_finalize
+
+# Handle the parsed arguments
+[[ -z "$ARGPARSE_ACTION" ]] && ARGPARSE_ACTION=help
+
+case "$ARGPARSE_ACTION" in
+select)
+    fn_select
+    if pgrep -x waybar >/dev/null; then
+        pkill -RTMIN+7 waybar
+    fi
+    ;;
+set)
+    if [ -z "$WORKFLOW_NAME" ]; then
+        echo "Error: --set requires a workflow name"
         exit 1
-        ;;
-    esac
-done
+    fi
+    set_conf "HYPR_WORKFLOW" "$WORKFLOW_NAME"
+    fn_update
+    if pgrep -x waybar >/dev/null; then
+        pkill -RTMIN+7 waybar
+    fi
+    ;;
+waybar) handle_waybar ;;
+help) argparse_help ;;
+*) argparse_help ;;
+esac

@@ -29,15 +29,18 @@ argparse() {
 
     # Parse argparse_flags into an associative array
     declare -A flags_map
-    IFS=',' read -r -a flag_pairs <<<"$argparse_flags"
-    for pair in "${flag_pairs[@]}"; do
-        IFS='=' read -r key value <<<"$pair"
-        flags_map["$key"]="$value"
+    IFS=',' read -r -a flag_list <<<"$argparse_flags"
+    for flag in "${flag_list[@]}"; do
+        flags_map["$flag"]=true
     done
 
     # Access flags directly from the associative array
-    local parameter=${flags_map[parameter]:-false} # Default to false (boolean flag)
-    local optional=${flags_map[optional]:-false}   # Default to false
+    local parameter=${flags_map[parameter]:-false}                   # Default to false (boolean flag)
+    local optional=${flags_map[optional]:-false}                     # Default to false
+    local parameter_optional=${flags_map[parameter_optional]:-false} # Alias for optional
+    if [[ "$parameter_optional" == true ]]; then
+        optional=true
+    fi
 
     # Split flags into an array
     IFS=',' read -r -a flag_array <<<"$flags"
@@ -71,6 +74,9 @@ argparse() {
     for ((i = 0; i < ${#ARGPARMS[@]}; i++)); do
         local arg="${ARGPARMS[i]}"
         if [[ " ${flag_array[*]} " == *" $arg "* ]]; then
+            # Set ARGPARSE_ACTION to the action name (remove -- from first flag)
+            # shellcheck disable=SC2034
+            ARGPARSE_ACTION="${flag_array[0]#--}"
             if [[ "$parameter" == true ]]; then
                 # Handle required parameter
                 if ((i + 1 >= ${#ARGPARMS[@]})); then
@@ -79,7 +85,11 @@ argparse() {
                 fi
                 i=$((i + 1)) # Move to the next argument
                 for key in "${!var_map[@]}"; do
-                    eval "$key=\"${ARGPARMS[i]}\""
+                    if [[ -z "${var_map[$key]}" ]]; then
+                        eval "$key=\"${ARGPARMS[i]}\""
+                    else
+                        eval "$key=${var_map[$key]}"
+                    fi
                 done
             elif [[ "$optional" == true ]]; then
                 # Handle optional parameter

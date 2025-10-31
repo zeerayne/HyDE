@@ -17,8 +17,8 @@ fi
 rofi_config="${ROFI_LAUNCH_STYLE:-$rofi_config}"
 font_scale="$ROFI_LAUNCH_SCALE"
 [[ $font_scale =~ ^[0-9]+$ ]] || font_scale=${ROFI_SCALE:-10}
-rofi_args=(
-    -show-icons)
+rofi_args=(-show-icons)
+
 case "$1" in
 d | --drun)
     r_mode="drun"
@@ -58,6 +58,10 @@ h | --help)
     rofi_config="${ROFI_LAUNCH_DRUN_STYLE:-$rofi_config}"
     ;;
 esac
+
+
+
+
 hypr_border="${hypr_border:-10}"
 hypr_width="${hypr_width:-2}"
 wind_border=$((hypr_border * 3))
