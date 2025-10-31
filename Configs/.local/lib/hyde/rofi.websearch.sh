@@ -196,7 +196,7 @@ main() {
     argparse_init "$@"
 
     # Set program name and header
-    argparse_program "rofi.websearch.sh"
+    argparse_program "hyde-shell rofi.websearch"
     argparse_header "HyDE Web Search"
 
     # Define arguments

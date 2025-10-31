@@ -87,7 +87,7 @@ fn_update() {
 argparse_init "$@"
 
 # Set program name and header
-argparse_program "animations.sh"
+argparse_program "hyde-shell animations"
 argparse_header "HyDE Animation Selector"
 
 # Define arguments

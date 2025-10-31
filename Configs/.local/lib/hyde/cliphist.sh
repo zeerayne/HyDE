@@ -299,7 +299,7 @@ main() {
     source "${LIB_DIR}/hyde/shutils/argparse.sh"
 
     argparse_init "$@"
-    argparse_program "cliphist.sh"
+    argparse_program "hyde-shell cliphist"
     argparse_header "HyDE Clipboard Manager"
 
     argparse "--copy,-c" "ACTION=copy" "Show clipboard history and copy selected item"
