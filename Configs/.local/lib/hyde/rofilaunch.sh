@@ -59,9 +59,6 @@ h | --help)
     ;;
 esac
 
-
-
-
 hypr_border="${hypr_border:-10}"
 hypr_width="${hypr_width:-2}"
 wind_border=$((hypr_border * 3))
