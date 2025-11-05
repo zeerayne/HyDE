@@ -8,29 +8,29 @@ tgtPath="$(dirname "$HYDE_THEME_DIR")"
 get_themes
 while getopts "t:w:" option; do
     case $option in
-    t)
-        for x in "${!thmList[@]}"; do
-            if [ "${thmList[x]}" == "$OPTARG" ]; then
-                setTheme="${thmList[x]}"
-                break
+        t)
+            for x in "${!thmList[@]}"; do
+                if [ "${thmList[x]}" == "$OPTARG" ]; then
+                    setTheme="${thmList[x]}"
+                    break
+                fi
+            done
+            [ -z "$setTheme" ] && echo "Error: '$OPTARG' theme not available..." && exit 1
+            ;;
+        w)
+            if
+                [ -f "$OPTARG" ] && file --mime-type "$OPTARG" | grep -q 'image/'
+            then
+                setWall="$OPTARG"
+            else
+                echo "Error: '$OPTARG' is not an image file..."
+                exit 1
             fi
-        done
-        [ -z "$setTheme" ] && echo "Error: '$OPTARG' theme not available..." && exit 1
-        ;;
-    w)
-        if
-            [ -f "$OPTARG" ] && file --mime-type "$OPTARG" | grep -q 'image/'
-        then
-            setWall="$OPTARG"
-        else
-            echo "Error: '$OPTARG' is not an image file..."
-            exit 1
-        fi
-        ;;
-    *)
-        unset setTheme
-        unset setWall
-        ;;
+            ;;
+        *)
+            unset setTheme
+            unset setWall
+            ;;
     esac
 done
 if [ ! -z "$setTheme" ] && [ ! -z "$setWall" ]; then
@@ -45,8 +45,8 @@ if [ ! -z "$setTheme" ] && [ ! -z "$setWall" ]; then
     "$scrDir/themeswitch.sh" -s "$setTheme"
     notify-send -a "HyDE Alert" -i "$thmbDir/$inwallHash.sqre" "Wallpaper set in $setTheme"
 else
-    echo -e "[Desktop Entry]\nType=Service\nMimeType=image/png;image/jpeg;image/jpg;image/gif\nActions=Menu-Refresh$(printf ";%s" "${thmList[@]}")\nX-KDE-Submenu=Set As Wallpaper...\n\n[Desktop Action Menu-Refresh]\nName=.: Refresh List :.\nExec=$scrName" >"$kmenuDesk"
+    echo -e "[Desktop Entry]\nType=Service\nMimeType=image/png;image/jpeg;image/jpg;image/gif\nActions=Menu-Refresh$(printf ";%s" "${thmList[@]}")\nX-KDE-Submenu=Set As Wallpaper...\n\n[Desktop Action Menu-Refresh]\nName=.: Refresh List :.\nExec=$scrName" > "$kmenuDesk"
     for i in "${!thmList[@]}"; do
-        echo -e "\n[Desktop Action ${thmList[i]}]\nName=${thmList[i]}\nExec=$scrName -t \"${thmList[i]}\" -w %u" >>"$kmenuDesk"
+        echo -e "\n[Desktop Action ${thmList[i]}]\nName=${thmList[i]}\nExec=$scrName -t \"${thmList[i]}\" -w %u" >> "$kmenuDesk"
     done
 fi

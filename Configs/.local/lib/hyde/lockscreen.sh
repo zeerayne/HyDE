@@ -11,12 +11,12 @@ argparse "--get" "" "Get the current lockscreen command"
 argparse_finalize
 
 case $ARGPARSE_ACTION in
-get) echo "$lockscreen" && exit 0 ;;
+    get) echo "$lockscreen" && exit 0 ;;
 esac
 
 unit_name="hyde-lockscreen.service"
 args=(-u "$unit_name" -t service)
-if which "$lockscreen.sh" 2>/dev/null 1>&2; then
+if which "$lockscreen.sh" 2> /dev/null 1>&2; then
     printf "Executing $lockscreen wrapper script : %s\n" "$lockscreen.sh"
     app2unit.sh "${args[@]}" -- "$lockscreen.sh" "$@"
 else

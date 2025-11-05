@@ -13,7 +13,7 @@ dict["font-manager"]="font/ttf"
 dict["code-editor"]="text/x-csrc"
 dict["log-viewer"]="text/x-log"
 show_usage() {
-    cat <<USAGE
+    cat << USAGE
 Usage: $0 [options] <mime-type or dict>
 Options:
   --help, -h       Show this help message
@@ -37,7 +37,7 @@ find_mime_type() {
     mime_type=$(awk -v input="$input" '
         BEGIN { IGNORECASE=1 }
         $0 ~ "^" input "=" { print $0; exit }
-    ' "$HOME/.config/mimeapps.list" 2>/dev/null)
+    ' "$HOME/.config/mimeapps.list" 2> /dev/null)
     if [ -z "$mime_type" ]; then
         mime_type=$(awk -v input="$input" '
             BEGIN { IGNORECASE=1 }
@@ -55,26 +55,26 @@ main() {
     fallbackCmd=""
     while [[ $# -gt 0 ]]; do
         case "$1" in
-        --help | -h)
-            show_usage
-            exit 0
-            ;;
-        --std)
-            std_only=true
-            shift
-            ;;
-        --mime)
-            (cat "$HOME/.config/mimeapps.list" || cat /usr/share/mime/types) 2>/dev/null | grep --color=auto "$2"
-            exit 0
-            ;;
-        --fall)
-            fallbackCmd="$2"
-            shift 2
-            ;;
-        *)
-            input="$1"
-            shift
-            ;;
+            --help | -h)
+                show_usage
+                exit 0
+                ;;
+            --std)
+                std_only=true
+                shift
+                ;;
+            --mime)
+                (cat "$HOME/.config/mimeapps.list" || cat /usr/share/mime/types) 2> /dev/null | grep --color=auto "$2"
+                exit 0
+                ;;
+            --fall)
+                fallbackCmd="$2"
+                shift 2
+                ;;
+            *)
+                input="$1"
+                shift
+                ;;
         esac
     done
     if [ -z "$input" ]; then

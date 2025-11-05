@@ -13,7 +13,7 @@ shcat() {
     done
 }
 usage() {
-    shcat <<-EOF
+    shcat <<- EOF
 		Usage:
 		  $SELF_NAME \\
 		    [-h | --help]
@@ -23,7 +23,7 @@ usage() {
             printf '\n'
             printf '    %s\n' '[-t scope|service] \'
             ;;
-        esac)
+    esac)
 		    [{-a app_name | -u unit_id}] \\
 		    [-d description] \\
 		    [-S {out|err|both}] \\
@@ -34,7 +34,7 @@ usage() {
             printf '\n'
             printf '    %s\n' '[-O | --open ] \'
             ;;
-        esac)
+    esac)
 		    [--fuzzel-compat] \\
 		    [--test] \\
 		    [--] $(case "$SELF_NAME" in
@@ -43,11 +43,11 @@ usage() {
             printf '%s\n' '[entry-id.desktop | entry-id.desktop:action-id | command] [args ...]'
             ;;
         *) printf '%s\n' '{entry-id.desktop | entry-id.desktop:action-id | command} [args ...]' ;;
-        esac)
+    esac)
 	EOF
 }
 help() {
-    shcat <<-EOF
+    shcat <<- EOF
 		$SELF_NAME - Application launcher, file opener, default terminal launcher
 		for systemd environments.
 
@@ -85,18 +85,18 @@ help() {
 
 	EOF
     case "$SELF_NAME" in
-    *-term | *-terminal | *-term-scope | *-terminal-scope | *-term-service | *-terminal-service) true ;;
-    *) shcat <<-EOF ;;
-		  -T
-		    Force launch in terminal ($TERMINAL_HANDLER is used). Any unknown option
-		    starting with '-' after this will be passed to $TERMINAL_HANDLER.
-		    Command may be omitted to just launch default terminal.
-		    This mode can also be selected if \$0 ends with '-term' or '-terminal',
-		    also optionally followed by '-scope' or '-service' unit type suffixes.
+        *-term | *-terminal | *-term-scope | *-terminal-scope | *-term-service | *-terminal-service) true ;;
+        *) shcat <<- EOF ;;
+			  -T
+			    Force launch in terminal ($TERMINAL_HANDLER is used). Any unknown option
+			    starting with '-' after this will be passed to $TERMINAL_HANDLER.
+			    Command may be omitted to just launch default terminal.
+			    This mode can also be selected if \$0 ends with '-term' or '-terminal',
+			    also optionally followed by '-scope' or '-service' unit type suffixes.
 
-	EOF
+		EOF
     esac
-    shcat <<-EOF
+    shcat <<- EOF
 		  -S out|err|both
 		    Silence stdout stderr or both.
 
@@ -110,22 +110,22 @@ help() {
 
 	EOF
     case "$SELF_NAME" in
-    *-open | *-open-scope | *-open-service) true ;;
-    *) shcat <<-EOF ;;
-		  -O | --open (also selected by default if \$0 ends with '-open')
-		    Opener mode: argument(s) are treated as file(s) or URL(s) to open.
-		    Desktop Entry for them is found via xdg-mime. Only single association
-		    is supported.
-		    This mode can also be selected if \$0 ends with '-open', also optionally
-		    followed by '-scope' or '-service' unit type suffixes.
+        *-open | *-open-scope | *-open-service) true ;;
+        *) shcat <<- EOF ;;
+			  -O | --open (also selected by default if \$0 ends with '-open')
+			    Opener mode: argument(s) are treated as file(s) or URL(s) to open.
+			    Desktop Entry for them is found via xdg-mime. Only single association
+			    is supported.
+			    This mode can also be selected if \$0 ends with '-open', also optionally
+			    followed by '-scope' or '-service' unit type suffixes.
 
-		  --fuzzel-compat
-		    For using in fuzzel like this:
-		      fuzzel --launch-prefix='app2unit --fuzzel-compat --'
+			  --fuzzel-compat
+			    For using in fuzzel like this:
+			      fuzzel --launch-prefix='app2unit --fuzzel-compat --'
 
-	EOF
+		EOF
     esac
-    shcat <<-EOF
+    shcat <<- EOF
 		  --test
 		    Do not run anything, print command.
 
@@ -134,58 +134,60 @@ help() {
 
 	EOF
     case "$SELF_NAME" in
-    *-open | *-open-scope | *-open-service)
-        shcat <<-EOF
-			File(s)|URL(s):
+        *-open | *-open-scope | *-open-service)
+            shcat <<- EOF
+				File(s)|URL(s):
 
-			  Objects to query xdg-mime for associations and open. The only
-			  restriction is: all given objects should have the same association.
+				  Objects to query xdg-mime for associations and open. The only
+				  restriction is: all given objects should have the same association.
+			EOF
+            ;;
+        *) shcat <<- EOF ;;
+			Desktop Entry or Command:
+
+			  Use Desktop Entry ID, optionally suffixed with Action ID:
+			    entry-id.desktop
+			    entry-id.desktop:action-id
+			  Arguments should be supported by Desktop Entry.
+
+			  Or use a custom command, arguments will be passed as is.
 		EOF
-        ;;
-    *) shcat <<-EOF ;;
-		Desktop Entry or Command:
-
-		  Use Desktop Entry ID, optionally suffixed with Action ID:
-		    entry-id.desktop
-		    entry-id.desktop:action-id
-		  Arguments should be supported by Desktop Entry.
-
-		  Or use a custom command, arguments will be passed as is.
-	EOF
     esac
 }
 error() {
     printf '%s\n' "$@" >&2
-    if [ ! -t 2 ] && command -v notify-send >/dev/null; then
+    if [ ! -t 2 ] && command -v notify-send > /dev/null; then
         notify-send -u critical -i error -a "$SELF_NAME" "Error" "$1"
     fi
 }
 message() {
     printf '%s\n' "$@"
-    if [ ! -t 1 ] && command -v notify-send >/dev/null; then
+    if [ ! -t 1 ] && command -v notify-send > /dev/null; then
         notify-send -u normal -i info -a "$SELF_NAME" "Info" "$1"
     fi
 }
 check_bool() {
     case "$1" in
-    true | True | TRUE | yes | Yes | YES | 1) return 0 ;;
-    false | False | FALSE | no | No | NO | 0) return 1 ;;
-    *)
-        error "Assuming '$1' means no"
-        return 1
-        ;;
+        true | True | TRUE | yes | Yes | YES | 1) return 0 ;;
+        false | False | FALSE | no | No | NO | 0) return 1 ;;
+        *)
+            error "Assuming '$1' means no"
+            return 1
+            ;;
     esac
 }
 if check_bool "${DEBUG-0}"; then
     debug() {
         while IFS='' read -r debug_line; do
             printf 'D: %s\n' "$debug_line"
-        done <<-EOF >&2
+        done <<- EOF >&2
 			$(printf '%s\n' "$@")
 		EOF
     }
 else
-    debug() { :; }
+    debug() {
+        :
+    }
 fi
 replace() {
     r_remainder=$1
@@ -194,7 +196,7 @@ replace() {
         r_left=${r_remainder%%"$2"*}
         REPLACED_STR=$REPLACED_STR$r_left
         case "$r_left" in
-        "$r_remainder") break ;;
+            "$r_remainder") break ;;
         esac
         REPLACED_STR=$REPLACED_STR$3
         r_remainder=${r_remainder#*"$2"}
@@ -226,21 +228,21 @@ find_entry() {
     IFS=$OIFS
     while read -r entry_path <&3; do
         case "$entry_path" in
-        '' | */./) continue ;;
-        */./*/*)
-            replace "${entry_path#*/./}" "/" "-"
-            entry_id=$REPLACED_STR
-            ;;
-        */./*) entry_id=${entry_path#*/./} ;;
+            '' | */./) continue ;;
+            */./*/*)
+                replace "${entry_path#*/./}" "/" "-"
+                entry_id=$REPLACED_STR
+                ;;
+            */./*) entry_id=${entry_path#*/./} ;;
         esac
         case "$entry_id" in
-        "$ENTRY_ID")
-            printf '%s' "$entry_path"
-            return 0
-            ;;
+            "$ENTRY_ID")
+                printf '%s' "$entry_path"
+                return 0
+                ;;
         esac
-    done 3<<-EOP
-		$(find -L "$@" 2>/dev/null)
+    done 3<<- EOP
+		$(find -L "$@" 2> /dev/null)
 	EOP
     error "Could not find entry '$ENTRY_ID'!"
     return 1
@@ -255,38 +257,38 @@ de_expand_str() {
         EXPANDED_STR=$EXPANDED_STR$exp_left
         debug "expander appended: $exp_left"
         case "$exp_left" in
-        "$exp_remainder")
-            debug "expander ended: $EXPANDED_STR"
-            break
-            ;;
+            "$exp_remainder")
+                debug "expander ended: $EXPANDED_STR"
+                break
+                ;;
         esac
         exp_remainder=${exp_remainder#"$exp_left"\\}
         case "$exp_remainder" in
-        s*)
-            EXPANDED_STR=$EXPANDED_STR' '
-            exp_remainder=${exp_remainder#?}
-            debug "expander substituted space"
-            ;;
-        n*)
-            EXPANDED_STR=$EXPANDED_STR$N
-            exp_remainder=${exp_remainder#?}
-            debug "expander substituted newline"
-            ;;
-        t*)
-            EXPANDED_STR=$EXPANDED_STR'	'
-            exp_remainder=${exp_remainder#?}
-            debug "expander substituted tab"
-            ;;
-        r*)
-            EXPANDED_STR=$EXPANDED_STR$(printf '%b' '\r')
-            exp_remainder=${exp_remainder#?}
-            debug "expander substituted caret return"
-            ;;
-        \\*)
-            EXPANDED_STR=$EXPANDED_STR\\
-            exp_remainder=${exp_remainder#?}
-            debug "expander substituted backslash"
-            ;;
+            s*)
+                EXPANDED_STR=$EXPANDED_STR' '
+                exp_remainder=${exp_remainder#?}
+                debug "expander substituted space"
+                ;;
+            n*)
+                EXPANDED_STR=$EXPANDED_STR$N
+                exp_remainder=${exp_remainder#?}
+                debug "expander substituted newline"
+                ;;
+            t*)
+                EXPANDED_STR=$EXPANDED_STR'	'
+                exp_remainder=${exp_remainder#?}
+                debug "expander substituted tab"
+                ;;
+            r*)
+                EXPANDED_STR=$EXPANDED_STR$(printf '%b' '\r')
+                exp_remainder=${exp_remainder#?}
+                debug "expander substituted caret return"
+                ;;
+            \\*)
+                EXPANDED_STR=$EXPANDED_STR\\
+                exp_remainder=${exp_remainder#?}
+                debug "expander substituted backslash"
+                ;;
         esac
     done
 }
@@ -301,10 +303,10 @@ de_tokenize_exec() {
         EXEC_USEP=$EXEC_USEP$tok_left
         debug "tokenizer appended: >$tok_left<"
         case "$tok_remainder" in
-        "$tok_left")
-            debug "tokenizer is out of special chars"
-            break
-            ;;
+            "$tok_left")
+                debug "tokenizer is out of special chars"
+                break
+                ;;
         esac
         tok_remainder=${tok_remainder#"$tok_left"}
         cut=${tok_remainder#?}
@@ -312,78 +314,78 @@ de_tokenize_exec() {
         unset cut
         tok_remainder=${tok_remainder#"$tok_char"}
         case "$tok_in_space$tok_left$tok_char" in
-        1[[:space:]])
-            debug "tokenizer still in space :) skipping space character"
-            continue
-            ;;
-        1*)
-            debug "tokenizer no longer in space :("
-            tok_in_space=0
-            ;;
+            1[[:space:]])
+                debug "tokenizer still in space :) skipping space character"
+                continue
+                ;;
+            1*)
+                debug "tokenizer no longer in space :("
+                tok_in_space=0
+                ;;
         esac
         case "$tok_quoted$tok_char" in
-        '1"')
-            tok_quoted=0
-            debug "tokenizer closed double quotes"
-            continue
-            ;;
-        '0"')
-            tok_quoted=1
-            debug "tokenizer opened double quotes"
-            continue
-            ;;
-        0[\`\$\\\'\>\<\~\|\&\;\*\?\#\(\)])
-            error "$ENTRY_ID: Encountered unquoted character: '$tok_char'"
-            return 1
-            ;;
-        1[\`\$])
-            error "$ENTRY_ID: Encountered unescaped quoted character: '$tok_char'"
-            return 1
-            ;;
-        1\\)
-            case "$tok_remainder" in
-            '')
-                error "$ENTRY_ID: Dangling backslash encountered!"
+            '1"')
+                tok_quoted=0
+                debug "tokenizer closed double quotes"
+                continue
+                ;;
+            '0"')
+                tok_quoted=1
+                debug "tokenizer opened double quotes"
+                continue
+                ;;
+            0[\`\$\\\'\>\<\~\|\&\;\*\?\#\(\)])
+                error "$ENTRY_ID: Encountered unquoted character: '$tok_char'"
                 return 1
                 ;;
-            *)
-                cut=${tok_remainder#?}
-                tok_char=${tok_remainder%"$cut"}
-                tok_remainder=$cut
-                unset cut
+            1[\`\$])
+                error "$ENTRY_ID: Encountered unescaped quoted character: '$tok_char'"
+                return 1
+                ;;
+            1\\)
+                case "$tok_remainder" in
+                    '')
+                        error "$ENTRY_ID: Dangling backslash encountered!"
+                        return 1
+                        ;;
+                    *)
+                        cut=${tok_remainder#?}
+                        tok_char=${tok_remainder%"$cut"}
+                        tok_remainder=$cut
+                        unset cut
+                        EXEC_USEP=$EXEC_USEP$tok_char
+                        debug "tokenizer appended escaped: >$tok_char<"
+                        ;;
+                esac
+                ;;
+            0[[:space:]])
+                case "$tok_remainder" in
+                    *[![:space:]]*)
+                        EXEC_USEP=$EXEC_USEP$USEP
+                        tok_in_space=1
+                        debug "tokenizer entered spaaaaaace!!!! separator appended"
+                        ;;
+                    *)
+                        debug "tokenizer entered outer spaaaaaace!!!! separator skipped, this is the end"
+                        break
+                        ;;
+                esac
+                ;;
+            1[[:space:]\'\>\<\~\|\&\;\*\?\#\(\)])
                 EXEC_USEP=$EXEC_USEP$tok_char
-                debug "tokenizer appended escaped: >$tok_char<"
-                ;;
-            esac
-            ;;
-        0[[:space:]])
-            case "$tok_remainder" in
-            *[![:space:]]*)
-                EXEC_USEP=$EXEC_USEP$USEP
-                tok_in_space=1
-                debug "tokenizer entered spaaaaaace!!!! separator appended"
+                debug "tokenizer appended quoted char: >$tok_char<"
                 ;;
             *)
-                debug "tokenizer entered outer spaaaaaace!!!! separator skipped, this is the end"
-                break
+                error "$ENTRY_ID: parsing error at char '$tok_char', (quoted: $tok_quoted)"
+                return 1
                 ;;
-            esac
-            ;;
-        1[[:space:]\'\>\<\~\|\&\;\*\?\#\(\)])
-            EXEC_USEP=$EXEC_USEP$tok_char
-            debug "tokenizer appended quoted char: >$tok_char<"
-            ;;
-        *)
-            error "$ENTRY_ID: parsing error at char '$tok_char', (quoted: $tok_quoted)"
-            return 1
-            ;;
         esac
     done
     case "$tok_quoted" in
-    1)
-        error "$ENTRY_ID: Double quote was not closed!"
-        return 1
-        ;;
+        1)
+            error "$ENTRY_ID: Double quote was not closed!"
+            return 1
+            ;;
     esac
     debug "tokenizer ended:" "$(
         IFS=$USEP
@@ -397,91 +399,91 @@ de_inject_fields() {
     IFS=$USEP
     for arg in $EXEC_RSEP_USEP; do
         case "$arg" in
-        *[!%]'%'[dDnNvm]* | '%'[dDnNvm]*) debug "injector removed deprecated '$arg'" ;;
-        *[!%]'%'[fFuU]* | '%'[fFuU]*)
-            case "$fu_found" in
-            true)
-                error "$ENTRY_ID: Encountered more than one %[fFuU] field!"
-                return 1
+            *[!%]'%'[dDnNvm]* | '%'[dDnNvm]*) debug "injector removed deprecated '$arg'" ;;
+            *[!%]'%'[fFuU]* | '%'[fFuU]*)
+                case "$fu_found" in
+                    true)
+                        error "$ENTRY_ID: Encountered more than one %[fFuU] field!"
+                        return 1
+                        ;;
+                esac
+                fu_found=true
+                if [ "$#" -eq "0" ]; then
+                    debug "injector removed '$arg'"
+                    continue
+                fi
+                case "$arg" in
+                    *[!%]'%F'* | *'%F'?* | *[!%]'%U'* | *'%U'?*)
+                        error "$ENTRY_ID: Encountered non-standalone field '$arg'"
+                        return 1
+                        ;;
+                    *[!%]'%f'* | '%f'*)
+                        for carg in "$@"; do
+                            replace "$arg" "%f" "$carg"
+                            carg=$REPLACED_STR
+                            debug "injector adding '$arg' iteration as '$carg'"
+                            exec_iter_usep=$exec_iter_usep${exec_iter_usep:+$USEP}$carg
+                        done
+                        exec_usep=$exec_usep${exec_usep:+$USEP}%%__ITER__%%
+                        ;;
+                    '%F')
+                        for carg in "$@"; do
+                            debug "injector extending '$arg' with '$carg'"
+                            exec_usep=$exec_usep${exec_usep:+$USEP}$carg
+                        done
+                        ;;
+                    *[!%]'%u'* | '%u'*)
+                        for carg in "$@"; do
+                            carg=$(urlencode "$carg")
+                            replace "$arg" "%u" "$carg"
+                            carg=$REPLACED_STR
+                            debug "injector adding '$arg' iteration as '$carg'"
+                            exec_iter_usep=$exec_iter_usep${exec_iter_usep:+$USEP}$carg
+                        done
+                        exec_usep=$exec_usep${exec_usep:+$USEP}%%__ITER__%%
+                        ;;
+                    '%U')
+                        for carg in "$@"; do
+                            carg=$(urlencode "$carg")
+                            debug "injector extending '$arg' with '$carg'"
+                            exec_usep=$exec_usep${exec_usep:+$USEP}$carg
+                        done
+                        ;;
+                    *) error "$ENTRY_ID: not implemented '$arg'" ;;
+                esac
                 ;;
-            esac
-            fu_found=true
-            if [ "$#" -eq "0" ]; then
-                debug "injector removed '$arg'"
-                continue
-            fi
-            case "$arg" in
-            *[!%]'%F'* | *'%F'?* | *[!%]'%U'* | *'%U'?*)
-                error "$ENTRY_ID: Encountered non-standalone field '$arg'"
-                return 1
+            *[!%]'%i'* | '%i'*)
+                if
+                    [ -n "$ENTRY_ICON" ]
+                then
+                    replace "$arg" "%i" "$ENTRY_ICON"
+                    rarg=$REPLACED_STR
+                    debug "injector replacing '%i': '$arg' -> '$rarg'"
+                    exec_usep=$exec_usep${exec_usep:+$USEP}$rarg
+                else
+                    debug "injector removed '$rarg'"
+                fi
                 ;;
-            *[!%]'%f'* | '%f'*)
-                for carg in "$@"; do
-                    replace "$arg" "%f" "$carg"
-                    carg=$REPLACED_STR
-                    debug "injector adding '$arg' iteration as '$carg'"
-                    exec_iter_usep=$exec_iter_usep${exec_iter_usep:+$USEP}$carg
-                done
-                exec_usep=$exec_usep${exec_usep:+$USEP}%%__ITER__%%
-                ;;
-            '%F')
-                for carg in "$@"; do
-                    debug "injector extending '$arg' with '$carg'"
-                    exec_usep=$exec_usep${exec_usep:+$USEP}$carg
-                done
-                ;;
-            *[!%]'%u'* | '%u'*)
-                for carg in "$@"; do
-                    carg=$(urlencode "$carg")
-                    replace "$arg" "%u" "$carg"
-                    carg=$REPLACED_STR
-                    debug "injector adding '$arg' iteration as '$carg'"
-                    exec_iter_usep=$exec_iter_usep${exec_iter_usep:+$USEP}$carg
-                done
-                exec_usep=$exec_usep${exec_usep:+$USEP}%%__ITER__%%
-                ;;
-            '%U')
-                for carg in "$@"; do
-                    carg=$(urlencode "$carg")
-                    debug "injector extending '$arg' with '$carg'"
-                    exec_usep=$exec_usep${exec_usep:+$USEP}$carg
-                done
-                ;;
-            *) error "$ENTRY_ID: not implemented '$arg'" ;;
-            esac
-            ;;
-        *[!%]'%i'* | '%i'*)
-            if
-                [ -n "$ENTRY_ICON" ]
-            then
-                replace "$arg" "%i" "$ENTRY_ICON"
+            *[!%]'%c'* | '%c'*)
+                replace "$arg" "%c" "$ENTRY_NAME"
                 rarg=$REPLACED_STR
-                debug "injector replacing '%i': '$arg' -> '$rarg'"
+                debug "injector replacing '%c': '$arg' -> '$rarg'"
                 exec_usep=$exec_usep${exec_usep:+$USEP}$rarg
-            else
-                debug "injector removed '$rarg'"
-            fi
-            ;;
-        *[!%]'%c'* | '%c'*)
-            replace "$arg" "%c" "$ENTRY_NAME"
-            rarg=$REPLACED_STR
-            debug "injector replacing '%c': '$arg' -> '$rarg'"
-            exec_usep=$exec_usep${exec_usep:+$USEP}$rarg
-            ;;
-        *[!%]%%* | %%*)
-            replace "$arg" "%%" "%"
-            rarg=$REPLACED_STR
-            debug "injector replacing '%%': '$arg' -> '$rarg'"
-            exec_usep=$exec_usep${exec_usep:+$USEP}$rarg
-            ;;
-        *%?* | *[!%]%)
-            error "$ENTRY_ID: unknown % field in argument '$arg'"
-            return 1
-            ;;
-        *)
-            debug "injector keeped: '$arg'"
-            exec_usep=$exec_usep${exec_usep:+$USEP}$arg
-            ;;
+                ;;
+            *[!%]%%* | %%*)
+                replace "$arg" "%%" "%"
+                rarg=$REPLACED_STR
+                debug "injector replacing '%%': '$arg' -> '$rarg'"
+                exec_usep=$exec_usep${exec_usep:+$USEP}$rarg
+                ;;
+            *%?* | *[!%]%)
+                error "$ENTRY_ID: unknown % field in argument '$arg'"
+                return 1
+                ;;
+            *)
+                debug "injector keeped: '$arg'"
+                exec_usep=$exec_usep${exec_usep:+$USEP}$arg
+                ;;
         esac
     done
     if [ -n "$exec_iter_usep" ]; then
@@ -504,179 +506,179 @@ parse_entry_key() {
     in_main=$5
     in_action=$6
     case "$in_action;$key" in
-    'false;'* | 'true;Name' | 'true;Name['*']' | 'true;Exec' | 'true;Icon') true ;;
-    *)
-        error "$ENTRY_ID: Encountered '$key' key inside action!"
-        return 1
-        ;;
+        'false;'* | 'true;Name' | 'true;Name['*']' | 'true;Exec' | 'true;Icon') true ;;
+        *)
+            error "$ENTRY_ID: Encountered '$key' key inside action!"
+            return 1
+            ;;
     esac
     case "$key" in
-    Type)
-        debug "captured '$key' '$value'"
-        case "$value" in
-        Application | Link) ENTRY_TYPE=$value ;;
-        *)
-            error "$ENTRY_ID: Unsupported type '$value'!"
+        Type)
+            debug "captured '$key' '$value'"
+            case "$value" in
+                Application | Link) ENTRY_TYPE=$value ;;
+                *)
+                    error "$ENTRY_ID: Unsupported type '$value'!"
+                    return 1
+                    ;;
+            esac
+            ;;
+        Actions)
+            [ -z "$action" ] && return 0
+            debug "checking for '$action' in Actions '$value'"
+            IFS=';'
+            for check_action in $value; do
+                case "$check_action" in
+                    "$action")
+                        action_listed=true
+                        return 0
+                        ;;
+                esac
+            done
+            error "$ENTRY_ID: Action '$action' is not listed in entry!"
             return 1
             ;;
-        esac
-        ;;
-    Actions)
-        [ -z "$action" ] && return 0
-        debug "checking for '$action' in Actions '$value'"
-        IFS=';'
-        for check_action in $value; do
-            case "$check_action" in
-            "$action")
-                action_listed=true
+        TryExec)
+            debug "checking TryExec executable '$value'"
+            de_expand_str "$value"
+            value=$EXPANDED_STR
+            if ! type "$value" > /dev/null 2>&1; then
+                error "$ENTRY_ID: TryExec '$value' failed!"
+                return 1
+            fi
+            ;;
+        Hidden)
+            debug "checking boolean Hidden '$value'"
+            case "$value" in
+                true)
+                    error "$ENTRY_ID: Entry is Hidden"
+                    return 1
+                    ;;
+            esac
+            ;;
+        Exec)
+            case "$read_exec" in
+                false)
+                    debug "ignored Exec from wrong section"
+                    return 0
+                    ;;
+            esac
+            case "$in_action" in
+                true) action_exec=true ;;
+            esac
+            debug "read Exec '$value'"
+            if [ -n "$EXEC_RSEP_USEP" ]; then
+                debug "skipping re-filling exec array"
                 return 0
-                ;;
+            fi
+            de_expand_str "$value"
+            de_tokenize_exec "$EXPANDED_STR"
+            EXEC_RSEP_USEP=$EXEC_USEP
+            IFS=$USEP read -r exec0 _rest <<- EOCMD
+				$EXEC_RSEP_USEP
+			EOCMD
+            case "$exec0" in
+                '')
+                    error "$ENTRY_ID: Could not extract Exec[0]!"
+                    return 1
+                    ;;
+                */*)
+                    EXEC_NAME=${exec0##*/}
+                    EXEC_PATH=$exec0
+                    ;;
+                *) EXEC_NAME=$exec0 ;;
             esac
-        done
-        error "$ENTRY_ID: Action '$action' is not listed in entry!"
-        return 1
-        ;;
-    TryExec)
-        debug "checking TryExec executable '$value'"
-        de_expand_str "$value"
-        value=$EXPANDED_STR
-        if ! type "$value" >/dev/null 2>&1; then
-            error "$ENTRY_ID: TryExec '$value' failed!"
-            return 1
-        fi
-        ;;
-    Hidden)
-        debug "checking boolean Hidden '$value'"
-        case "$value" in
-        true)
-            error "$ENTRY_ID: Entry is Hidden"
-            return 1
+            debug "checking Exec[0] executable '${EXEC_PATH:-$EXEC_NAME}'"
+            if ! type "${EXEC_PATH:-$EXEC_NAME}" > /dev/null 2>&1; then
+                error "$ENTRY_ID: Exec command '${EXEC_PATH:-$EXEC_NAME}' not found"
+                return 1
+            fi
             ;;
-        esac
-        ;;
-    Exec)
-        case "$read_exec" in
-        false)
-            debug "ignored Exec from wrong section"
-            return 0
-            ;;
-        esac
-        case "$in_action" in
-        true) action_exec=true ;;
-        esac
-        debug "read Exec '$value'"
-        if [ -n "$EXEC_RSEP_USEP" ]; then
-            debug "skipping re-filling exec array"
-            return 0
-        fi
-        de_expand_str "$value"
-        de_tokenize_exec "$EXPANDED_STR"
-        EXEC_RSEP_USEP=$EXEC_USEP
-        IFS=$USEP read -r exec0 _rest <<-EOCMD
-			$EXEC_RSEP_USEP
-		EOCMD
-        case "$exec0" in
-        '')
-            error "$ENTRY_ID: Could not extract Exec[0]!"
-            return 1
-            ;;
-        */*)
-            EXEC_NAME=${exec0##*/}
-            EXEC_PATH=$exec0
-            ;;
-        *) EXEC_NAME=$exec0 ;;
-        esac
-        debug "checking Exec[0] executable '${EXEC_PATH:-$EXEC_NAME}'"
-        if ! type "${EXEC_PATH:-$EXEC_NAME}" >/dev/null 2>&1; then
-            error "$ENTRY_ID: Exec command '${EXEC_PATH:-$EXEC_NAME}' not found"
-            return 1
-        fi
-        ;;
-    URL)
-        debug "captured '$key' '$value'"
-        de_expand_str "$value"
-        ENTRY_URL=$EXPANDED_STR
-        ;;
-    "Name[$LCODE]")
-        case "${in_main}_$in_action" in
-        true_false)
+        URL)
             debug "captured '$key' '$value'"
             de_expand_str "$value"
-            ENTRY_LNAME=$EXPANDED_STR
+            ENTRY_URL=$EXPANDED_STR
             ;;
-        false_true)
-            debug "captured '$key' '$value'"
-            de_expand_str "$value"
-            ENTRY_LNAME_ACTION=$EXPANDED_STR
-            ;;
-        *) debug "discarded '$key' '$value'" ;;
-        esac
-        ;;
-    Name)
-        case "${in_main}_$in_action" in
-        true_false)
-            debug "captured '$key' '$value'"
-            de_expand_str "$value"
-            ENTRY_NAME=$EXPANDED_STR
-            ;;
-        false_true)
-            debug "captured '$key' '$value'"
-            de_expand_str "$value"
-            ENTRY_NAME_ACTION=$EXPANDED_STR
-            ;;
-        *) debug "discarded '$key' '$value'" ;;
-        esac
-        ;;
-    "GenericName[$LCODE]")
-        debug "captured '$key' '$value'"
-        de_expand_str "$value"
-        ENTRY_LCOMMENT=$EXPANDED_STR
-        ;;
-    GenericName)
-        debug "captured '$key' '$value'"
-        de_expand_str "$value"
-        ENTRY_COMMENT=$EXPANDED_STR
-        ;;
-    Icon)
-        if
-            [ "$in_main" = "true" ] || [ "$in_action" = "true" ]
-        then
-            debug "captured '$key' '$value'"
-            de_expand_str "$value"
-            ENTRY_ICON=$EXPANDED_STR
-        else
-            debug "discarded '$key' '$value'"
-        fi
-        ;;
-    Path)
-        debug "captured '$key' '$value'"
-        de_expand_str "$value"
-        ENTRY_WORKDIR=$EXPANDED_STR
-        if [ ! -e "$ENTRY_WORKDIR" ]; then
-            error "$ENTRY_ID: Requested 'Path' '$ENTRY_WORKDIR' does not exist!"
-            return 1
-        elif [ ! -d "$ENTRY_WORKDIR" ]; then
-            error "$ENTRY_ID: Requested 'Path' '$ENTRY_WORKDIR' is not a directory!"
-            return 1
-        fi
-        ;;
-    Terminal)
-        debug "captured '$key' '$value'"
-        case "$FUZZEL_COMPAT" in
-        true)
-            debug "ignoring Terminal in fuzzel compat mode"
-            return 0
-            ;;
-        esac
-        case "$value" in
-        true)
-            case "$TERMINAL" in
-            false) check_terminal_handler ;;
+        "Name[$LCODE]")
+            case "${in_main}_$in_action" in
+                true_false)
+                    debug "captured '$key' '$value'"
+                    de_expand_str "$value"
+                    ENTRY_LNAME=$EXPANDED_STR
+                    ;;
+                false_true)
+                    debug "captured '$key' '$value'"
+                    de_expand_str "$value"
+                    ENTRY_LNAME_ACTION=$EXPANDED_STR
+                    ;;
+                *) debug "discarded '$key' '$value'" ;;
             esac
-            TERMINAL=true
             ;;
-        esac
-        ;;
+        Name)
+            case "${in_main}_$in_action" in
+                true_false)
+                    debug "captured '$key' '$value'"
+                    de_expand_str "$value"
+                    ENTRY_NAME=$EXPANDED_STR
+                    ;;
+                false_true)
+                    debug "captured '$key' '$value'"
+                    de_expand_str "$value"
+                    ENTRY_NAME_ACTION=$EXPANDED_STR
+                    ;;
+                *) debug "discarded '$key' '$value'" ;;
+            esac
+            ;;
+        "GenericName[$LCODE]")
+            debug "captured '$key' '$value'"
+            de_expand_str "$value"
+            ENTRY_LCOMMENT=$EXPANDED_STR
+            ;;
+        GenericName)
+            debug "captured '$key' '$value'"
+            de_expand_str "$value"
+            ENTRY_COMMENT=$EXPANDED_STR
+            ;;
+        Icon)
+            if
+                [ "$in_main" = "true" ] || [ "$in_action" = "true" ]
+            then
+                debug "captured '$key' '$value'"
+                de_expand_str "$value"
+                ENTRY_ICON=$EXPANDED_STR
+            else
+                debug "discarded '$key' '$value'"
+            fi
+            ;;
+        Path)
+            debug "captured '$key' '$value'"
+            de_expand_str "$value"
+            ENTRY_WORKDIR=$EXPANDED_STR
+            if [ ! -e "$ENTRY_WORKDIR" ]; then
+                error "$ENTRY_ID: Requested 'Path' '$ENTRY_WORKDIR' does not exist!"
+                return 1
+            elif [ ! -d "$ENTRY_WORKDIR" ]; then
+                error "$ENTRY_ID: Requested 'Path' '$ENTRY_WORKDIR' is not a directory!"
+                return 1
+            fi
+            ;;
+        Terminal)
+            debug "captured '$key' '$value'"
+            case "$FUZZEL_COMPAT" in
+                true)
+                    debug "ignoring Terminal in fuzzel compat mode"
+                    return 0
+                    ;;
+            esac
+            case "$value" in
+                true)
+                    case "$TERMINAL" in
+                        false) check_terminal_handler ;;
+                    esac
+                    TERMINAL=true
+                    ;;
+            esac
+            ;;
     esac
 }
 alias parse_entry_key='IFS= parse_entry_key'
@@ -692,55 +694,57 @@ read_entry_path() {
     debug "reading desktop entry '$entry_path'${entry_action:+ action '$entry_action'}"
     while read -r line; do
         case $line in
-        '[Desktop Entry]'*)
-            debug "entered section: $line"
-            in_main=true
-            if [ -z "$entry_action" ]; then
-                read_exec=true
+            '[Desktop Entry]'*)
+                debug "entered section: $line"
+                in_main=true
+                if [ -z "$entry_action" ]; then
+                    read_exec=true
+                    break_on_next_section=true
+                fi
+                ;;
+            [a-zA-Z0-9-]*=*)
+                IFS='=' read -r key value <<- EOL
+					$line
+				EOL
+                {
+                    read -r key && read -r value
+                } <<- EOL
+					$key
+					$value
+				EOL
+                parse_entry_key "$key" "$value" "$entry_action" "$read_exec" "$in_main" "$in_action" || return 1
+                ;;
+            "[Desktop Action $entry_action]"*)
+                debug "entered section: $line"
+                in_main=false
                 break_on_next_section=true
-            fi
-            ;;
-        [a-zA-Z0-9-]*=*)
-            IFS='=' read -r key value <<-EOL
-				$line
-			EOL
-            { read -r key && read -r value; } <<-EOL
-				$key
-				$value
-			EOL
-            parse_entry_key "$key" "$value" "$entry_action" "$read_exec" "$in_main" "$in_action" || return 1
-            ;;
-        "[Desktop Action $entry_action]"*)
-            debug "entered section: $line"
-            in_main=false
-            break_on_next_section=true
-            case "$action_listed" in
-            true)
-                read_exec=true
-                in_action=true
+                case "$action_listed" in
+                    true)
+                        read_exec=true
+                        in_action=true
+                        ;;
+                    *)
+                        error "$ENTRY_ID: Action '$entry_action' is not listed in Actions key!"
+                        return 1
+                        ;;
+                esac
                 ;;
-            *)
-                error "$ENTRY_ID: Action '$entry_action' is not listed in Actions key!"
-                return 1
+            '['*)
+                debug "entered section: $line"
+                [ "$break_on_next_section" = "true" ] && break
+                in_main=false
+                in_action=false
+                read_exec=false
                 ;;
-            esac
-            ;;
-        '['*)
-            debug "entered section: $line"
-            [ "$break_on_next_section" = "true" ] && break
-            in_main=false
-            in_action=false
-            read_exec=false
-            ;;
         esac
-    done <"$entry_path"
+    done < "$entry_path"
     if [ -n "$entry_action" ]; then
         case "$action_listed" in
-        true) true ;;
-        *)
-            error "$ENTRY_ID: Action '$entry_action' is not listed in Actions key or does not exist!"
-            return 1
-            ;;
+            true) true ;;
+            *)
+                error "$ENTRY_ID: Action '$entry_action' is not listed in Actions key or does not exist!"
+                return 1
+                ;;
         esac
         if [ "$action_exec" != "true" ] || [ -z "${ENTRY_LNAME_ACTION:-$ENTRY_NAME_ACTION}" ]; then
             error "$ENTRY_ID: Action '$entry_action' is incomplete"
@@ -748,70 +752,70 @@ read_entry_path() {
         fi
     fi
     case "$ENTRY_TYPE;;$EXEC_RSEP_USEP;;$ENTRY_URL" in
-    'Application;;'?*';;' | 'Link;;;;'?*) true ;;
-    ';;'*)
-        error "$ENTRY_ID: type not specified!"
-        return 1
-        ;;
-    *)
-        error "$ENTRY_ID: type and keys mismatch: '$ENTRY_TYPE', Exec is$([ -z "$EXEC_RSEP_USEP" ] && echo ' not') set, URL is$([ -z "$ENTRY_URL" ] && echo ' not') set"
-        return 1
-        ;;
+        'Application;;'?*';;' | 'Link;;;;'?*) true ;;
+        ';;'*)
+            error "$ENTRY_ID: type not specified!"
+            return 1
+            ;;
+        *)
+            error "$ENTRY_ID: type and keys mismatch: '$ENTRY_TYPE', Exec is$([ -z "$EXEC_RSEP_USEP" ] && echo ' not') set, URL is$([ -z "$ENTRY_URL" ] && echo ' not') set"
+            return 1
+            ;;
     esac
 }
 random_string() {
-    tr -dc '0-9a-f' </dev/urandom 2>/dev/null | head -c 8
+    tr -dc '0-9a-f' < /dev/urandom 2> /dev/null | head -c 8
 }
 validate_entry_id() {
     case "$1" in
-    *[!a-zA-Z0-9_.-]* | *[!a-zA-Z0-9_.-] | [!a-zA-Z0-9_.-]* | [!a-zA-Z0-9_.-] | '' | .desktop)
-        debug "string not valid as Entry ID: '$1'"
-        return 1
-        ;;
-    *.desktop) return 0 ;;
-    *)
-        debug "string not valid as Entry ID '$1'"
-        return 1
-        ;;
+        *[!a-zA-Z0-9_.-]* | *[!a-zA-Z0-9_.-] | [!a-zA-Z0-9_.-]* | [!a-zA-Z0-9_.-] | '' | .desktop)
+            debug "string not valid as Entry ID: '$1'"
+            return 1
+            ;;
+        *.desktop) return 0 ;;
+        *)
+            debug "string not valid as Entry ID '$1'"
+            return 1
+            ;;
     esac
 }
 validate_action_id() {
     case "$1" in
-    '') return 0 ;;
-    *[!a-zA-Z0-9-]* | *[!a-zA-Z0-9-] | [!a-zA-Z0-9-]* | [!a-zA-Z0-9-])
-        debug "string not valid as Action ID: '$1'"
-        return 1
-        ;;
-    *) return 0 ;;
+        '') return 0 ;;
+        *[!a-zA-Z0-9-]* | *[!a-zA-Z0-9-] | [!a-zA-Z0-9-]* | [!a-zA-Z0-9-])
+            debug "string not valid as Action ID: '$1'"
+            return 1
+            ;;
+        *) return 0 ;;
     esac
 }
 urlencode() {
     string=$1
     case "$string" in
-    *[a-zA-Z0-9_-]://*)
-        echo "$string"
-        return
-        ;;
-    /*) true ;;
-    *) string=$(pwd)/$string ;;
+        *[a-zA-Z0-9_-]://*)
+            echo "$string"
+            return
+            ;;
+        /*) true ;;
+        *) string=$(pwd)/$string ;;
     esac
     printf '%s' 'file://'
     case "$string" in
-    *[!._~0-9A-Za-z/-]*)
-        while
-            [ -n "$string" ]
-        do
-            right=${string#?}
-            char=${string%"$right"}
-            debug "urlencode string $string" "urlencode right $right" "urlencode char $char"
-            case $char in
-            [._~0-9A-Za-z/-]) printf '%s' "$char" ;;
-            *) printf '%%%02x' "'$char" ;;
-            esac
-            string=$right
-        done
-        ;;
-    *) printf '%s' "$string" ;;
+        *[!._~0-9A-Za-z/-]*)
+            while
+                [ -n "$string" ]
+            do
+                right=${string#?}
+                char=${string%"$right"}
+                debug "urlencode string $string" "urlencode right $right" "urlencode char $char"
+                case $char in
+                    [._~0-9A-Za-z/-]) printf '%s' "$char" ;;
+                    *) printf '%%%02x' "'$char" ;;
+                esac
+                string=$right
+            done
+            ;;
+        *) printf '%s' "$string" ;;
     esac
 }
 gen_unit_id() {
@@ -829,34 +833,34 @@ gen_unit_id() {
             UNIT_DESKTOP_SUBSTRING=NoDesktop
         fi
         case "$UNIT_DESKTOP_SUBSTRING$UNIT_APP_SUBSTRING" in
-        *[!a-zA-Z:_.]*)
-            read -r UNIT_DESKTOP_SUBSTRING UNIT_APP_SUBSTRING <<-EOL
-				$(systemd-escape "A$UNIT_DESKTOP_SUBSTRING" "A$UNIT_APP_SUBSTRING")
-			EOL
-            UNIT_DESKTOP_SUBSTRING=${UNIT_DESKTOP_SUBSTRING#A}
-            UNIT_APP_SUBSTRING=${UNIT_APP_SUBSTRING#A}
-            ;;
+            *[!a-zA-Z:_.]*)
+                read -r UNIT_DESKTOP_SUBSTRING UNIT_APP_SUBSTRING <<- EOL
+					$(systemd-escape "A$UNIT_DESKTOP_SUBSTRING" "A$UNIT_APP_SUBSTRING")
+				EOL
+                UNIT_DESKTOP_SUBSTRING=${UNIT_DESKTOP_SUBSTRING#A}
+                UNIT_APP_SUBSTRING=${UNIT_APP_SUBSTRING#A}
+                ;;
         esac
         RANDOM_STRING=$(random_string)
         case "$UNIT_TYPE" in
-        service)
-            UNIT_ID="app-$UNIT_DESKTOP_SUBSTRING-$UNIT_APP_SUBSTRING@$RANDOM_STRING.service"
-            ;;
-        scope)
-            UNIT_ID="app-$UNIT_DESKTOP_SUBSTRING-$UNIT_APP_SUBSTRING-$RANDOM_STRING.scope"
-            ;;
-        *)
-            error "Unsupported unit type '$UNIT_TYPE'!"
-            return 1
-            ;;
+            service)
+                UNIT_ID="app-$UNIT_DESKTOP_SUBSTRING-$UNIT_APP_SUBSTRING@$RANDOM_STRING.service"
+                ;;
+            scope)
+                UNIT_ID="app-$UNIT_DESKTOP_SUBSTRING-$UNIT_APP_SUBSTRING-$RANDOM_STRING.scope"
+                ;;
+            *)
+                error "Unsupported unit type '$UNIT_TYPE'!"
+                return 1
+                ;;
         esac
     else
         case "$UNIT_ID" in
-        *?".$UNIT_TYPE") true ;;
-        *)
-            error "Unit ID '$UNIT_ID' is not of type '$UNIT_TYPE'"
-            return 1
-            ;;
+            *?".$UNIT_TYPE") true ;;
+            *)
+                error "Unit ID '$UNIT_ID' is not of type '$UNIT_TYPE'"
+                return 1
+                ;;
         esac
     fi
     if [ "${#UNIT_ID}" -gt "254" ]; then
@@ -864,15 +868,15 @@ gen_unit_id() {
         return 1
     fi
     case "$UNIT_ID" in
-    .service | .scope | '')
-        error "Unit ID is empty!"
-        return 1
-        ;;
-    *.service | *.scope) true ;;
-    *)
-        error "Invalid Unit ID '$UNIT_ID'!"
-        return 1
-        ;;
+        .service | .scope | '')
+            error "Unit ID is empty!"
+            return 1
+            ;;
+        *.service | *.scope) true ;;
+        *)
+            error "Invalid Unit ID '$UNIT_ID'!"
+            return 1
+            ;;
     esac
 }
 randomize_unit_id() {
@@ -913,43 +917,43 @@ systemd_run() {
         set -- --same-dir "$@"
     fi
     case "$UNIT_TYPE" in
-    scope) set -- --scope "$@" ;;
-    service)
-        set -- --property=Type=exec --property=ExitType=cgroup "$@"
-        case "$SILENT" in
-        out)
-            set -- --property=StandardOutput=null "$@"
-            dso=''
-            dse=''
-            while IFS='=' read -r key value; do
-                case "$key" in
-                DefaultStandardOutput) dso=$value ;;
-                DefaultStandardError) dse=$value ;;
-                esac
-            done <<-EOF
-				$(systemctl --user show --property DefaultStandardOutput --property DefaultStandardError)
-			EOF
-            case "$dse" in
-            inherit) set -- --property=StandardError="$dso" "$@" ;;
+        scope) set -- --scope "$@" ;;
+        service)
+            set -- --property=Type=exec --property=ExitType=cgroup "$@"
+            case "$SILENT" in
+                out)
+                    set -- --property=StandardOutput=null "$@"
+                    dso=''
+                    dse=''
+                    while IFS='=' read -r key value; do
+                        case "$key" in
+                            DefaultStandardOutput) dso=$value ;;
+                            DefaultStandardError) dse=$value ;;
+                        esac
+                    done <<- EOF
+						$(systemctl --user show --property DefaultStandardOutput --property DefaultStandardError)
+					EOF
+                    case "$dse" in
+                        inherit) set -- --property=StandardError="$dso" "$@" ;;
+                    esac
+                    ;;
+                err) set -- --property=StandardError=null "$@" ;;
+                both) set -- --property=StandardOutput=null --property=StandardError=null "$@" ;;
             esac
             ;;
-        err) set -- --property=StandardError=null "$@" ;;
-        both) set -- --property=StandardOutput=null --property=StandardError=null "$@" ;;
-        esac
-        ;;
     esac
     debug "systemd run" "$(printf '  >%s<\n' systemd-run "$@")"
     case "$TEST_MODE" in
-    true)
-        printf '%s\n' 'Command and arguments:'
-        printf '  >%s<\n' systemd-run --user "$@"
-        exit 0
-        ;;
+        true)
+            printf '%s\n' 'Command and arguments:'
+            printf '  >%s<\n' systemd-run --user "$@"
+            exit 0
+            ;;
     esac
     case "${UNIT_TYPE}_$SILENT" in
-    scope_out) exec >/dev/null ;;
-    scope_err) exec 2>/dev/null ;;
-    scope_both) exec >/dev/null 2>&1 ;;
+        scope_out) exec > /dev/null ;;
+        scope_err) exec 2> /dev/null ;;
+        scope_both) exec > /dev/null 2>&1 ;;
     esac
     exec systemd-run --user "$@"
 }
@@ -961,32 +965,32 @@ parse_main_arg() {
     EXEC_NAME=''
     EXEC_PATH=''
     case "$MAIN_ARG" in
-    '')
-        error "Empty main argument"
-        return 1
-        ;;
-    *.desktop:*)
-        IFS=':' read -r ENTRY_ID ENTRY_ACTION <<-EOA
-			$MAIN_ARG
-		EOA
-        ;;
-    *.desktop)
-        ENTRY_ID=$MAIN_ARG
-        ENTRY_ACTION=''
-        ;;
+        '')
+            error "Empty main argument"
+            return 1
+            ;;
+        *.desktop:*)
+            IFS=':' read -r ENTRY_ID ENTRY_ACTION <<- EOA
+				$MAIN_ARG
+			EOA
+            ;;
+        *.desktop)
+            ENTRY_ID=$MAIN_ARG
+            ENTRY_ACTION=''
+            ;;
     esac
     debug "ENTRY_ID: $ENTRY_ID" "ENTRY_ACTION: $ENTRY_ACTION"
     if [ -n "$ENTRY_ID" ]; then
         case "$ENTRY_ID" in
-        */*)
-            ENTRY_PATH=$ENTRY_ID
-            ENTRY_ID=${ENTRY_ID##*/}
-            if [ ! -f "$ENTRY_PATH" ]; then
-                error "File not found: '$ENTRY_PATH'"
-                return 1
-            fi
-            return
-            ;;
+            */*)
+                ENTRY_PATH=$ENTRY_ID
+                ENTRY_ID=${ENTRY_ID##*/}
+                if [ ! -f "$ENTRY_PATH" ]; then
+                    error "File not found: '$ENTRY_PATH'"
+                    return 1
+                fi
+                return
+                ;;
         esac
         if ! validate_entry_id "$ENTRY_ID"; then
             error "Invalid Entry ID '$ENTRY_ID'!"
@@ -999,30 +1003,30 @@ parse_main_arg() {
         return 0
     fi
     case "$MAIN_ARG" in
-    */*)
-        EXEC_PATH=$MAIN_ARG
-        EXEC_NAME=${EXEC_PATH##*/}
-        debug "EXEC_PATH: $EXEC_PATH" "EXEC_NAME: $EXEC_NAME"
-        if [ ! -f "$EXEC_PATH" ]; then
-            error "File not found: '$EXEC_PATH'"
-            return 1
-        fi
-        if [ ! -x "$EXEC_PATH" ]; then
-            error "File is not executable: '$EXEC_PATH'"
-            return 1
-        fi
-        return
-        ;;
+        */*)
+            EXEC_PATH=$MAIN_ARG
+            EXEC_NAME=${EXEC_PATH##*/}
+            debug "EXEC_PATH: $EXEC_PATH" "EXEC_NAME: $EXEC_NAME"
+            if [ ! -f "$EXEC_PATH" ]; then
+                error "File not found: '$EXEC_PATH'"
+                return 1
+            fi
+            if [ ! -x "$EXEC_PATH" ]; then
+                error "File is not executable: '$EXEC_PATH'"
+                return 1
+            fi
+            return
+            ;;
     esac
     EXEC_NAME=$MAIN_ARG
     debug "EXEC_NAME: $EXEC_NAME"
-    if ! type "$EXEC_NAME" >/dev/null 2>&1; then
+    if ! type "$EXEC_NAME" > /dev/null 2>&1; then
         error "Executable not found: '$EXEC_NAME'"
         return 1
     fi
 }
 check_terminal_handler() {
-    if ! command -v "$TERMINAL_HANDLER" >/dev/null; then
+    if ! command -v "$TERMINAL_HANDLER" > /dev/null; then
         error "Terminal launch requested but '$TERMINAL_HANDLER' is unavailable!"
         exit 1
     fi
@@ -1030,45 +1034,45 @@ check_terminal_handler() {
 get_mime() {
     mime=
     case "$1" in
-    [a-zA-Z]*:*)
-        IFS=':' read -r scheme _rest <<-EOF
-			$1
-		EOF
-        debug "potential scheme '$scheme'"
-        case "$scheme" in
-        *[!a-zA-Z0-9+.-]*)
-            debug "not a valid scheme '$scheme', assuming file"
-            mime=$(xdg-mime query filetype "$1")
+        [a-zA-Z]*:*)
+            IFS=':' read -r scheme _rest <<- EOF
+				$1
+			EOF
+            debug "potential scheme '$scheme'"
+            case "$scheme" in
+                *[!a-zA-Z0-9+.-]*)
+                    debug "not a valid scheme '$scheme', assuming file"
+                    mime=$(xdg-mime query filetype "$1")
+                    ;;
+                *) mime=x-scheme-handler/$scheme ;;
+            esac
             ;;
-        *) mime=x-scheme-handler/$scheme ;;
-        esac
-        ;;
-    *) mime=$(xdg-mime query filetype "$1") ;;
+        *) mime=$(xdg-mime query filetype "$1") ;;
     esac
     case "$mime" in
-    '' | 'x-scheme-handler/')
-        error "Could not query mime type for '$1'"
-        return 1
-        ;;
-    *)
-        debug "got mime '$mime' for '$1'"
-        echo "$mime"
-        return 0
-        ;;
+        '' | 'x-scheme-handler/')
+            error "Could not query mime type for '$1'"
+            return 1
+            ;;
+        *)
+            debug "got mime '$mime' for '$1'"
+            echo "$mime"
+            return 0
+            ;;
     esac
 }
 get_assoc() {
     assoc=$(xdg-mime query default "$1")
     case "$assoc" in
-    ?*.desktop)
-        debug "got association '$assoc' for mime '$1'"
-        echo "$assoc"
-        return 0
-        ;;
-    *)
-        error "Could not query association for mime '$1'"
-        return 1
-        ;;
+        ?*.desktop)
+            debug "got association '$assoc' for mime '$1'"
+            echo "$assoc"
+            return 0
+            ;;
+        *)
+            error "Could not query association for mime '$1'"
+            return 1
+            ;;
     esac
 }
 debug "initial args:" "$(printf '  >%s<\n' "$@")"
@@ -1093,11 +1097,11 @@ EXEC_USEP=''
 REPLACED_STR=''
 UNIT_TYPE=${APP2UNIT_TYPE:-scope}
 case "$UNIT_TYPE" in
-service | scope) true ;;
-*)
-    error "Unsupported unit type '$UNIT_TYPE'!"
-    exit 1
-    ;;
+    service | scope) true ;;
+    *)
+        error "Unsupported unit type '$UNIT_TYPE'!"
+        exit 1
+        ;;
 esac
 UNIT_SLICE_ID=''
 UNIT_SLICE_CHOICES=${APP2UNIT_SLICES:-"a=app.slice b=background.slice s=session.slice"}
@@ -1106,19 +1110,19 @@ for choice in $UNIT_SLICE_CHOICES; do
     slice_abbr=
     slice_id=
     case "$choice" in
-    *[!a-zA-Z0-9=._-]* | *=*=* | *[!a-z]*=* | *=[!a-zA-Z0-9._-]* | *[!.][!s][!l][!i][!c][!e])
-        error "Invalid slice choice '$choice', ignoring."
-        continue
-        ;;
-    [a-z]*=[a-zA-Z0-9_.-]*.slice)
-        IFS='=' read -r slice_abbr slice_id <<-EOF
-			$choice
-		EOF
-        ;;
-    *)
-        error "Invalid slice choice '$choice', ignoring."
-        continue
-        ;;
+        *[!a-zA-Z0-9=._-]* | *=*=* | *[!a-z]*=* | *=[!a-zA-Z0-9._-]* | *[!.][!s][!l][!i][!c][!e])
+            error "Invalid slice choice '$choice', ignoring."
+            continue
+            ;;
+        [a-z]*=[a-zA-Z0-9_.-]*.slice)
+            IFS='=' read -r slice_abbr slice_id <<- EOF
+				$choice
+			EOF
+            ;;
+        *)
+            error "Invalid slice choice '$choice', ignoring."
+            continue
+            ;;
     esac
     if [ -z "$UNIT_SLICE_ID" ]; then
         UNIT_SLICE_CHOICES=
@@ -1147,21 +1151,21 @@ FUZZEL_COMPAT=false
 OPENER_MODE=false
 capture_terminal_args=false
 case "$SELF_NAME" in
-*-open | *-open-scope | *-open-service)
-    OPENER_MODE=true
-    case "$SELF_NAME" in
-    *-scope) UNIT_TYPE=scope ;;
-    *-service) UNIT_TYPE=service ;;
-    esac
-    ;;
-*-term | *-terminal | *-term-scope | *-terminal-scope | *-term-service | *-terminal-service)
-    TERMINAL=true
-    capture_terminal_args=true
-    case "$SELF_NAME" in
-    *-scope) UNIT_TYPE=scope ;;
-    *-service) UNIT_TYPE=service ;;
-    esac
-    ;;
+    *-open | *-open-scope | *-open-service)
+        OPENER_MODE=true
+        case "$SELF_NAME" in
+            *-scope) UNIT_TYPE=scope ;;
+            *-service) UNIT_TYPE=service ;;
+        esac
+        ;;
+    *-term | *-terminal | *-term-scope | *-terminal-scope | *-term-service | *-terminal-service)
+        TERMINAL=true
+        capture_terminal_args=true
+        case "$SELF_NAME" in
+            *-scope) UNIT_TYPE=scope ;;
+            *-service) UNIT_TYPE=service ;;
+        esac
+        ;;
 esac
 RANDOM_STRING=
 LCODE=${LANGUAGE:-"$LANG"}
@@ -1171,204 +1175,204 @@ first=true
 found_delim=false
 for arg in "$@"; do
     case "$first" in
-    true)
-        set --
-        first=false
-        ;;
+        true)
+            set --
+            first=false
+            ;;
     esac
     case "$found_delim" in
-    true)
-        set -- "$@" "$arg"
-        continue
-        ;;
+        true)
+            set -- "$@" "$arg"
+            continue
+            ;;
     esac
     case "$arg" in
-    --)
-        found_delim=true
-        set -- "$@" "$arg"
-        ;;
-    -[a-zA-Z][a-zA-Z]*)
-        arg=${arg#-}
-        while [ -n "$arg" ]; do
-            cut=${arg#?}
-            char=${arg%"$cut"}
-            set -- "$@" "-$char"
-            arg=$cut
-        done
-        ;;
-    *) set -- "$@" "$arg" ;;
+        --)
+            found_delim=true
+            set -- "$@" "$arg"
+            ;;
+        -[a-zA-Z][a-zA-Z]*)
+            arg=${arg#-}
+            while [ -n "$arg" ]; do
+                cut=${arg#?}
+                char=${arg%"$cut"}
+                set -- "$@" "-$char"
+                arg=$cut
+            done
+            ;;
+        *) set -- "$@" "$arg" ;;
     esac
 done
 part_of_gst_set=false
 TERMINAL_ARGS_USEP=
 while [ "$#" -gt "0" ]; do
     case "$1" in
-    -h | --help)
-        help
-        exit 0
-        ;;
-    -s)
-        debug "arg '$1' '${2:-}'"
-        case "${2:-}" in
-        .slice | '')
-            error "Empty slice id '${2:-}'" "$(usage)"
-            exit 1
+        -h | --help)
+            help
+            exit 0
             ;;
-        *[!a-zA-Z0-9_.-]*)
-            error "Invalid slice id '$2'" "$(usage)"
-            exit 1
-            ;;
-        *.slice)
-            UNIT_SLICE_ID=$2
-            shift 2
-            continue
-            ;;
-        *)
-            for choice in $UNIT_SLICE_CHOICES; do
-                IFS='=' read -r slice_abbr slice_id <<-EOF
-					$choice
-				EOF
-                case "$slice_abbr" in
-                "$2")
-                    UNIT_SLICE_ID=$slice_id
-                    shift 2
-                    continue 2
+        -s)
+            debug "arg '$1' '${2:-}'"
+            case "${2:-}" in
+                .slice | '')
+                    error "Empty slice id '${2:-}'" "$(usage)"
+                    exit 1
                     ;;
-                esac
-            done
-            error "'$2' does not point to a slice choice!" "Choices: $UNIT_SLICE_CHOICES" "$(usage)"
+                *[!a-zA-Z0-9_.-]*)
+                    error "Invalid slice id '$2'" "$(usage)"
+                    exit 1
+                    ;;
+                *.slice)
+                    UNIT_SLICE_ID=$2
+                    shift 2
+                    continue
+                    ;;
+                *)
+                    for choice in $UNIT_SLICE_CHOICES; do
+                        IFS='=' read -r slice_abbr slice_id <<- EOF
+							$choice
+						EOF
+                        case "$slice_abbr" in
+                            "$2")
+                                UNIT_SLICE_ID=$slice_id
+                                shift 2
+                                continue 2
+                                ;;
+                        esac
+                    done
+                    error "'$2' does not point to a slice choice!" "Choices: $UNIT_SLICE_CHOICES" "$(usage)"
+                    exit 1
+                    ;;
+            esac
+            error "Failed to parse '-s' argument" "$(usage)"
             exit 1
             ;;
-        esac
-        error "Failed to parse '-s' argument" "$(usage)"
-        exit 1
-        ;;
-    -t)
-        debug "arg '$1' '${2:-}'"
-        case "${2:-}" in
-        scope | service) UNIT_TYPE=$2 ;;
-        *)
-            error "Expected unit type scope|service for -t, got '${2:-}'!" "$(usage)"
-            exit 1
+        -t)
+            debug "arg '$1' '${2:-}'"
+            case "${2:-}" in
+                scope | service) UNIT_TYPE=$2 ;;
+                *)
+                    error "Expected unit type scope|service for -t, got '${2:-}'!" "$(usage)"
+                    exit 1
+                    ;;
+            esac
+            shift 2
             ;;
-        esac
-        shift 2
-        ;;
-    -a)
-        debug "arg '$1' '${2:-}'"
-        if [ -z "${2:-}" ]; then
-            error "Expected app name for -a!" "$(usage)"
-            exit 1
-        elif [ -n "$UNIT_ID" ]; then
-            error "Conflicting options: -a, -u!" "$(usage)"
-            exit 1
-        else
-            UNIT_APP_SUBSTRING=$2
-        fi
-        shift 2
-        ;;
-    -u)
-        debug "arg '$1' '${2:-}'"
-        if [ -z "${2:-}" ]; then
-            error "Expected Unit ID for -u!" "$(usage)"
-            exit 1
-        elif [ -n "$UNIT_APP_SUBSTRING" ]; then
-            error "Conflicting options: -u, -a!" "$(usage)"
-            exit 1
-        else
-            UNIT_ID=$2
-        fi
-        shift 2
-        ;;
-    -d)
-        debug "arg '$1' '${2:-}'"
-        if [ -z "${2:-}" ]; then
-            error "Expected unit description for -d!" "$(usage)"
-            exit 1
-        else
-            UNIT_DESCRIPTION="$2"
-        fi
-        shift 2
-        ;;
-    -c)
-        case "$part_of_gst_set" in
-        true)
-            error "-c conflicts with -C" "$(usage)"
-            exit 1
+        -a)
+            debug "arg '$1' '${2:-}'"
+            if [ -z "${2:-}" ]; then
+                error "Expected app name for -a!" "$(usage)"
+                exit 1
+            elif [ -n "$UNIT_ID" ]; then
+                error "Conflicting options: -a, -u!" "$(usage)"
+                exit 1
+            else
+                UNIT_APP_SUBSTRING=$2
+            fi
+            shift 2
             ;;
-        esac
-        debug "arg '$1'"
-        PART_OF_GST=false
-        part_of_gst_set=true
-        shift
-        ;;
-    -C)
-        case "$part_of_gst_set" in
-        true)
-            error "-C conflicts with -c" "$(usage)"
-            exit 1
+        -u)
+            debug "arg '$1' '${2:-}'"
+            if [ -z "${2:-}" ]; then
+                error "Expected Unit ID for -u!" "$(usage)"
+                exit 1
+            elif [ -n "$UNIT_APP_SUBSTRING" ]; then
+                error "Conflicting options: -u, -a!" "$(usage)"
+                exit 1
+            else
+                UNIT_ID=$2
+            fi
+            shift 2
             ;;
-        esac
-        debug "arg '$1'"
-        PART_OF_GST=true
-        part_of_gst_set=true
-        shift
-        ;;
-    -S)
-        debug "arg '$1' '${2:-}'"
-        case "${2:-}" in
-        out | err | both) SILENT=$2 ;;
-        *)
-            error "Expected silent mode out|err|both for -S, got '${2:-}'!" "$(usage)"
-            exit 1
+        -d)
+            debug "arg '$1' '${2:-}'"
+            if [ -z "${2:-}" ]; then
+                error "Expected unit description for -d!" "$(usage)"
+                exit 1
+            else
+                UNIT_DESCRIPTION="$2"
+            fi
+            shift 2
             ;;
-        esac
-        shift 2
-        ;;
-    -T)
-        TERMINAL=true
-        capture_terminal_args=true
-        debug "arg '$1'"
-        check_terminal_handler
-        shift
-        ;;
-    -O | --open)
-        OPENER_MODE=true
-        debug "arg '$1'"
-        shift
-        ;;
-    --fuzzel-compat)
-        FUZZEL_COMPAT=true
-        debug "arg '$1'"
-        shift
-        ;;
-    --test)
-        TEST_MODE=true
-        debug "arg '$1'"
-        shift
-        ;;
-    --)
-        debug "arg '$1', breaking"
-        shift
-        break
-        ;;
-    -*)
-        case "$capture_terminal_args" in
-        false)
-            error "Unknown option '$1'!" "$(usage)"
-            exit 1
-            ;;
-        true)
-            debug "storing unknown opt '$1' for terminal"
-            TERMINAL_ARGS_USEP=$TERMINAL_ARGS_USEP${TERMINAL_ARGS_USEP:+$USEP}$1
+        -c)
+            case "$part_of_gst_set" in
+                true)
+                    error "-c conflicts with -C" "$(usage)"
+                    exit 1
+                    ;;
+            esac
+            debug "arg '$1'"
+            PART_OF_GST=false
+            part_of_gst_set=true
             shift
             ;;
-        esac
-        ;;
-    *)
-        debug "arg '$1', breaking"
-        break
-        ;;
+        -C)
+            case "$part_of_gst_set" in
+                true)
+                    error "-C conflicts with -c" "$(usage)"
+                    exit 1
+                    ;;
+            esac
+            debug "arg '$1'"
+            PART_OF_GST=true
+            part_of_gst_set=true
+            shift
+            ;;
+        -S)
+            debug "arg '$1' '${2:-}'"
+            case "${2:-}" in
+                out | err | both) SILENT=$2 ;;
+                *)
+                    error "Expected silent mode out|err|both for -S, got '${2:-}'!" "$(usage)"
+                    exit 1
+                    ;;
+            esac
+            shift 2
+            ;;
+        -T)
+            TERMINAL=true
+            capture_terminal_args=true
+            debug "arg '$1'"
+            check_terminal_handler
+            shift
+            ;;
+        -O | --open)
+            OPENER_MODE=true
+            debug "arg '$1'"
+            shift
+            ;;
+        --fuzzel-compat)
+            FUZZEL_COMPAT=true
+            debug "arg '$1'"
+            shift
+            ;;
+        --test)
+            TEST_MODE=true
+            debug "arg '$1'"
+            shift
+            ;;
+        --)
+            debug "arg '$1', breaking"
+            shift
+            break
+            ;;
+        -*)
+            case "$capture_terminal_args" in
+                false)
+                    error "Unknown option '$1'!" "$(usage)"
+                    exit 1
+                    ;;
+                true)
+                    debug "storing unknown opt '$1' for terminal"
+                    TERMINAL_ARGS_USEP=$TERMINAL_ARGS_USEP${TERMINAL_ARGS_USEP:+$USEP}$1
+                    shift
+                    ;;
+            esac
+            ;;
+        *)
+            debug "arg '$1', breaking"
+            break
+            ;;
     esac
 done
 if [ "$#" -eq "0" ] && [ "$TERMINAL" = "false" ]; then
@@ -1408,7 +1412,7 @@ if [ "$OPENER_MODE" = "true" ]; then
 elif [ "$FUZZEL_COMPAT" = "true" ]; then
     debug "setting MAIN_ARG from FUZZEL_DESKTOP_FILE_ID: '$FUZZEL_DESKTOP_FILE_ID'" "passing arguments to exec array"
     MAIN_ARG=$FUZZEL_DESKTOP_FILE_ID
-    if ! type "$1" >/dev/null 2>&1; then
+    if ! type "$1" > /dev/null 2>&1; then
         error "Executable not found: '$1'"
         exit 1
     fi
@@ -1422,7 +1426,7 @@ elif [ "$#" -eq "0" ] && [ "$TERMINAL" = "true" ]; then
         unset DISPLAY WAYLAND_DISPLAY
         "$TERMINAL_HANDLER" --print-path --print-cmd='\037' "$@"
     ) && case "$path_and_cmd" in
-    '/'*".desktop$N"* | '/'*'.desktop:'*"$N"*) true ;; *) false ;; esac then
+        '/'*".desktop$N"* | '/'*'.desktop:'*"$N"*) true ;; *) false ;; esac then
         MAIN_ARG=${path_and_cmd%%"$N"*}
         EXEC_RSEP_USEP=${path_and_cmd#*"$N"}
         debug "initial args:" "$(printf '  >%s<\n' "$@")"
@@ -1450,10 +1454,10 @@ if [ -n "$ENTRY_PATH" ]; then
         if [ "$ENTRY_PATH" != "${ENTRY_PATH#"$dir"}" ]; then
             ENTRY_ID_PRE=${ENTRY_PATH#"$dir"}
             case "$ENTRY_ID_PRE" in
-            */*)
-                replace "$ENTRY_ID_PRE" "/" "-"
-                ENTRY_ID_PRE=$REPLACED_STR
-                ;;
+                */*)
+                    replace "$ENTRY_ID_PRE" "/" "-"
+                    ENTRY_ID_PRE=$REPLACED_STR
+                    ;;
             esac
             if validate_entry_id "$ENTRY_ID_PRE"; then
                 ENTRY_ID=$ENTRY_ID_PRE
@@ -1483,60 +1487,60 @@ fi
 gen_unit_id
 if [ -n "$ENTRY_ID" ]; then
     case "$FUZZEL_COMPAT" in
-    false) de_inject_fields "$@" ;;
+        false) de_inject_fields "$@" ;;
     esac
     case "$EXEC_RSEP_USEP" in
-    *"$RSEP"*)
-        IFS=$RSEP
-        first=true
-        for cmd in $EXEC_RSEP_USEP; do
+        *"$RSEP"*)
+            IFS=$RSEP
+            first=true
+            for cmd in $EXEC_RSEP_USEP; do
+                IFS=$USEP
+                set -- $cmd
+                IFS=$OIFS
+                case "$TERMINAL" in
+                    true)
+                        debug "injected $TERMINAL_HANDLER"
+                        IFS=$USEP
+                        set -- "$TERMINAL_HANDLER" $TERMINAL_ARGS_USEP "$@"
+                        IFS=$OIFS
+                        ;;
+                esac
+                debug "entry iteration" "$(printf '  >%s<\n' "$@")"
+                if [ "$first" = "false" ]; then
+                    randomize_unit_id
+                fi
+                systemd_run "$@" &
+                first=false
+            done
+            wait
+            exit
+            ;;
+        *)
             IFS=$USEP
-            set -- $cmd
+            set -- $EXEC_RSEP_USEP
             IFS=$OIFS
             case "$TERMINAL" in
-            true)
-                debug "injected $TERMINAL_HANDLER"
-                IFS=$USEP
-                set -- "$TERMINAL_HANDLER" $TERMINAL_ARGS_USEP "$@"
-                IFS=$OIFS
-                ;;
+                true)
+                    debug "injected $TERMINAL_HANDLER"
+                    IFS=$USEP
+                    set -- "$TERMINAL_HANDLER" $TERMINAL_ARGS_USEP "$@"
+                    IFS=$OIFS
+                    ;;
             esac
-            debug "entry iteration" "$(printf '  >%s<\n' "$@")"
-            if [ "$first" = "false" ]; then
-                randomize_unit_id
-            fi
-            systemd_run "$@" &
-            first=false
-        done
-        wait
-        exit
-        ;;
-    *)
-        IFS=$USEP
-        set -- $EXEC_RSEP_USEP
-        IFS=$OIFS
-        case "$TERMINAL" in
+            debug "entry single" "$(printf '  >%s<\n' "$@")"
+            systemd_run "$@"
+            ;;
+    esac
+else
+    set -- "${EXEC_PATH:-$EXEC_NAME}" "$@"
+    IFS=$OIFS
+    case "$TERMINAL" in
         true)
             debug "injected $TERMINAL_HANDLER"
             IFS=$USEP
             set -- "$TERMINAL_HANDLER" $TERMINAL_ARGS_USEP "$@"
             IFS=$OIFS
             ;;
-        esac
-        debug "entry single" "$(printf '  >%s<\n' "$@")"
-        systemd_run "$@"
-        ;;
-    esac
-else
-    set -- "${EXEC_PATH:-$EXEC_NAME}" "$@"
-    IFS=$OIFS
-    case "$TERMINAL" in
-    true)
-        debug "injected $TERMINAL_HANDLER"
-        IFS=$USEP
-        set -- "$TERMINAL_HANDLER" $TERMINAL_ARGS_USEP "$@"
-        IFS=$OIFS
-        ;;
     esac
     debug "command" "$(printf '  >%s<\n' "$@")"
     systemd_run "$@"

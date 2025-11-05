@@ -11,10 +11,10 @@ cache_dir="${HYDE_CACHE_HOME:-$HOME/.cache/hyde}"
 recent_data="$cache_dir/landing/show_glyph.recent"
 save_recent_entry() {
     local glyph_line="$1"
-    (
+    (   
         echo "$glyph_line"
         cat "$recent_data"
-    ) | awk '!seen[$0]++' >temp && mv temp "$recent_data"
+    ) | awk '!seen[$0]++' > temp && mv temp "$recent_data"
 }
 setup_rofi_config() {
     local font_scale="$ROFI_GLYPH_SCALE"
@@ -45,7 +45,7 @@ get_glyph_selection() {
 main() {
     if [[ ! -f $recent_data ]]; then
         mkdir -p "$(dirname "$recent_data")"
-        printf "\tArch linux - I use Arch, BTW\n" >"$recent_data"
+        printf "\tArch linux - I use Arch, BTW\n" > "$recent_data"
     fi
     setup_rofi_config
     data_glyph=$(get_glyph_selection)

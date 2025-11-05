@@ -5,7 +5,7 @@ if [ -z "$*" ]; then
     exit
 fi
 USAGE() {
-    cat <<USAGE
+    cat << USAGE
 Usage: fastfetch [commands] [options]
 
 commands:
@@ -24,23 +24,23 @@ cacheDir="${XDG_CACHE_HOME:-$HOME/.cache}/hyde"
 image_dirs=()
 hyde_distro_logo=$iconDir/Wallbash-Icon/distro/$LOGO
 case $1 in
-logo)
-    random() {
-        (
-            image_dirs+=("$confDir/fastfetch/logo")
-            image_dirs+=("$iconDir/Wallbash-Icon/fastfetch/")
-            if [ -n "$HYDE_THEME" ] && [ -d "$confDir/hyde/themes/$HYDE_THEME/logo" ]; then
-                image_dirs+=("$confDir/hyde/themes/$HYDE_THEME/logo")
-            fi
-            [ -f "$hyde_distro_logo" ] && echo "$hyde_distro_logo"
-            image_dirs+=("$cacheDir/wall.quad")
-            image_dirs+=("$cacheDir/wall.sqre")
-            [ -f "$HOME/.face.icon" ] && image_dirs+=("$HOME/.face.icon")
-            find -L "${image_dirs[@]}" -maxdepth 1 -type f \( -name "wall.quad" -o -name "wall.sqre" -o -name "*.icon" -o -name "*logo*" -o -name "*.png" \) ! -path "*/wall.set*" ! -path "*/wallpapers/*.png" 2>/dev/null
-        ) | shuf -n 1
-    }
-    help() {
-        cat <<HELP
+    logo)
+        random() {
+            (   
+                image_dirs+=("$confDir/fastfetch/logo")
+                image_dirs+=("$iconDir/Wallbash-Icon/fastfetch/")
+                if [ -n "$HYDE_THEME" ] && [ -d "$confDir/hyde/themes/$HYDE_THEME/logo" ]; then
+                    image_dirs+=("$confDir/hyde/themes/$HYDE_THEME/logo")
+                fi
+                [ -f "$hyde_distro_logo" ] && echo "$hyde_distro_logo"
+                image_dirs+=("$cacheDir/wall.quad")
+                image_dirs+=("$cacheDir/wall.sqre")
+                [ -f "$HOME/.face.icon" ] && image_dirs+=("$HOME/.face.icon")
+                find -L "${image_dirs[@]}" -maxdepth 1 -type f \( -name "wall.quad" -o -name "wall.sqre" -o -name "*.icon" -o -name "*logo*" -o -name "*.png" \) ! -path "*/wall.set*" ! -path "*/wallpapers/*.png" 2> /dev/null
+            ) | shuf -n 1
+        }
+        help() {
+            cat << HELP
 Usage: ${0##*/} logo [option]
 
 options:
@@ -58,51 +58,51 @@ options:
 Note: Options can be combined to search across multiple sources
 Example: ${0##*/} logo --local --os --prof
 HELP
-    }
-    shift
-    [ -z "$*" ] && random && exit
-    [[ $1 == "--rand" ]] && random && exit
-    [[ $1 == *"help"* ]] && help && exit
-    (
-        image_dirs=()
-        for arg in "$@"; do
-            case $arg in
-            --quad)
-                image_dirs+=("$cacheDir/wall.quad")
-                ;;
-            --sqre)
-                image_dirs+=("$cacheDir/wall.sqre")
-                ;;
-            --prof)
-                [ -f "$HOME/.face.icon" ] && image_dirs+=("$HOME/.face.icon")
-                ;;
-            --os)
-                [ -f "$hyde_distro_logo" ] && image_dirs+=("$hyde_distro_logo")
-                ;;
-            --local)
-                image_dirs+=("$confDir/fastfetch/logo")
-                ;;
-            --wall)
-                image_dirs+=("$iconDir/Wallbash-Icon/fastfetch/")
-                ;;
-            --theme) if
-                [ -n "$HYDE_THEME" ] && [ -d "$confDir/hyde/themes/$HYDE_THEME/logo" ]
-            then
-                image_dirs+=("$confDir/hyde/themes/$HYDE_THEME/logo")
-            fi ;;
-            esac
-        done
-        find -L "${image_dirs[@]}" -maxdepth 1 -type f \( -name "wall.quad" -o -name "wall.sqre" -o -name "*.icon" -o -name "*logo*" -o -name "*.png" \) ! -path "*/wall.set*" ! -path "*/wallpapers/*.png" 2>/dev/null
-    ) | shuf -n 1
-    ;;
---select | -S)
-    :
-    ;;
-help | --help | -h)
-    USAGE
-    ;;
-*)
-    clear
-    exec fastfetch --logo-type kitty
-    ;;
+        }
+        shift
+        [ -z "$*" ] && random && exit
+        [[ $1 == "--rand" ]] && random && exit
+        [[ $1 == *"help"* ]] && help && exit
+        (   
+            image_dirs=()
+            for arg in "$@"; do
+                case $arg in
+                    --quad)
+                        image_dirs+=("$cacheDir/wall.quad")
+                        ;;
+                    --sqre)
+                        image_dirs+=("$cacheDir/wall.sqre")
+                        ;;
+                    --prof)
+                        [ -f "$HOME/.face.icon" ] && image_dirs+=("$HOME/.face.icon")
+                        ;;
+                    --os)
+                        [ -f "$hyde_distro_logo" ] && image_dirs+=("$hyde_distro_logo")
+                        ;;
+                    --local)
+                        image_dirs+=("$confDir/fastfetch/logo")
+                        ;;
+                    --wall)
+                        image_dirs+=("$iconDir/Wallbash-Icon/fastfetch/")
+                        ;;
+                    --theme) if
+                        [ -n "$HYDE_THEME" ] && [ -d "$confDir/hyde/themes/$HYDE_THEME/logo" ]
+                    then
+                        image_dirs+=("$confDir/hyde/themes/$HYDE_THEME/logo")
+                    fi ;;
+                esac
+            done
+            find -L "${image_dirs[@]}" -maxdepth 1 -type f \( -name "wall.quad" -o -name "wall.sqre" -o -name "*.icon" -o -name "*logo*" -o -name "*.png" \) ! -path "*/wall.set*" ! -path "*/wallpapers/*.png" 2> /dev/null
+        ) | shuf -n 1
+        ;;
+    --select | -S)
+        :
+        ;;
+    help | --help | -h)
+        USAGE
+        ;;
+    *)
+        clear
+        exec fastfetch --logo-type kitty
+        ;;
 esac

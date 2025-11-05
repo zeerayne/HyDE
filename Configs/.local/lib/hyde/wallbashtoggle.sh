@@ -32,10 +32,10 @@ step_wallbash() {
     done
 }
 case "$1" in
-m | -m | --menu) rofi_wallbash ;;
-n | -n | --next) step_wallbash n ;;
-p | -p | --prev) step_wallbash p ;;
-*) step_wallbash n ;;
+    m | -m | --menu) rofi_wallbash ;;
+    n | -n | --next) step_wallbash n ;;
+    p | -p | --prev) step_wallbash p ;;
+    *) step_wallbash n ;;
 esac
 export reload_flag=1
 [[ $setMode -lt 0 ]] && setMode=$((${#wallbashModes[@]} - 1))

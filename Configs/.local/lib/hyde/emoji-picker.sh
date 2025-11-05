@@ -14,7 +14,7 @@ save_recent_entry() {
     {
         echo "$emoji_line"
         cat "$recent_data"
-    } | awk '!seen[$0]++' >temp && mv temp "$recent_data"
+    } | awk '!seen[$0]++' > temp && mv temp "$recent_data"
 }
 setup_rofi_config() {
     local font_scale="$ROFI_EMOJI_SCALE"
@@ -38,53 +38,53 @@ get_emoji_selection() {
             -matching fuzzy -no-custom
     else
         case $style_type in
-        2 | grid)
-            awk '!seen[$0]++' "$recent_data" "$emoji_data" | rofi -dmenu -i "${ROFI_EMOJI_ARGS[@]/-multi-select/}" -display-columns 1 \
-                -display-column-separator " " \
-                -theme-str "listview {columns: 9;}" \
+            2 | grid)
+                awk '!seen[$0]++' "$recent_data" "$emoji_data" | rofi -dmenu -i "${ROFI_EMOJI_ARGS[@]/-multi-select/}" -display-columns 1 \
+                    -display-column-separator " " \
+                    -theme-str "listview {columns: 9;}" \
+                    -theme-str "entry { placeholder: \" 🔎 Emoji\";} $rofi_position $r_override" \
+                    -theme-str "$font_override" \
+                    -theme-str "$size_override" \
+                    -theme "clipboard" \
+                    -matching fuzzy -no-custom
+                ;;
+            1 | list)
+                awk '!seen[$0]++' "$recent_data" "$emoji_data" | rofi -dmenu -i "${ROFI_EMOJI_ARGS[@]}" \
+                    -theme-str "entry { placeholder: \" 🔎 Emoji\";} $rofi_position $r_override" \
+                    -theme-str "$font_override" \
+                    -theme "clipboard" \
+                    -matching fuzzy -no-custom
+                ;;
+            *) awk '!seen[$0]++' "$recent_data" "$emoji_data" | rofi -dmenu -i "${ROFI_EMOJI_ARGS[@]}" \
                 -theme-str "entry { placeholder: \" 🔎 Emoji\";} $rofi_position $r_override" \
                 -theme-str "$font_override" \
-                -theme-str "$size_override" \
-                -theme "clipboard" \
-                -matching fuzzy -no-custom
-            ;;
-        1 | list)
-            awk '!seen[$0]++' "$recent_data" "$emoji_data" | rofi -dmenu -i "${ROFI_EMOJI_ARGS[@]}" \
-                -theme-str "entry { placeholder: \" 🔎 Emoji\";} $rofi_position $r_override" \
-                -theme-str "$font_override" \
-                -theme "clipboard" \
-                -matching fuzzy -no-custom
-            ;;
-        *) awk '!seen[$0]++' "$recent_data" "$emoji_data" | rofi -dmenu -i "${ROFI_EMOJI_ARGS[@]}" \
-            -theme-str "entry { placeholder: \" 🔎 Emoji\";} $rofi_position $r_override" \
-            -theme-str "$font_override" \
-            -theme "${style_type:-clipboard}" \
-            -matching fuzzy -no-custom ;;
+                -theme "${style_type:-clipboard}" \
+                -matching fuzzy -no-custom ;;
         esac
     fi
 }
 parse_arguments() {
     while (($# > 0)); do
         case $1 in
-        --style | -s)
-            if
-                (($# > 1))
-            then
-                emoji_style="$2"
+            --style | -s)
+                if
+                    (($# > 1))
+                then
+                    emoji_style="$2"
+                    shift
+                else
+                    print_log +y "[warn] " "--style needs argument"
+                    emoji_style="clipboard"
+                    shift
+                fi
+                ;;
+            --rasi)
+                [[ -z $2 ]] && print_log +r "[error] " +y "--rasi requires an file.rasi config file" && exit 1
+                use_rofile=$2
                 shift
-            else
-                print_log +y "[warn] " "--style needs argument"
-                emoji_style="clipboard"
-                shift
-            fi
-            ;;
-        --rasi)
-            [[ -z $2 ]] && print_log +r "[error] " +y "--rasi requires an file.rasi config file" && exit 1
-            use_rofile=$2
-            shift
-            ;;
-        -*)
-            cat <<HELP
+                ;;
+            -*)
+                cat << HELP
 Usage:
 --style [1 | 2]         Change Emoji style
                         Add 'emoji_style=[1|2]' variable in ~/.config/hyde/config.toml'
@@ -92,8 +92,8 @@ Usage:
                             2 = grid
                         or select styles from 'rofi-theme-selector'
 HELP
-            exit 0
-            ;;
+                exit 0
+                ;;
         esac
         shift
     done
@@ -102,7 +102,7 @@ main() {
     parse_arguments "$@"
     if [[ ! -f $recent_data ]]; then
         mkdir -p "$(dirname "$recent_data")"
-        echo " Arch linux - I use Arch, BTW" >"$recent_data"
+        echo " Arch linux - I use Arch, BTW" > "$recent_data"
     fi
     setup_rofi_config
     data_emoji=$(get_emoji_selection)

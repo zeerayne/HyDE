@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-cat <<EOF
+cat << EOF
 DEPRECATION: This script is deprecated, please use 'wallpaper.sh' instead."
 
 -------------------------------------------------

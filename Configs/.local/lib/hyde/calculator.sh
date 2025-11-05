@@ -25,7 +25,7 @@ main() {
     fi
 }
 usage() {
-    cat <<EOF
+    cat << EOF
 --rasi <PATH>     Set custom .rasi file. Note that this removes all overrides
 
 EOF
@@ -33,15 +33,15 @@ EOF
 }
 while (($# > 0)); do
     case $1 in
-    --rasi)
-        [[ -z $2 ]] && echo "[error] --rasi requires a file.rasi config file" && exit 1
-        customRoFile=$2
-        shift
-        ;;
-    *)
-        echo "Unknown option: $1"
-        usage
-        ;;
+        --rasi)
+            [[ -z $2 ]] && echo "[error] --rasi requires a file.rasi config file" && exit 1
+            customRoFile=$2
+            shift
+            ;;
+        *)
+            echo "Unknown option: $1"
+            usage
+            ;;
     esac
     shift
 done

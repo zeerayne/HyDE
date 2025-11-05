@@ -5,6 +5,7 @@ cache_dir="${HYDE_CACHE_HOME:-$HOME/.cache/hyde}"
 favorites_file="$cache_dir/landing/cliphist_favorites"
 [ -f "$HOME/.cliphist_favorites" ] && favorites_file="$HOME/.cliphist_favorites"
 cliphist_style="${ROFI_CLIPHIST_STYLE:-clipboard}"
+
 process_deletion() {
     while IFS= read -r line; do
         echo "$line"
@@ -15,7 +16,7 @@ process_deletion() {
             "$0" --delete
             break
         elif [ -n "$line" ]; then
-            cliphist delete <<<"$line"
+            cliphist delete <<< "$line"
             notify-send "Deleted" "$line"
         fi
     done
@@ -41,41 +42,25 @@ process_selections() {
 handle_special_commands() {
     local lines=("$@")
     case "${lines[0]}" in
-    ":d:e:l:e:t:e:"*)
-        exec "$0" --delete
-        exit 0
-        ;;
-    ":w:i:p:e:"*)
-        exec "$0" --wipe
-        exit 0
-        ;;
-    ":b:a:r:"* | *":c:o:p:y:"*)
-        exec "$0" --copy
-        exit 0
-        ;;
-    ":f:a:v:"*)
-        exec "$0" --favorites
-        exit 0
-        ;;
-    ":i:m:g:")
-        exec "$0" --image-history
-        ;;
-    ":o:p:t:"*)
-        exec "$0"
-        exit 0
-        ;;
+        ":d:e:l:e:t:e:"*) exec "$0" --delete exit 0 ;;
+        ":w:i:p:e:"*) exec "$0" --wipe exit 0 ;;
+        ":b:a:r:"* | *":c:o:p:y:"*) exec "$0" --copy exit 0 ;;
+        ":f:a:v:"*) exec "$0" --favorites exit 0 ;;
+        ":i:m:g:") exec "$0" --image-history ;;
+        ":o:p:t:"*) exec "$0" exit 0 ;;
+        ":o:c:r:"*) exec "$0" --scan-image ;;
     esac
 }
 check_content() {
     local line
     read -r line
     if [[ $line == *"[[ binary data"* ]]; then
-        cliphist decode <<<"$line" | wl-copy
+        cliphist decode <<< "$line" | wl-copy
         local img_idx
-        img_idx=$(awk -F '\t' '{print $1}' <<<"$line")
+        img_idx=$(awk -F '\t' '{print $1}' <<< "$line")
         local temp_preview="$XDG_RUNTIME_DIR/hyde/pastebin-preview_$img_idx"
-        wl-paste >"$temp_preview"
-        notify-send -a "Pastebin:" "Preview: $img_idx" -i "$temp_preview" -t 2000:im:g:
+        wl-paste > "$temp_preview"
+        notify-send -a "Pastebin:" "Preview: $img_idx" -i "$temp_preview" -t 2000
         return 1
     fi
 }
@@ -94,16 +79,18 @@ run_rofi() {
         -kb-custom-4 "Alt+w" \
         -kb-custom-5 "Alt+o" \
         -kb-custom-6 "Alt+v" \
+        -kb-custom-7 "Alt+s" \
         "$@"
     local exit_code=$?
     if [ $exit_code -ne 0 ]; then
         case "$exit_code" in
-        10) printf ":c:o:p:y:" ;;
-        11) printf ":d:e:l:e:t:e:" ;;
-        12) printf ":f:a:v:" ;;
-        13) printf ":w:i:p:e:" ;;
-        14) printf ":o:p:t:" ;;
-        15) printf ":i:m:g:" ;;
+            10) printf ":c:o:p:y:" ;;
+            11) printf ":d:e:l:e:t:e:" ;;
+            12) printf ":f:a:v:" ;;
+            13) printf ":w:i:p:e:" ;;
+            14) printf ":o:p:t:" ;;
+            15) printf ":i:m:g:" ;;
+            16) printf ":o:c:r:" ;;
         esac
     fi
 }
@@ -130,7 +117,7 @@ prepare_favorites_for_display() {
     if [ ! -f "$favorites_file" ] || [ ! -s "$favorites_file" ]; then
         return 1
     fi
-    mapfile -t favorites <"$favorites_file"
+    mapfile -t favorites < "$favorites_file"
     decoded_lines=()
     for favorite in "${favorites[@]}"; do
         local decoded_favorite
@@ -154,7 +141,7 @@ show_history() {
     local selected_item
     rofi_args=(" 📜 History..." -multi-select -i -display-columns 2 -selected-row 2)
     if [[ $CLIPHIST_IMAGE_HISTORY == true ]]; then
-        rofi_args=(" 🏞️ Image..." -display-columns 2
+        rofi_args=(" 🏞️ Image History | Alt+S to Scan" -display-columns 2
             -show-icons -eh 3
             -theme-str 'listview { lines: 4; columns: 2; }'
             -theme-str 'element { enabled: true; orientation: vertical; spacing: 0%; padding: 0%; cursor: pointer; background-color: transparent; text-color: @main-fg; horizontal-align: 0.5; }'
@@ -162,11 +149,14 @@ show_history() {
             -theme-str 'element-icon {size: 8%; spacing: 0%; padding: 0%; cursor: inherit; background-color: transparent; }'
             -theme-str 'element selected.normal { background-color: @select-bg; text-color: @select-fg; }')
     fi
-    selected_item=$(cliphist_cmd | run_rofi "${rofi_args[@]}") || exit 0
+
+    selected_item=$(cliphist_cmd | run_rofi "${rofi_args[@]}")
+    echo "${?}"
+    echo "$selected_item"
     [ -n "$selected_item" ] || exit 0
     handle_special_commands "${selected_item##*$'\n'}"
     if echo -e "$selected_item" | check_content; then
-        process_selections <<<"$selected_item" | wl-copy
+        process_selections <<< "$selected_item" | wl-copy
         paste_string "$@"
         echo -e "$selected_item\t" | cliphist delete
     else
@@ -174,11 +164,12 @@ show_history() {
         exit 0
     fi
 }
+
 delete_items() {
     local selected_item
     selected_item="$(cliphist list | run_rofi " 🗑️ Delete" -multi-select -i -display-columns 2)"
     handle_special_commands "${selected_item##*$'\n'}"
-    process_deletion <<<"$selected_item"
+    process_deletion <<< "$selected_item"
 }
 view_favorites() {
     prepare_favorites_for_display || {
@@ -213,7 +204,7 @@ add_to_favorites() {
         if [ -f "$favorites_file" ] && grep -Fxq "$encoded_item" "$favorites_file"; then
             notify-send "Item is already in favorites."
         else
-            echo "$encoded_item" >>"$favorites_file"
+            echo "$encoded_item" >> "$favorites_file"
             notify-send "Added to favorites."
         fi
     fi
@@ -230,10 +221,10 @@ delete_from_favorites() {
         index=$(printf "%s\n" "${decoded_lines[@]}" | grep -nxF "$selected_favorite" | cut -d: -f1)
         if [ -n "$index" ]; then
             local selected_encoded_favorite="${favorites[$((index - 1))]}"
-            if [ "$(wc -l <"$favorites_file")" -eq 1 ]; then
-                : >"$favorites_file"
+            if [ "$(wc -l < "$favorites_file")" -eq 1 ]; then
+                : > "$favorites_file"
             else
-                grep -vF -x "$selected_encoded_favorite" "$favorites_file" >"$favorites_file.tmp" && mv "$favorites_file.tmp" "$favorites_file"
+                grep -vF -x "$selected_encoded_favorite" "$favorites_file" > "$favorites_file.tmp" && mv "$favorites_file.tmp" "$favorites_file"
             fi
             notify-send "Item removed from favorites."
         else
@@ -246,7 +237,7 @@ clear_favorites() {
         local confirm
         confirm=$(echo -e "Yes\nNo" | run_rofi "☢️ Clear All Favorites?") || exit 0
         if [ "$confirm" = "Yes" ]; then
-            : >"$favorites_file"
+            : > "$favorites_file"
             notify-send "All favorites have been deleted."
         fi
     else
@@ -257,20 +248,20 @@ manage_favorites() {
     local manage_action
     manage_action=$(echo -e "Add to Favorites\nDelete from Favorites\nClear All Favorites" | run_rofi "📓 Manage Favorites") || exit 0
     case "$manage_action" in
-    "Add to Favorites")
-        add_to_favorites
-        ;;
-    "Delete from Favorites")
-        delete_from_favorites
-        ;;
-    "Clear All Favorites")
-        clear_favorites
-        ;;
-    *)
-        [ -n "$manage_action" ] || return 0
-        echo "Invalid action"
-        exit 1
-        ;;
+        "Add to Favorites")
+            add_to_favorites
+            ;;
+        "Delete from Favorites")
+            delete_from_favorites
+            ;;
+        "Clear All Favorites")
+            clear_favorites
+            ;;
+        *)
+            [ -n "$manage_action" ] || return 0
+            echo "Invalid action"
+            exit 1
+            ;;
     esac
 }
 clear_history() {
@@ -283,15 +274,41 @@ clear_history() {
     fi
 }
 main_menu_options() {
-    cat <<-EOF
-			History:::<sub>(Alt+C)</sub>
-			Image History:::<sub>(Alt+V)</sub>
-			Delete Item:::<sub>(Alt+D)</sub>
-			Clear History:::<sub>(Alt+W)</sub>
-			View Favorites:::<sub>(Alt+N)</sub>
-			Manage Favorites:::<sub>(Alt+O)</sub>
-			EOF
+    cat <<- EOF
+		History:::<sub>(Alt+C)</sub>
+		Image History:::<sub>(Alt+V)</sub>
+		Delete Item:::<sub>(Alt+D)</sub>
+		Clear History:::<sub>(Alt+W)</sub>
+		View Favorites:::<sub>(Alt+N)</sub>
+		Manage Favorites:::<sub>(Alt+O)</sub>
+	EOF
 }
+
+ocr_scan() {
+
+    # shellcheck disable=SC1091
+    source "${LIB_DIR}/hyde/shutils/ocr.sh"
+    local runtime_dir="${XDG_RUNTIME_DIR:-/run/user/${EUID}}/hyde"
+    local image_path="${runtime_dir}/cliphist_ocr.png"
+    local index
+    index="$(HYDE_CLIPHIST_IMAGE_ONLY=1 "${LIB_DIR}/hyde/cliphist.image.py" | head -n1)"
+    [[ -n $index  ]] || {
+        send_notifs "OCR Error" "No images in clipboard history..." -r 9
+        exit 1
+    }
+
+    mkdir -p "$runtime_dir"
+    cliphist decode "$index" > "${image_path}"
+    if [ ! -s "${image_path}" ]; then
+        notify-send "OCR Error" "No image data in clipboard -r 9"
+        exit 1
+    fi
+    print_log -g  "Scanning ${image_path}"
+    send_notifs "OCR" "Scanning latest image from clipboard..." -i "${image_path}" -r 9
+    ocr_extract "$image_path"
+
+}
+
 main() {
     setup_rofi_config
 
@@ -308,6 +325,7 @@ main() {
     argparse "--manage-fav,-mf" "ACTION=manage_fav" "Manage favorite clipboard items"
     argparse "--wipe,-w" "ACTION=wipe" "Clear clipboard history"
     argparse "--image-history,-i" "ACTION=image_history" "Show image history"
+    argparse "--scan-image,-sc" "ACTION=ocr_image" "Use tesseract the latest image from clipboard"
     argparse_finalize
 
     unset CLIPHIST_IMAGE_HISTORY # prevent image history side effects
@@ -326,24 +344,25 @@ main() {
         main_action="${main_action%%:::*}"
 
         case "$main_action" in
-        "History") ACTION=copy ;;
-        "Image History") ACTION=image_history ;;
-        "Delete Item") ACTION=delete ;;
-        "Clear History") ACTION=wipe ;;
-        "View Favorites") ACTION=favorites ;;
-        "Manage Favorites") ACTION=manage_fav ;;
-        *) exit 0 ;;
+            "History") ACTION=copy ;;
+            "Image History") ACTION=image_history ;;
+            "Delete Item") ACTION=delete ;;
+            "Clear History") ACTION=wipe ;;
+            "View Favorites") ACTION=favorites ;;
+            "Manage Favorites") ACTION=manage_fav ;;
+            *) exit 0 ;;
         esac
     fi
 
     # Execute the action
     case "$ACTION" in
-    copy) show_history "$@" ;;
-    delete) delete_items ;;
-    favorites) view_favorites "$@" ;;
-    manage_fav) manage_favorites ;;
-    wipe) clear_history ;;
-    image_history) CLIPHIST_IMAGE_HISTORY=true show_history "$@" ;;
+        copy) show_history "$@" ;;
+        delete) delete_items ;;
+        favorites) view_favorites "$@" ;;
+        manage_fav) manage_favorites ;;
+        wipe) clear_history ;;
+        image_history) CLIPHIST_IMAGE_HISTORY=true show_history "$@" ;;
+        ocr_image) ocr_scan ;;
     esac
 }
 main "$@"

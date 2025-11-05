@@ -2,29 +2,29 @@
 set -eo pipefail
 [[ $HYDE_SHELL_INIT -ne 1 ]] && eval "$(hyde-shell init)"
 RECORDER="wl-screenrec"
-command -v "$RECORDER" &>/dev/null || RECORDER="wf-recorder"
-if ! command -v "$RECORDER" &>/dev/null; then
+command -v "$RECORDER" &> /dev/null || RECORDER="wf-recorder"
+if ! command -v "$RECORDER" &> /dev/null; then
     notify-send -a "HyDE Alert" "No screen recorder found. Try installing wl-screenrec or wf-recorder."
     echo "No screen recorder found. Try installing wl-screenrec or wf-recorder."
     exit 1
 fi
 USAGE() {
-    cat <<USAGE
+    cat << USAGE
 
 Usage: 'hyde-shell screenrecord' [option]
-    
+
     Using $RECORDER to record the screen.
 
 Options:
 
     --start    Screen record
-    --backend       Use 'wl-screenrec' or 'wf-recorder' as the backend 
+    --backend       Use 'wl-screenrec' or 'wf-recorder' as the backend
     --file          Specify the output file
     --quit     Stop the recording
     --help          Show this help message
     --              Pass additional arguments to '$RECORDER'
 
-Note: 
+Note:
 
     Click and drag on the screen to select a region to record.
     To record the whole screen, simply click without dragging.
@@ -36,7 +36,7 @@ Example:
 
 
     To see all available options for '$RECORDER', run:
-        $RECORDER --help    
+        $RECORDER --help
 
 USAGE
 }
@@ -66,7 +66,7 @@ handle_recording() {
         split($2, size, "x");  # Split WxH
         width = size[1];
         height = size[2];
-        
+
         # Check if selection meets minimum size
         if (width >= 16 && height >= 16) {
             print x","y" "width"x"height;  # Output in the same format
@@ -80,7 +80,7 @@ handle_recording() {
     fi
     tmp_thumbnail=$(mktemp -t thumbnail_XXXXXX.png)
     if [[ -z $GEOM ]]; then
-        "$LIB_DIR/hyde/grimblast" save active "$tmp_thumbnail"
+        "$LIB_DIR/hyde/screenshot/grimblast" save active "$tmp_thumbnail"
     else
         grim -g "$GEOM" "$tmp_thumbnail"
     fi
@@ -89,31 +89,31 @@ handle_recording() {
 }
 while [[ $# -gt 0 ]]; do
     case "$1" in
-    --file)
-        shift
-        FILE_PATH="$1"
-        ;;
-    --backend)
-        shift
-        RECORDER="$1"
-        ;;
-    --start)
-        handle_recording "$@"
-        exit 0
-        ;;
-    --quit)
-        killall "$RECORDER"
-        notify-send -a "HyDE Alert" "Recording stopped"
-        exit 0
-        ;;
-    --help)
-        USAGE
-        exit 0
-        ;;
-    *)
-        USAGE
-        exit 1
-        ;;
+        --file)
+            shift
+            FILE_PATH="$1"
+            ;;
+        --backend)
+            shift
+            RECORDER="$1"
+            ;;
+        --start)
+            handle_recording "$@"
+            exit 0
+            ;;
+        --quit)
+            killall "$RECORDER"
+            notify-send -a "HyDE Alert" "Recording stopped"
+            exit 0
+            ;;
+        --help)
+            USAGE
+            exit 0
+            ;;
+        *)
+            USAGE
+            exit 1
+            ;;
     esac
     shift
 done

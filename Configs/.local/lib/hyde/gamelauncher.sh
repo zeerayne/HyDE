@@ -33,41 +33,41 @@ icon_border=$((elem_border - 3))
 r_override="element{border-radius:${elem_border}px;} element-icon{border-radius:${icon_border}px;}"
 [[ -n $ROFI_GAMELAUNCHER_STYLE ]] && style=$ROFI_GAMELAUNCHER_STYLE
 case ${style:-5} in
-5 | steam_deck)
-    monitor_info=()
-    eval "$(hyprctl -j monitors | jq -r '.[] | select(.focused==true) |
+    5 | steam_deck)
+        monitor_info=()
+        eval "$(hyprctl -j monitors | jq -r '.[] | select(.focused==true) |
     "monitor_info=(\(.width) \(.height) \(.scale) \(.x) \(.y)) reserved_info=(\(.reserved | join(" ")))"')"
-    percent=80
-    monitor_scale="${monitor_info[2]//./}"
-    monitor_width=$((monitor_info[0] * percent / monitor_scale))
-    monitor_height=$((monitor_info[1] * percent / monitor_scale))
-    BG=$HOME/.local/share/hyde/rofi/assets/steamdeck_holographic.png
-    BGfx=$HOME/.cache/hyde/landing/steamdeck_holographic_${monitor_width}x$monitor_height.png
-    if [ ! -e "$BGfx" ]; then
-        magick "$BG" -resize ${monitor_width}x$monitor_height -background none -gravity center -extent ${monitor_width}x$monitor_height "$BGfx"
-    fi
-    r_override="window {width: ${monitor_width}px; height: $monitor_height; background-image: url('$BGfx',width);}
+        percent=80
+        monitor_scale="${monitor_info[2]//./}"
+        monitor_width=$((monitor_info[0] * percent / monitor_scale))
+        monitor_height=$((monitor_info[1] * percent / monitor_scale))
+        BG=$HOME/.local/share/hyde/rofi/assets/steamdeck_holographic.png
+        BGfx=$HOME/.cache/hyde/landing/steamdeck_holographic_${monitor_width}x$monitor_height.png
+        if [ ! -e "$BGfx" ]; then
+            magick "$BG" -resize ${monitor_width}x$monitor_height -background none -gravity center -extent ${monitor_width}x$monitor_height "$BGfx"
+        fi
+        r_override="window {width: ${monitor_width}px; height: $monitor_height; background-image: url('$BGfx',width);}
                 element-icon {border-radius:0px;}
                 mainbox { padding: 17% 18%; }
                 "
-    ;;
-*) ;;
+        ;;
+    *) ;;
 esac
 
 backend_command=()
 rofi_args=()
 
 case "$backend" in
-steam)
-    backend_command=(python3 "$LIB_DIR/hyde/gamelauncher/steam.py" --rofi-string)
-    ;;
-lutris)
-    backend_command=(python3 "$LIB_DIR/hyde/gamelauncher/lutris.py" --rofi-string)
-    ;;
-*)
-    backend_command=(python3 "$LIB_DIR/hyde/gamelauncher/catalog.py" --rofi-string)
-    rofi_args=(-markup-rows)
-    ;;
+    steam)
+        backend_command=(python3 "$LIB_DIR/hyde/gamelauncher/steam.py" --rofi-string)
+        ;;
+    lutris)
+        backend_command=(python3 "$LIB_DIR/hyde/gamelauncher/lutris.py" --rofi-string)
+        ;;
+    *)
+        backend_command=(python3 "$LIB_DIR/hyde/gamelauncher/catalog.py" --rofi-string)
+        rofi_args=(-markup-rows)
+        ;;
 esac
 
 selected=$("${backend_command[@]}" | rofi -dmenu -p Catalog \

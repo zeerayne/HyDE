@@ -20,43 +20,43 @@ font_scale="$ROFI_LAUNCH_SCALE"
 rofi_args=(-show-icons)
 
 case "$1" in
-d | --drun)
-    r_mode="drun"
-    rofi_config="${ROFI_LAUNCH_DRUN_STYLE:-$rofi_config}"
-    rofi_args+=("${ROFI_LAUNCH_DRUN_ARGS[@]:-}")
-    rofi_args+=("-run-command" "app2unit.sh  --fuzzel-compat -- {cmd}")
-    ;;
-w | --window)
-    r_mode="window"
-    rofi_config="${ROFI_LAUNCH_WINDOW_STYLE:-$rofi_config}"
-    rofi_args+=("${ROFI_LAUNCH_WINDOW_ARGS[@]:-}")
-    ;;
-f | --filebrowser)
-    r_mode="filebrowser"
-    rofi_config="${ROFI_LAUNCH_FILEBROWSER_STYLE:-$rofi_config}"
-    rofi_args+=("${ROFI_LAUNCH_FILEBROWSER_ARGS[@]:-}")
-    ;;
-r | --run)
-    r_mode="run"
-    rofi_config="${ROFI_LAUNCH_RUN_STYLE:-$rofi_config}"
-    rofi_args+=("-run-command" "app2unit.sh  --fuzzel-compat -- {cmd}")
-    rofi_args+=("${ROFI_LAUNCH_RUN_ARGS[@]:-}")
-    ;;
-h | --help)
-    echo -e "$(basename "$0") [action]"
-    echo "d :  drun mode"
-    echo "w :  window mode"
-    echo "f :  filebrowser mode,"
-    echo "r :  run mode"
-    exit 0
-    ;;
-*)
-    r_mode="drun"
-    ROFI_LAUNCH_DRUN_STYLE="${ROFI_LAUNCH_DRUN_STYLE:-$ROFI_LAUNCH_STYLE}"
-    rofi_args+=("${ROFI_LAUNCH_DRUN_ARGS[@]:-}")
-    rofi_args+=("-run-command" "app2unit.sh  --fuzzel-compat -- {cmd}")
-    rofi_config="${ROFI_LAUNCH_DRUN_STYLE:-$rofi_config}"
-    ;;
+    d | --drun)
+        r_mode="drun"
+        rofi_config="${ROFI_LAUNCH_DRUN_STYLE:-$rofi_config}"
+        rofi_args+=("${ROFI_LAUNCH_DRUN_ARGS[@]:-}")
+        rofi_args+=("-run-command" "app2unit.sh  --fuzzel-compat -- {cmd}")
+        ;;
+    w | --window)
+        r_mode="window"
+        rofi_config="${ROFI_LAUNCH_WINDOW_STYLE:-$rofi_config}"
+        rofi_args+=("${ROFI_LAUNCH_WINDOW_ARGS[@]:-}")
+        ;;
+    f | --filebrowser)
+        r_mode="filebrowser"
+        rofi_config="${ROFI_LAUNCH_FILEBROWSER_STYLE:-$rofi_config}"
+        rofi_args+=("${ROFI_LAUNCH_FILEBROWSER_ARGS[@]:-}")
+        ;;
+    r | --run)
+        r_mode="run"
+        rofi_config="${ROFI_LAUNCH_RUN_STYLE:-$rofi_config}"
+        rofi_args+=("-run-command" "app2unit.sh  --fuzzel-compat -- {cmd}")
+        rofi_args+=("${ROFI_LAUNCH_RUN_ARGS[@]:-}")
+        ;;
+    h | --help)
+        echo -e "$(basename "$0") [action]"
+        echo "d :  drun mode"
+        echo "w :  window mode"
+        echo "f :  filebrowser mode,"
+        echo "r :  run mode"
+        exit 0
+        ;;
+    *)
+        r_mode="drun"
+        ROFI_LAUNCH_DRUN_STYLE="${ROFI_LAUNCH_DRUN_STYLE:-$ROFI_LAUNCH_STYLE}"
+        rofi_args+=("${ROFI_LAUNCH_DRUN_ARGS[@]:-}")
+        rofi_args+=("-run-command" "app2unit.sh  --fuzzel-compat -- {cmd}")
+        rofi_config="${ROFI_LAUNCH_DRUN_STYLE:-$rofi_config}"
+        ;;
 esac
 
 hypr_border="${hypr_border:-10}"
@@ -68,7 +68,7 @@ if [[ -f "$HYDE_STATE_HOME/fullscreen_$r_mode" ]]; then
 fi
 [ "$hypr_border" -eq 0 ] && elem_border="10" || elem_border=$((hypr_border * 2))
 mon_data=$(hyprctl -j monitors)
-is_vertical=$(jq -e '.[] | select(.focused==true) | if (.transform % 2 == 0) then .width / .height else .height / .width end < 1' <<<"$mon_data")
+is_vertical=$(jq -e '.[] | select(.focused==true) | if (.transform % 2 == 0) then .width / .height else .height / .width end < 1' <<< "$mon_data")
 if [[ $is_vertical == "true" ]]; then
     echo "Monitor is vertical"
 fi
@@ -94,4 +94,6 @@ rofi -show "$r_mode" \
     -theme-str "$i_override" \
     -theme-str "$r_override" \
     -theme "$rofi_config" \
-    -dump-theme | { grep -q "fullscreen.*true" && touch "$HYDE_STATE_HOME/fullscreen_$r_mode"; } || rm -f "$HYDE_STATE_HOME/fullscreen_$r_mode"
+    -dump-theme | {
+    grep -q "fullscreen.*true" && touch "$HYDE_STATE_HOME/fullscreen_$r_mode"
+}                                                                                             || rm -f "$HYDE_STATE_HOME/fullscreen_$r_mode"
