@@ -34,64 +34,64 @@ fi
 w_position="$(grep '^1|' "$conf_ctl" | cut -d '|' -f 3)"
 export w_position
 case $w_position in
-top | bottom)
-    export x1g_margin=$g_margin
-    export x2g_margin=0
-    export x3g_margin=$g_margin
-    export x4g_margin=0
-    export x1rb_radius=0
-    export x2rb_radius=$b_radius
-    export x3rb_radius=$b_radius
-    export x4rb_radius=0
-    export x1lb_radius=$b_radius
-    export x2lb_radius=0
-    export x3lb_radius=0
-    export x4lb_radius=$b_radius
-    export x1rc_radius=0
-    export x2rc_radius=$c_radius
-    export x3rc_radius=$c_radius
-    export x4rc_radius=0
-    export x1lc_radius=$c_radius
-    export x2lc_radius=0
-    export x3lc_radius=0
-    export x4lc_radius=$c_radius
-    export x1="top"
-    export x2="bottom"
-    export x3="left"
-    export x4="right"
-    ;;
-left | right)
-    export x1g_margin=0
-    export x2g_margin=$g_margin
-    export x3g_margin=0
-    export x4g_margin=$g_margin
-    export x1rb_radius=0
-    export x2rb_radius=0
-    export x3rb_radius=$b_radius
-    export x4rb_radius=$b_radius
-    export x1lb_radius=$b_radius
-    export x2lb_radius=$b_radius
-    export x3lb_radius=0
-    export x4lb_radius=0
-    export x1rc_radius=0
-    export x2rc_radius=$c_radius
-    export x3rc_radius=$c_radius
-    export x4rc_radius=0
-    export x1lc_radius=$c_radius
-    export x2lc_radius=0
-    export x3lc_radius=0
-    export x4lc_radius=$c_radius
-    export x1="left"
-    export x2="right"
-    export x3="top"
-    export x4="bottom"
-    ;;
+    top | bottom)
+        export x1g_margin=$g_margin
+        export x2g_margin=0
+        export x3g_margin=$g_margin
+        export x4g_margin=0
+        export x1rb_radius=0
+        export x2rb_radius=$b_radius
+        export x3rb_radius=$b_radius
+        export x4rb_radius=0
+        export x1lb_radius=$b_radius
+        export x2lb_radius=0
+        export x3lb_radius=0
+        export x4lb_radius=$b_radius
+        export x1rc_radius=0
+        export x2rc_radius=$c_radius
+        export x3rc_radius=$c_radius
+        export x4rc_radius=0
+        export x1lc_radius=$c_radius
+        export x2lc_radius=0
+        export x3lc_radius=0
+        export x4lc_radius=$c_radius
+        export x1="top"
+        export x2="bottom"
+        export x3="left"
+        export x4="right"
+        ;;
+    left | right)
+        export x1g_margin=0
+        export x2g_margin=$g_margin
+        export x3g_margin=0
+        export x4g_margin=$g_margin
+        export x1rb_radius=0
+        export x2rb_radius=0
+        export x3rb_radius=$b_radius
+        export x4rb_radius=$b_radius
+        export x1lb_radius=$b_radius
+        export x2lb_radius=$b_radius
+        export x3lb_radius=0
+        export x4lb_radius=0
+        export x1rc_radius=0
+        export x2rc_radius=$c_radius
+        export x3rc_radius=$c_radius
+        export x4rc_radius=0
+        export x1lc_radius=$c_radius
+        export x2lc_radius=0
+        export x3lc_radius=0
+        export x4lc_radius=$c_radius
+        export x1="left"
+        export x2="right"
+        export x3="top"
+        export x4="bottom"
+        ;;
 esac
 font_name=${WAYBAR_FONT:-$(get_hyprConf "WAYBAR_FONT")}
 export font_name=${font_name:-"JetBrainsMono Nerd Font"}
 export modules_ls
 modules_ls=$(grep -m 1 '".*.": {' --exclude="$modules_dir/footer.jsonc" "$modules_dir"/*.jsonc | cut -d '"' -f 2 | awk -F '/' '{print ($1=="custom" ? "#custom-"$NF : "#"$NF)","}')
-envsubst <"$in_file" >"$out_file"
+envsubst < "$in_file" > "$out_file"
 hypr_border=$(awk -F '=' '{if($1~" rounding ") print $2}' "$src_file" | sed 's/ //g')
 hypr_border=${hypr_border:-$WAYBAR_BORDER_RADIUS}
 if [ "$hypr_border" == "0" ] || [ -z "$hypr_border" ]; then

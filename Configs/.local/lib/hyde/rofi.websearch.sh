@@ -55,25 +55,25 @@ get_sites_list() {
 }
 get_queries_list() {
     site=$1
-    cat "$cached_search_dir/$site.txt" 2>/dev/null || true
+    cat "$cached_search_dir/$site.txt" 2> /dev/null || true
 }
 write_to_top() {
     file=$1
     content=$2
     if [[ $file == *"recent.sites" ]]; then
-        key="$(awk -F '|' '{print $1}' <<<"$content" | xargs)"
+        key="$(awk -F '|' '{print $1}' <<< "$content" | xargs)"
         if [[ -n ${SITES[$key]} ]]; then
-            grep -vx "$key" "$file" 2>/dev/null >temp_recent || true
-            printf "%s\n" "$key" >"$file"
-            cat temp_recent >>"$file"
+            grep -vx "$key" "$file" 2> /dev/null > temp_recent || true
+            printf "%s\n" "$key" > "$file"
+            cat temp_recent >> "$file"
             rm -f temp_recent
         fi
     else
         {
             printf "%s\n" "$content"
-            cat "$file" 2>/dev/null
-        } >temp && mv temp "$file"
-        awk 'NF' "$file" | awk '!seen[$0]++' >temp && mv temp "$file"
+            cat "$file" 2> /dev/null
+        } > temp && mv temp "$file"
+        awk 'NF' "$file" | awk '!seen[$0]++' > temp && mv temp "$file"
     fi
 }
 handle_query() {
@@ -84,16 +84,16 @@ handle_query() {
     mkdir -p "$cached_search_dir"
     touch "$cached_search_dir/$site.txt"
     if grep -Fxq "$query" "$cached_search_dir/$site.txt"; then
-        printf "%s\n" "$(grep -xv "$query" "$cached_search_dir/$site.txt")" >"$cached_search_dir/$site.txt"
+        printf "%s\n" "$(grep -xv "$query" "$cached_search_dir/$site.txt")" > "$cached_search_dir/$site.txt"
     fi
     write_to_top "$cached_search_dir/$site.txt" "$query"
     write_to_top "$cached_search_dir/recent.sites" "$site | ${SITES[$site]}"
     if [ -n "$BROWSER" ]; then
         printf "Using browser: %s %s\n" "$BROWSER" "${SITES[$site]}$query"
-        nohup "$BROWSER" "${SITES[$site]}$query" >/dev/null 2>&1 &
+        nohup "$BROWSER" "${SITES[$site]}$query" > /dev/null 2>&1 &
     else
         printf "Using default browser: xdg-open %s\n" "${SITES[$site]}$query"
-        [ -z "$BROWSER" ] && nohup xdg-open "${SITES[$site]}$query" >/dev/null 2>&1 &
+        [ -z "$BROWSER" ] && nohup xdg-open "${SITES[$site]}$query" > /dev/null 2>&1 &
     fi
 }
 smart_input() {
@@ -134,7 +134,7 @@ setup_rofi_config() {
     r_override="window{border:${hypr_width}px;border-radius:${wind_border}px;}wallbox{border-radius:${elem_border}px;} element{border-radius:${elem_border}px;}"
 }
 usage() {
-    cat <<EOF
+    cat << EOF
 --clear-cache               Reset cache
 --browser | -b [browser]    Browser to use, defaults to xdg browser
 --site | -s [search engine] Search-engine to use
@@ -171,7 +171,7 @@ rofi_interactive() {
         smart_input "${text_input[@]}"
     fi
     if [[ -z $FINAL_SITE ]]; then
-        FINAL_SITE=$(awk '{print $1}' <<<"$text_input")
+        FINAL_SITE=$(awk '{print $1}' <<< "$text_input")
         if [[ -z ${SITES[$FINAL_SITE]} ]]; then
             printf "Invalid FINAL_SITE: %s\n" "$FINAL_SITE"
             exit 1
@@ -212,17 +212,17 @@ main() {
 
     # Handle arguments
     case "$ARGPARSE_ACTION" in
-    clear-cache)
-        rm -fr "$cached_search_dir"
-        print_log +g "[ok] " +y "cleared cache"
-        exit 0
-        ;;
-    help)
-        usage
-        ;;
-    *)
-        rofi_interactive
-        ;;
+        clear-cache)
+            rm -fr "$cached_search_dir"
+            print_log +g "[ok] " +y "cleared cache"
+            exit 0
+            ;;
+        help)
+            usage
+            ;;
+        *)
+            rofi_interactive
+            ;;
     esac
 }
 main "$@"

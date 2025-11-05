@@ -10,10 +10,10 @@ img_preview() {
     if [ xterm-kitty == "$TERM" ]; then
         kitty icat --clear --transfer-mode=memory --stdin=no --place=100x200@20x2 "$image_url" || kitty icat --clear --transfer-mode=memory --stdin=no "$image_url"
     else
-        if command -v jp2a &>/dev/null; then
-            find "$image_url" -name "*" -exec jp2a --colors --color-depth=24 --chars=' .:-=+*#%@' --fill --term-fit --background=dark {} \; 2>/dev/null
+        if command -v jp2a &> /dev/null; then
+            find "$image_url" -name "*" -exec jp2a --colors --color-depth=24 --chars=' .:-=+*#%@' --fill --term-fit --background=dark {} \; 2> /dev/null
         else
-            cat <<EOF
+            cat << EOF
           ░▒▒▒░░░░░▓▓          ___________
         ░░▒▒▒░░░░░▓▓        //___________/
        ░░▒▒▒░░░░░▓▓     _   _ _    _ _____

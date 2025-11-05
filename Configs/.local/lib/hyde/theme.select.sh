@@ -4,8 +4,8 @@ rofiAssetDir="$SHARE_DIR/hyde/rofi/assets"
 hypr_border=${hypr_border:-"$(hyprctl -j getoption decoration:rounding | jq '.int')"}
 hypr_border=${hypr_border:-2}
 mon_data=$(hyprctl -j monitors)
-mon_x_res=$(jq '.[] | select(.focused==true) | if (.transform % 2 == 0) then .width else .height end' <<<"$mon_data")
-mon_scale=$(jq '.[] | select(.focused==true) | .scale' <<<"$mon_data" | sed "s/\.//")
+mon_x_res=$(jq '.[] | select(.focused==true) | if (.transform % 2 == 0) then .width else .height end' <<< "$mon_data")
+mon_scale=$(jq '.[] | select(.focused==true) | .scale' <<< "$mon_data" | sed "s/\.//")
 mon_x_res=${mon_x_res:-1920}
 mon_scale=${mon_scale:-1}
 mon_x_res=$((mon_x_res * 100 / mon_scale))
@@ -43,7 +43,7 @@ selector_menu() {
     exit 0
 }
 help_message() {
-    cat <<HELP
+    cat << HELP
 Usage: $(basename "$0") --select-menu|-s  [style]
 
 menu style:
@@ -57,47 +57,47 @@ HELP
     exit 0
 }
 case "$1" in
--m | -s | --select-menu)
-    selector_menu
-    ;;
--*)
-    help_message
-    ;;
-*)
-    font_scale="$ROFI_THEME_SCALE"
-    [[ $font_scale =~ ^[0-9]+$ ]] || font_scale=${ROFI_SCALE:-10}
-    font_name=${ROFI_THEME_FONT:-$ROFI_FONT}
-    font_name=${font_name:-$(get_hyprConf "MENU_FONT")}
-    font_name=${font_name:-$(get_hyprConf "FONT")}
-    font_override="* {font: \"${font_name:-"JetBrainsMono Nerd Font"} $font_scale\";}"
-    elem_border=$((hypr_border * 5))
-    icon_border=$((elem_border - 5))
-    ROFI_THEME_STYLE="${ROFI_THEME_STYLE:-1}"
-    case "$ROFI_THEME_STYLE" in
-    2 | "quad")
-        elm_width=$(((20 + 12) * font_scale * 2))
-        max_avail=$((mon_x_res - (4 * font_scale)))
-        col_count=$((max_avail / elm_width))
-        r_override="window{width:100%;background-color:#00000003;} 
+    -m | -s | --select-menu)
+        selector_menu
+        ;;
+    -*)
+        help_message
+        ;;
+    *)
+        font_scale="$ROFI_THEME_SCALE"
+        [[ $font_scale =~ ^[0-9]+$ ]] || font_scale=${ROFI_SCALE:-10}
+        font_name=${ROFI_THEME_FONT:-$ROFI_FONT}
+        font_name=${font_name:-$(get_hyprConf "MENU_FONT")}
+        font_name=${font_name:-$(get_hyprConf "FONT")}
+        font_override="* {font: \"${font_name:-"JetBrainsMono Nerd Font"} $font_scale\";}"
+        elem_border=$((hypr_border * 5))
+        icon_border=$((elem_border - 5))
+        ROFI_THEME_STYLE="${ROFI_THEME_STYLE:-1}"
+        case "$ROFI_THEME_STYLE" in
+            2 | "quad")
+                elm_width=$(((20 + 12) * font_scale * 2))
+                max_avail=$((mon_x_res - (4 * font_scale)))
+                col_count=$((max_avail / elm_width))
+                r_override="window{width:100%;background-color:#00000003;} 
                             listview{columns:$col_count;} 
                             element{border-radius:${elem_border}px;background-color:@main-bg;}
                             element-icon{size:20em;border-radius:${icon_border}px 0px 0px ${icon_border}px;}"
-        thmbExtn="quad"
-        ROFI_THEME_STYLE="selector"
-        ;;
-    1 | "square")
-        elm_width=$(((23 + 12 + 1) * font_scale * 2))
-        max_avail=$((mon_x_res - (4 * font_scale)))
-        col_count=$((max_avail / elm_width))
-        r_override="window{width:100%;} 
+                thmbExtn="quad"
+                ROFI_THEME_STYLE="selector"
+                ;;
+            1 | "square")
+                elm_width=$(((23 + 12 + 1) * font_scale * 2))
+                max_avail=$((mon_x_res - (4 * font_scale)))
+                col_count=$((max_avail / elm_width))
+                r_override="window{width:100%;} 
                             listview{columns:$col_count;} 
                             element{border-radius:${elem_border}px;padding:0.5em;} 
                             element-icon{size:23em;border-radius:${icon_border}px;}"
-        thmbExtn="sqre"
-        ROFI_THEME_STYLE="selector"
+                thmbExtn="sqre"
+                ROFI_THEME_STYLE="selector"
+                ;;
+        esac
         ;;
-    esac
-    ;;
 esac
 get_themes
 rofiSel=$(

@@ -2,7 +2,7 @@
 selected_wall="${1:-"$$HYDE_CACHE_HOME/wall.set"}"
 lockFile="$XDG_RUNTIME_DIR/hyde/$(basename "$0").lock"
 if [ -e "$lockFile" ]; then
-    cat <<EOF
+    cat << EOF
 
 Error: Another instance of $(basename "$0") is running.
 If you are sure that no other instance is running, remove the lock file:
@@ -15,19 +15,19 @@ trap 'rm -f ${lockFile}' EXIT
 scrDir="$(dirname "$(realpath "$0")")"
 source "$scrDir/globalcontrol.sh"
 case "$WALLPAPER_SET_FLAG" in
-p)
-    xtrans=$WALLPAPER_SWWW_TRANSITION_PREV
-    xtrans="${xtrans:-"outer"}"
-    ;;
-n)
-    xtrans=$WALLPAPER_SWWW_TRANSITION_NEXT
-    xtrans="${xtrans:-"grow"}"
-    ;;
+    p)
+        xtrans=$WALLPAPER_SWWW_TRANSITION_PREV
+        xtrans="${xtrans:-"outer"}"
+        ;;
+    n)
+        xtrans=$WALLPAPER_SWWW_TRANSITION_NEXT
+        xtrans="${xtrans:-"grow"}"
+        ;;
 esac
 selected_wall="$1"
 [ -z "$selected_wall" ] && echo "No input wallpaper" && exit 1
 selected_wall="$(readlink -f "$selected_wall")"
-if ! swww query &>/dev/null; then
+if ! swww query &> /dev/null; then
     swww-daemon --format xrgb &
     disown
     swww query && swww restore

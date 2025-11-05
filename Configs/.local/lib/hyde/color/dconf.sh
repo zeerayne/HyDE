@@ -2,7 +2,7 @@
 [[ $HYDE_SHELL_INIT -ne 1 ]] && eval "$(hyde-shell init)"
 source "$SHARE_DIR/hyde/env-theme"
 dconf_populate() {
-    cat <<EOF
+    cat << EOF
 [org/gnome/desktop/interface]
 icon-theme='$ICON_THEME'
 gtk-theme='$GTK_THEME'
@@ -24,7 +24,7 @@ EOF
 }
 COLOR_SCHEME="prefer-$dcol_mode"
 GTK_THEME="Wallbash-Gtk"
-if [[ -r $HYPRLAND_CONFIG ]] && command -v "hyq" &>/dev/null; then
+if [[ -r $HYPRLAND_CONFIG ]] && command -v "hyq" &> /dev/null; then
     eval "$(hyq "$HYPRLAND_CONFIG" --source --export env \
         -Q 'hyde:gtk-theme' \
         -Q 'hyde:color-scheme' \
@@ -65,10 +65,18 @@ if [[ ${revert_colors:-0} -eq 1 ]] || [[ ${enableWallDcol:-0} -eq 2 && ${dcol_mo
     fi
 fi
 DCONF_FILE="${XDG_CACHE_HOME:-$HOME/.cache}/hyde/dconf"
-{ dconf load -f / <"$DCONF_FILE" && print_log -sec "dconf" -stat "preserve" "$DCONF_FILE"; } || print_log -sec "dconf" -warn "failed to preserve" "$DCONF_FILE"
-{ dconf_populate >"$DCONF_FILE" && print_log -sec "dconf" -stat "populated" "$DCONF_FILE"; } || print_log -sec "dconf" -warn "failed to populate" "$DCONF_FILE"
-{ dconf reset -f / <"$DCONF_FILE" && print_log -sec "dconf" -stat "reset" "$DCONF_FILE"; } || print_log -sec "dconf" -warn "failed to reset" "$DCONF_FILE"
-{ dconf load -f / <"$DCONF_FILE" && print_log -sec "dconf" -stat "loaded" "$DCONF_FILE"; } || print_log -sec "dconf" -warn "failed to load" "$DCONF_FILE"
+{
+    dconf load -f / < "$DCONF_FILE" && print_log -sec "dconf" -stat "preserve" "$DCONF_FILE"
+}                                                                                            || print_log -sec "dconf" -warn "failed to preserve" "$DCONF_FILE"
+{
+    dconf_populate > "$DCONF_FILE" && print_log -sec "dconf" -stat "populated" "$DCONF_FILE"
+}                                                                                            || print_log -sec "dconf" -warn "failed to populate" "$DCONF_FILE"
+{
+    dconf reset -f / < "$DCONF_FILE" && print_log -sec "dconf" -stat "reset" "$DCONF_FILE"
+}                                                                                          || print_log -sec "dconf" -warn "failed to reset" "$DCONF_FILE"
+{
+    dconf load -f / < "$DCONF_FILE" && print_log -sec "dconf" -stat "loaded" "$DCONF_FILE"
+}                                                                                          || print_log -sec "dconf" -warn "failed to load" "$DCONF_FILE"
 [[ -n $HYPRLAND_INSTANCE_SIGNATURE ]] && hyprctl setcursor "$CURSOR_THEME" "$CURSOR_SIZE"
 print_log -sec "dconf" -stat "Loaded dconf settings"
 print_log -y "#-----------------------------------------------#"

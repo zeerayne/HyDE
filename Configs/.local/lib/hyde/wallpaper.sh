@@ -5,7 +5,7 @@ else
     export_hyde_config
 fi
 show_help() {
-    cat <<EOF
+    cat << EOF
 Usage: $(basename "$0") --[options|flags] [parameters]
 options:
     -j, --json                List wallpapers in JSON format to STDOUT
@@ -49,7 +49,7 @@ Wall_Cache() {
     ln -fs "${wallList[setIndex]}" "$wallCur"
     if [ "$set_as_global" == "true" ]; then
         print_log -sec "wallpaper" "Setting Wallpaper as global"
-        "$LIB_DIR/hyde/swwwallcache.sh" -w "${wallList[setIndex]}" &>/dev/null
+        "$LIB_DIR/hyde/swwwallcache.sh" -w "${wallList[setIndex]}" &> /dev/null
         "$LIB_DIR/hyde/color.set.sh" "${wallList[setIndex]}" &
         ln -fs "$thmbDir/${wallHash[setIndex]}.sqre" "$wallSqr"
         ln -fs "$thmbDir/${wallHash[setIndex]}.thmb" "$wallTmb"
@@ -113,8 +113,8 @@ Wall_Select() {
     font_override="* {font: \"${font_name:-"JetBrainsMono Nerd Font"} $font_scale\";}"
     elem_border=$((hypr_border * 3))
     mon_data=$(hyprctl -j monitors)
-    mon_x_res=$(jq '.[] | select(.focused==true) | if (.transform % 2 == 0) then .width else .height end' <<<"$mon_data")
-    mon_scale=$(jq '.[] | select(.focused==true) | .scale' <<<"$mon_data" | sed "s/\.//")
+    mon_x_res=$(jq '.[] | select(.focused==true) | if (.transform % 2 == 0) then .width else .height end' <<< "$mon_data")
+    mon_scale=$(jq '.[] | select(.focused==true) | .scale' <<< "$mon_data" | sed "s/\.//")
     mon_x_res=${mon_x_res:-1920}
     mon_scale=${mon_scale:-1}
     mon_x_res=$((mon_x_res * 100 / mon_scale))
@@ -135,9 +135,9 @@ Wall_Select() {
         -theme-str "$r_override" \
         -theme "${ROFI_WALLPAPER_STYLE:-selector}" \
         -select "$(basename "$(readlink "$wallSet")")")
-    selected_thumbnail="$(awk -F ':::' '{print $3}' <<<"$entry")"
-    selected_wallpaper_path="$(awk -F ':::' '{print $2}' <<<"$entry")"
-    selected_wallpaper="$(awk -F ':::' '{print $1}' <<<"$entry")"
+    selected_thumbnail="$(awk -F ':::' '{print $3}' <<< "$entry")"
+    selected_wallpaper_path="$(awk -F ':::' '{print $2}' <<< "$entry")"
+    selected_wallpaper="$(awk -F ':::' '{print $1}' <<< "$entry")"
     export selected_wallpaper selected_wallpaper_path selected_thumbnail
     if [ -z "$selected_wallpaper" ]; then
         print_log -err "wallpaper" " No wallpaper selected"
@@ -180,76 +180,76 @@ main() {
     if [ -n "$wallpaper_setter_flag" ]; then
         export WALLPAPER_SET_FLAG="$wallpaper_setter_flag"
         case "$wallpaper_setter_flag" in
-        n)
-            Wall_Hash
-            Wall_Change n
-            ;;
-        p)
-            Wall_Hash
-            Wall_Change p
-            ;;
-        r)
-            Wall_Hash
-            setIndex=$((RANDOM % ${#wallList[@]}))
-            Wall_Cache "${wallList[setIndex]}"
-            ;;
-        s)
-            if
-                [ -z "$wallpaper_path" ] && [ ! -f "$wallpaper_path" ]
-            then
-                print_log -err "wallpaper" "Wallpaper not found: $wallpaper_path"
-                exit 1
-            fi
-            get_hashmap "$wallpaper_path"
-            Wall_Cache
-            ;;
-        start)
-            if
-                [ ! -e "$wallSet" ]
-            then
-                print_log -err "wallpaper" "No current wallpaper found: $wallSet"
-                exit 1
-            fi
-            export WALLPAPER_RELOAD_ALL=0 WALLBASH_STARTUP=1
-            current_wallpaper="$(realpath "$wallSet")"
-            get_hashmap "$current_wallpaper"
-            Wall_Cache
-            ;;
-        g)
-            if
-                [ ! -e "$wallSet" ]
-            then
-                print_log -err "wallpaper" "Wallpaper not found: $wallSet"
-                exit 1
-            fi
-            realpath "$wallSet"
-            exit 0
-            ;;
-        o)
-            if
-                [ -n "$wallpaper_output" ]
-            then
-                print_log -sec "wallpaper" "Current wallpaper copied to: $wallpaper_output"
-                cp -f "$wallSet" "$wallpaper_output"
-            fi
-            ;;
-        select)
-            Wall_Select
-            get_hashmap "$selected_wallpaper_path"
-            Wall_Cache
-            ;;
-        link)
-            Wall_Hash
-            Wall_Cache
-            exit 0
-            ;;
+            n)
+                Wall_Hash
+                Wall_Change n
+                ;;
+            p)
+                Wall_Hash
+                Wall_Change p
+                ;;
+            r)
+                Wall_Hash
+                setIndex=$((RANDOM % ${#wallList[@]}))
+                Wall_Cache "${wallList[setIndex]}"
+                ;;
+            s)
+                if
+                    [ -z "$wallpaper_path" ] && [ ! -f "$wallpaper_path" ]
+                then
+                    print_log -err "wallpaper" "Wallpaper not found: $wallpaper_path"
+                    exit 1
+                fi
+                get_hashmap "$wallpaper_path"
+                Wall_Cache
+                ;;
+            start)
+                if
+                    [ ! -e "$wallSet" ]
+                then
+                    print_log -err "wallpaper" "No current wallpaper found: $wallSet"
+                    exit 1
+                fi
+                export WALLPAPER_RELOAD_ALL=0 WALLBASH_STARTUP=1
+                current_wallpaper="$(realpath "$wallSet")"
+                get_hashmap "$current_wallpaper"
+                Wall_Cache
+                ;;
+            g)
+                if
+                    [ ! -e "$wallSet" ]
+                then
+                    print_log -err "wallpaper" "Wallpaper not found: $wallSet"
+                    exit 1
+                fi
+                realpath "$wallSet"
+                exit 0
+                ;;
+            o)
+                if
+                    [ -n "$wallpaper_output" ]
+                then
+                    print_log -sec "wallpaper" "Current wallpaper copied to: $wallpaper_output"
+                    cp -f "$wallSet" "$wallpaper_output"
+                fi
+                ;;
+            select)
+                Wall_Select
+                get_hashmap "$selected_wallpaper_path"
+                Wall_Cache
+                ;;
+            link)
+                Wall_Hash
+                Wall_Cache
+                exit 0
+                ;;
         esac
     fi
     if [ -f "$LIB_DIR/hyde/wallpaper.$wallpaper_backend.sh" ] && [ -n "$wallpaper_backend" ]; then
         print_log -sec "wallpaper" "Using backend: $wallpaper_backend"
         "$LIB_DIR/hyde/wallpaper.$wallpaper_backend.sh" "$wallSet"
     else
-        if command -v "wallpaper.$wallpaper_backend.sh" >/dev/null; then
+        if command -v "wallpaper.$wallpaper_backend.sh" > /dev/null; then
             "wallpaper.$wallpaper_backend.sh" "$wallSet"
         else
             print_log -warn "wallpaper" "No backend script found for $wallpaper_backend"
@@ -284,79 +284,79 @@ wallpaper_setter_flag=""
 eval set -- "$PARSED"
 while true; do
     case "$1" in
-    -G | --global)
-        set_as_global=true
-        shift
-        ;;
-    --link)
-        wallpaper_setter_flag="link"
-        shift
-        ;;
-    -j | --json)
-        Wall_Json
-        exit 0
-        ;;
-    -S | --select)
-        "$LIB_DIR/hyde/swwwallcache.sh" w &>/dev/null &
-        wallpaper_setter_flag=select
-        shift
-        ;;
-    -n | --next)
-        wallpaper_setter_flag=n
-        shift
-        ;;
-    -p | --previous)
-        wallpaper_setter_flag=p
-        shift
-        ;;
-    -r | --random)
-        wallpaper_setter_flag=r
-        shift
-        ;;
-    -s | --set)
-        wallpaper_setter_flag=s
-        wallpaper_path="$2"
-        shift 2
-        ;;
-    --start)
-        wallpaper_setter_flag=start
-        shift
-        ;;
-    -g | --get)
-        wallpaper_setter_flag=g
-        shift
-        ;;
-    -b | --backend)
-        wallpaper_backend="${2:-"$WALLPAPER_BACKEND"}"
-        shift 2
-        ;;
-    -o | --output)
-        wallpaper_setter_flag=o
-        wallpaper_output="$2"
-        shift 2
-        ;;
-    -t | --filetypes)
-        IFS=':' read -r -a WALLPAPER_OVERRIDE_FILETYPES <<<"$2"
-        if [ "$LOG_LEVEL" == "debug" ]; then
-            for i in "${WALLPAPER_OVERRIDE_FILETYPES[@]}"; do
-                print_log -g "DEBUG:" -b "filetype overrides : " "'$i'"
-            done
-        fi
-        export WALLPAPER_OVERRIDE_FILETYPES
-        shift 2
-        ;;
-    -h | --help)
-        show_help
-        ;;
-    --)
-        shift
-        break
-        ;;
-    *)
-        echo "Invalid option: $1"
-        echo "Try '$(basename "$0") --help' for more information."
-        exit 1
-        ;;
+        -G | --global)
+            set_as_global=true
+            shift
+            ;;
+        --link)
+            wallpaper_setter_flag="link"
+            shift
+            ;;
+        -j | --json)
+            Wall_Json
+            exit 0
+            ;;
+        -S | --select)
+            "$LIB_DIR/hyde/swwwallcache.sh" w &> /dev/null &
+            wallpaper_setter_flag=select
+            shift
+            ;;
+        -n | --next)
+            wallpaper_setter_flag=n
+            shift
+            ;;
+        -p | --previous)
+            wallpaper_setter_flag=p
+            shift
+            ;;
+        -r | --random)
+            wallpaper_setter_flag=r
+            shift
+            ;;
+        -s | --set)
+            wallpaper_setter_flag=s
+            wallpaper_path="$2"
+            shift 2
+            ;;
+        --start)
+            wallpaper_setter_flag=start
+            shift
+            ;;
+        -g | --get)
+            wallpaper_setter_flag=g
+            shift
+            ;;
+        -b | --backend)
+            wallpaper_backend="${2:-"$WALLPAPER_BACKEND"}"
+            shift 2
+            ;;
+        -o | --output)
+            wallpaper_setter_flag=o
+            wallpaper_output="$2"
+            shift 2
+            ;;
+        -t | --filetypes)
+            IFS=':' read -r -a WALLPAPER_OVERRIDE_FILETYPES <<< "$2"
+            if [ "$LOG_LEVEL" == "debug" ]; then
+                for i in "${WALLPAPER_OVERRIDE_FILETYPES[@]}"; do
+                    print_log -g "DEBUG:" -b "filetype overrides : " "'$i'"
+                done
+            fi
+            export WALLPAPER_OVERRIDE_FILETYPES
+            shift 2
+            ;;
+        -h | --help)
+            show_help
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            echo "Invalid option: $1"
+            echo "Try '$(basename "$0") --help' for more information."
+            exit 1
+            ;;
     esac
 done
 main

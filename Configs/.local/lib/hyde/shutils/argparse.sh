@@ -22,48 +22,48 @@ argparse_init() {
 
 # Function to dynamically add CLI arguments
 argparse() {
-    local flags="$1"          # "--long,-short"
-    local vars="$2"           # "VAR1=true,VAR2=false"
-    local description="$3"    # "Description about this CLI"
+    local flags="$1" # "--long,-short"
+    local vars="$2" # "VAR1=true,VAR2=false"
+    local description="$3" # "Description about this CLI"
     local argparse_flags="$4" # "parameter=true"
 
     # Parse argparse_flags into an associative array
     declare -A flags_map
-    IFS=',' read -r -a flag_list <<<"$argparse_flags"
+    IFS=',' read -r -a flag_list <<< "$argparse_flags"
     for flag in "${flag_list[@]}"; do
         flags_map["$flag"]=true
     done
 
     # Access flags directly from the associative array
-    local parameter=${flags_map[parameter]:-false}                   # Default to false (boolean flag)
-    local optional=${flags_map[optional]:-false}                     # Default to false
+    local parameter=${flags_map[parameter]:-false} # Default to false (boolean flag)
+    local optional=${flags_map[optional]:-false} # Default to false
     local parameter_optional=${flags_map[parameter_optional]:-false} # Alias for optional
-    if [[ "$parameter_optional" == true ]]; then
+    if [[ $parameter_optional == true ]]; then
         optional=true
     fi
 
     # Split flags into an array
-    IFS=',' read -r -a flag_array <<<"$flags"
+    IFS=',' read -r -a flag_array <<< "$flags"
 
     # Split vars into an associative array
     declare -A var_map
-    IFS=',' read -r -a var_pairs <<<"$vars"
+    IFS=',' read -r -a var_pairs <<< "$vars"
     for pair in "${var_pairs[@]}"; do
-        IFS='=' read -r key value <<<"$pair"
+        IFS='=' read -r key value <<< "$pair"
         var_map["$key"]="$value"
     done
 
     # Add the description to the help text
     local param_var=""
     for key in "${!var_map[@]}"; do
-        if [[ "${var_map[$key]}" != true ]]; then
+        if [[ ${var_map[$key]} != true ]]; then
             param_var="$key"
             break
         fi
     done
-    if [[ "$parameter" == true ]]; then
+    if [[ $parameter == true ]]; then
         ARGPARSE_HELP_TEXT+=("$flags $param_var: $description")
-    elif [[ "$optional" == true ]]; then
+    elif [[ $optional == true ]]; then
         ARGPARSE_HELP_TEXT+=("$flags [$param_var]: $description")
     else
         ARGPARSE_HELP_TEXT+=("$flags: $description")
@@ -77,7 +77,7 @@ argparse() {
             # Set ARGPARSE_ACTION to the action name (remove -- from first flag)
             # shellcheck disable=SC2034
             ARGPARSE_ACTION="${flag_array[0]#--}"
-            if [[ "$parameter" == true ]]; then
+            if [[ $parameter == true ]]; then
                 # Handle required parameter
                 if ((i + 1 >= ${#ARGPARMS[@]})); then
                     echo "Error: $arg requires a parameter" >&2
@@ -85,20 +85,20 @@ argparse() {
                 fi
                 i=$((i + 1)) # Move to the next argument
                 for key in "${!var_map[@]}"; do
-                    if [[ -z "${var_map[$key]}" ]]; then
+                    if [[ -z ${var_map[$key]} ]]; then
                         eval "$key=\"${ARGPARMS[i]}\""
                     else
                         eval "$key=${var_map[$key]}"
                     fi
                 done
-            elif [[ "$optional" == true ]]; then
+            elif [[ $optional == true ]]; then
                 # Handle optional parameter
                 for key in "${!var_map[@]}"; do
-                    if [[ "${var_map[$key]}" == true ]]; then
+                    if [[ ${var_map[$key]} == true ]]; then
                         eval "$key=true"
                     else
                         # Parameter variable
-                        if ((i + 1 < ${#ARGPARMS[@]})) && [[ "${ARGPARMS[i + 1]}" != -* ]]; then
+                        if ((i + 1 < ${#ARGPARMS[@]})) && [[ ${ARGPARMS[i + 1]} != -* ]]; then
                             i=$((i + 1)) # Move to the next argument
                             eval "$key=\"${ARGPARMS[i]}\""
                         else
@@ -155,25 +155,25 @@ argparse_help() {
         done
     )
 
-    cat <<-EOF
-${ARGPARSE_HEADER:+$ARGPARSE_HEADER}
+    cat <<- EOF
+		${ARGPARSE_HEADER:+$ARGPARSE_HEADER}
 
-Usage:
-  ${ARGPARSE_PROGRAM:-$SCRIPT_NAME} [flags]
+		Usage:
+		  ${ARGPARSE_PROGRAM:-$SCRIPT_NAME} [flags]
 
-Options:
-$options_text
+		Options:
+		$options_text
 
-${ARGPARSE_FOOTER:+$ARGPARSE_FOOTER
+		${ARGPARSE_FOOTER:+$ARGPARSE_FOOTER
 
-}
-EOF
+		}
+	EOF
 }
 
 # Function to finalize parsing and handle --help
 argparse_finalize() {
     for arg in "${ARGPARMS[@]}"; do
-        if [[ "$arg" == "--help" ]]; then
+        if [[ $arg == "--help" ]]; then
             argparse_help
             exit 0
         fi

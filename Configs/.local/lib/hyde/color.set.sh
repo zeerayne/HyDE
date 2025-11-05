@@ -29,11 +29,11 @@ create_wallbash_substitutions() {
         local pry_rgb_var="dcol_pry${src_i}_rgb"
         local txt_rgb_var="dcol_txt${src_i}_rgb"
         if [[ -n ${!pry_rgba_var:-} && -z ${!pry_rgb_var:-} ]]; then
-            declare -g "$pry_rgb_var=$(sed -E 's/rgba\(([0-9]+,[0-9]+,[0-9]+),.*/\1/' <<<"${!pry_rgba_var}")"
+            declare -g "$pry_rgb_var=$(sed -E 's/rgba\(([0-9]+,[0-9]+,[0-9]+),.*/\1/' <<< "${!pry_rgba_var}")"
             export "${pry_rgb_var?}"
         fi
         if [[ -n ${!txt_rgba_var:-} && -z ${!txt_rgb_var:-} ]]; then
-            declare -g "$txt_rgb_var=$(sed -E 's/rgba\(([0-9]+,[0-9]+,[0-9]+),.*/\1/' <<<"${!txt_rgba_var}")"
+            declare -g "$txt_rgb_var=$(sed -E 's/rgba\(([0-9]+,[0-9]+,[0-9]+),.*/\1/' <<< "${!txt_rgba_var}")"
             export "${txt_rgb_var?}"
         fi
         [ -n "${!pry_var:-}" ] && sed_script+="s|<wallbash_pry$i>|${!pry_var}|g;"
@@ -47,7 +47,7 @@ create_wallbash_substitutions() {
             local xa_rgba_var="dcol_${src_i}xa${j}_rgba"
             local xa_rgb_var="dcol_${src_i}xa${j}_rgb"
             if [[ -n ${!xa_rgba_var:-} && -z ${!xa_rgb_var:-} ]]; then
-                declare -g "$xa_rgb_var=$(sed -E 's/rgba\(([0-9]+,[0-9]+,[0-9]+),.*/\1/' <<<"${!xa_rgba_var}")"
+                declare -g "$xa_rgb_var=$(sed -E 's/rgba\(([0-9]+,[0-9]+,[0-9]+),.*/\1/' <<< "${!xa_rgba_var}")"
                 export "${xa_rgb_var?}"
             fi
             [ -n "${!xa_var:-}" ] && sed_script+="s|<wallbash_${i}xa$j>|${!xa_var}|g;"
@@ -73,7 +73,7 @@ fn_wallbash() {
         local template_name
         template_name="${template##*/}"
         template_name="${template_name%.*}"
-        dcolTemplate=$(find -H "${wallbash_dirs_array[@]}" -type f -path "*/theme*" -name "$template_name.dcol" 2>/dev/null | awk '!seen[substr($0, match($0, /[^/]+$/))]++')
+        dcolTemplate=$(find -H "${wallbash_dirs_array[@]}" -type f -path "*/theme*" -name "$template_name.dcol" 2> /dev/null | awk '!seen[substr($0, match($0, /[^/]+$/))]++')
         if [[ -n $dcolTemplate ]]; then
             eval target_file="$(head -1 "$dcolTemplate" | awk -F '|' '{print $1}')"
             exec_command="$(head -1 "$dcolTemplate" | awk -F '|' '{print $2}')"
@@ -102,7 +102,7 @@ fn_wallbash() {
     export -f pkg_installed print_log
     exec_command="${exec_command:-"$(head -1 "$template" | awk -F '|' '{print $2}')"}"
     temp_target_file="$(mktemp)"
-    sed '1d' "$template" >"$temp_target_file"
+    sed '1d' "$template" > "$temp_target_file"
     if [[ ${revert_colors:-0} -eq 1 ]] || [[ ${enableWallDcol:-0} -eq 2 && ${dcol_mode:-} == "light" ]] || [[ ${enableWallDcol:-0} -eq 3 && ${dcol_mode:-} == "dark" ]]; then
         sed -i "$INVERTED_SED_SCRIPT" "$temp_target_file"
     else
@@ -125,34 +125,34 @@ wallbash_image="$1"
 dcol_colors=""
 while [[ $# -gt 0 ]]; do
     case "$1" in
-    --dcol)
-        dcol_colors="$2"
-        if [ -f "$dcol_colors" ]; then
-            printf "[Source] %s\n" "$dcol_colors"
-            source "$dcol_colors"
+        --dcol)
+            dcol_colors="$2"
+            if [ -f "$dcol_colors" ]; then
+                printf "[Source] %s\n" "$dcol_colors"
+                source "$dcol_colors"
+                shift 2
+            else
+                dcol_colors="$(find -H "$dcolDir" -type f -name "*.dcol" | shuf -n 1)"
+                printf "[Dcol Colors] %s\n" "$dcol_colors"
+                shift
+            fi
+            ;;
+        --wall)
+            wallbash_image="$2"
             shift 2
-        else
-            dcol_colors="$(find -H "$dcolDir" -type f -name "*.dcol" | shuf -n 1)"
-            printf "[Dcol Colors] %s\n" "$dcol_colors"
-            shift
-        fi
-        ;;
-    --wall)
-        wallbash_image="$2"
-        shift 2
-        ;;
-    --single)
-        [ -f "$wallbash_image" ] || wallbash_image="$cacheDir/wall.set"
-        single_template="$2"
-        printf "[wallbash] Single template: %s\n" "$single_template"
-        printf "[wallbash] Wallpaper: %s\n" "$wallbash_image"
-        shift 2
-        ;;
-    -*)
-        printf "Usage: %s [--dcol <mode>] [--wall <image>] [--single] [--mode <mode>] [--help]\n" "$0"
-        exit 0
-        ;;
-    *) break ;;
+            ;;
+        --single)
+            [ -f "$wallbash_image" ] || wallbash_image="$cacheDir/wall.set"
+            single_template="$2"
+            printf "[wallbash] Single template: %s\n" "$single_template"
+            printf "[wallbash] Wallpaper: %s\n" "$wallbash_image"
+            shift 2
+            ;;
+        -*)
+            printf "Usage: %s [--dcol <mode>] [--wall <image>] [--single] [--mode <mode>] [--help]\n" "$0"
+            exit 0
+            ;;
+        *) break ;;
     esac
 done
 if [ -z "$wallbash_image" ] || [ ! -f "$wallbash_image" ]; then
@@ -161,7 +161,7 @@ if [ -z "$wallbash_image" ] || [ ! -f "$wallbash_image" ]; then
 fi
 dcol_file="$dcolDir/$(set_hash "$wallbash_image").dcol"
 if [ ! -f "$dcol_file" ]; then
-    "$scrDir/swwwallcache.sh" -w "$wallbash_image" &>/dev/null
+    "$scrDir/swwwallcache.sh" -w "$wallbash_image" &> /dev/null
 fi
 set -a
 source "$dcol_file"
@@ -175,7 +175,9 @@ set +a
 preprocess_substitutions
 print_log -sec "wallbash" -stat "preprocessed" "color substitutions"
 revert_colors=0
-[ "$enableWallDcol" -eq 0 ] && { grep -q "$dcol_mode" <<<"$(get_hyprConf "COLOR_SCHEME")" || revert_colors=1; }
+[ "$enableWallDcol" -eq 0 ] && {
+    grep          -q "$dcol_mode" <<< "$(get_hyprConf "COLOR_SCHEME")" || revert_colors=1
+}
 export revert_colors
 load_dconf_kdeglobals
 export GTK_THEME GTK_ICON CURSOR_THEME COLOR_SCHEME
@@ -206,10 +208,10 @@ if [ "$enableWallDcol" -eq 0 ] && [[ $reload_flag -eq 1 ]]; then
     while read -r pKey; do
         fKey="$(find -H "$HYDE_THEME_DIR" -type f -name "$(basename "${pKey%.dcol}.theme")")"
         [ -z "$fKey" ] && deployList+=("$pKey")
-    done < <(find -H "${wallbashDirs[@]}" -type f -path "*/theme*" -name "*.dcol" 2>/dev/null | awk '!seen[substr($0, match($0, /[^/]+$/))]++')
+    done < <(find -H "${wallbashDirs[@]}" -type f -path "*/theme*" -name "*.dcol" 2> /dev/null | awk '!seen[substr($0, match($0, /[^/]+$/))]++')
     parallel fn_wallbash {} "${wallbashDirs[@]}" ::: "${deployList[@]}" || true
 elif [ "$enableWallDcol" -gt 0 ]; then
     print_log -sec "wallbash" -stat "apply $dcol_mode colors" "Wallbash theme"
-    find -H "${wallbashDirs[@]}" -type f -path "*/theme*" -name "*.dcol" 2>/dev/null | awk '!seen[substr($0, match($0, /[^/]+$/))]++' | parallel fn_wallbash {} "${wallbashDirs[@]}" || true
+    find -H "${wallbashDirs[@]}" -type f -path "*/theme*" -name "*.dcol" 2> /dev/null | awk '!seen[substr($0, match($0, /[^/]+$/))]++' | parallel fn_wallbash {} "${wallbashDirs[@]}" || true
 fi
-find -H "${wallbashDirs[@]}" -type f -path "*/always*" -name "*.dcol" 2>/dev/null | awk '!seen[substr($0, match($0, /[^/]+$/))]++' | parallel fn_wallbash {} "${wallbashDirs[@]}" || true
+find -H "${wallbashDirs[@]}" -type f -path "*/always*" -name "*.dcol" 2> /dev/null | awk '!seen[substr($0, match($0, /[^/]+$/))]++' | parallel fn_wallbash {} "${wallbashDirs[@]}" || true

@@ -76,21 +76,21 @@ main() {
     COMMAND=$1
     shift
     case "$COMMAND" in
-    i | install) install "$@" ;;
-    u | upgrade) upgrade ;;
-    r | remove) remove "$@" ;;
-    n | info) info "$@" ;;
-    l | list) list "$@" ;;
-    li) list installed ;;
-    la) list all ;;
-    s | search) search "$@" ;;
-    si) search installed ;;
-    sa) search all ;;
-    f | fetch) fetch ;;
-    w | which) which ;;
-    pq | query) is_installed "$@" ;;
-    fq | file-query) file_query "$@" ;;
-    *) die_wrong_usage "invalid <command> argument '$COMMAND'" ;;
+        i | install) install "$@" ;;
+        u | upgrade) upgrade ;;
+        r | remove) remove "$@" ;;
+        n | info) info "$@" ;;
+        l | list) list "$@" ;;
+        li) list installed ;;
+        la) list all ;;
+        s | search) search "$@" ;;
+        si) search installed ;;
+        sa) search all ;;
+        f | fetch) fetch ;;
+        w | which) which ;;
+        pq | query) is_installed "$@" ;;
+        fq | file-query) file_query "$@" ;;
+        *) die_wrong_usage "invalid <command> argument '$COMMAND'" ;;
     esac
 }
 install() {
@@ -131,7 +131,7 @@ search() {
     else
         FILTER_FILE=$(mktemp)
         trap "rm -f -- '$FILTER_FILE'" EXIT
-        compile_stdin_filter >"$FILTER_FILE"
+        compile_stdin_filter > "$FILTER_FILE"
         pm_list "$1" | grep -Ef "$FILTER_FILE" | pm_format "$1" | interactive_filter
     fi
 }
@@ -142,7 +142,7 @@ is_installed() {
     if [ $# -eq 0 ]; then
         die_wrong_usage "expected <pkg> argument"
     fi
-    if command -v "${PM}_is_installed" >/dev/null 2>&1; then
+    if command -v "${PM}_is_installed" > /dev/null 2>&1; then
         "${PM}_is_installed" "$1"
     else
         die "is-installed command is not supported for package manager '$PM'"
@@ -152,7 +152,7 @@ file_query() {
     if [ $# -eq 0 ]; then
         die_wrong_usage "expected <file> argument"
     fi
-    if command -v "${PM}_file_query" >/dev/null 2>&1; then
+    if command -v "${PM}_file_query" > /dev/null 2>&1; then
         "${PM}_file_query" "$1"
     else
         die "file-query command is not supported for package manager '$PM'"
@@ -179,7 +179,9 @@ check_source() {
     fi
 }
 compile_stdin_filter() {
-    sed -E 's/#.*//;s/^\s+//;s/\s+$//' | { grep . || die "empty stdin filter"; } | awk '{ print "^" $1 "($|\\s)" }'
+    sed -E 's/#.*//;s/^\s+//;s/\s+$//' | {
+        grep             . || die "empty stdin filter"
+    }                                                     | awk '{ print "^" $1 "($|\\s)" }'
 }
 interactive_filter() {
     if is_command fzf; then
@@ -198,7 +200,7 @@ interactive_filter() {
 skip_table_header() {
     while read -r LINE; do
         case "$LINE" in
-        --*) cat ;;
+            --*) cat ;;
         esac
     done
 }
@@ -230,7 +232,7 @@ pm_upgrade() {
 }
 pm_fetch() {
     "${PM}_fetch"
-    current_date >"$PM_CACHE_DIR/last-fetch"
+    current_date > "$PM_CACHE_DIR/last-fetch"
 }
 pm_info() {
     "${PM}_info" "$1"
@@ -281,7 +283,9 @@ pacman_format_installed() {
     awk "{ print $FMT_NAME \$1 $FMT_VERSION \$2 $FMT_RESET }"
 }
 pacman_is_installed() {
-    pacman -Q "$1" >/dev/null 2>&1 && echo "Installed" || { echo "Not installed" && return 1; }
+    pacman -Q "$1" > /dev/null 2>&1 && echo "Installed" || {
+        echo                              "Not installed" && return 1
+    }
 }
 pacman_file_query() {
     pacman -F "$1"
@@ -339,7 +343,9 @@ paru_format_installed() {
     awk "{ print $FMT_NAME \$1 $FMT_VERSION \$2 $FMT_RESET }"
 }
 paru_is_installed() {
-    paru -Q "$1" >/dev/null 2>&1 && echo "Installed" || { echo "Not installed" && return 1; }
+    paru -Q "$1" > /dev/null 2>&1 && echo "Installed" || {
+        echo                            "Not installed" && return 1
+    }
 }
 paru_file_query() {
     paru -F -- "$1"
@@ -375,7 +381,9 @@ yay_format_installed() {
     awk "{ print $FMT_NAME \$1 $FMT_VERSION \$2 $FMT_RESET }"
 }
 yay_is_installed() {
-    yay -Q "$1" >/dev/null 2>&1 && echo "Installed" || { echo "Not installed" && return 1; }
+    yay -Q "$1" > /dev/null 2>&1 && echo "Installed" || {
+        echo                           "Not installed" && return 1
+    }
 }
 yay_file_query() {
     yay -F -- "$1"
@@ -398,7 +406,7 @@ apt_info() {
 apt_list_all() {
     INSTALLED_PKGS_FILE=$(mktemp)
     trap "rm -f -- '$INSTALLED_PKGS_FILE'" EXIT
-    dpkg-query --show -f '${package} [installed]\n' >"$INSTALLED_PKGS_FILE"
+    dpkg-query --show -f '${package} [installed]\n' > "$INSTALLED_PKGS_FILE"
     apt-cache pkgnames | sort | join -j1 -a1 - "$INSTALLED_PKGS_FILE"
 }
 apt_list_installed() {
@@ -411,7 +419,9 @@ apt_format_installed() {
     awk "{ print $FMT_NAME \$1 $FMT_VERSION \$2 $FMT_RESET }"
 }
 apt_is_installed() {
-    dpkg -l "$1" >/dev/null 2>&1 && echo "Installed" || { echo "Not installed" && return 1; }
+    dpkg -l "$1" > /dev/null 2>&1 && echo "Installed" || {
+        echo                            "Not installed" && return 1
+    }
 }
 apt_file_query() {
     apt-file search "$1"
@@ -434,7 +444,7 @@ dnf_info() {
 dnf_list_all() {
     INSTALLED_PKGS_FILE=$(mktemp)
     trap "rm -f -- '$INSTALLED_PKGS_FILE'" EXIT
-    dnf repoquery -q --installed --qf '%{name} [installed]' >"$INSTALLED_PKGS_FILE"
+    dnf repoquery -q --installed --qf '%{name} [installed]' > "$INSTALLED_PKGS_FILE"
     dnf repoquery -q --qf='%{name} %{repoid} %{evr}' | join -j1 -a1 - "$INSTALLED_PKGS_FILE"
 }
 dnf_list_installed() {
@@ -447,7 +457,9 @@ dnf_format_installed() {
     awk "{ print $FMT_NAME \$1 $FMT_VERSION \$2 $FMT_RESET }"
 }
 dnf_is_installed() {
-    rpm -q "$1" >/dev/null 2>&1 && echo "Installed" || { echo "Not installed" && return 1; }
+    rpm -q "$1" > /dev/null 2>&1 && echo "Installed" || {
+        echo                           "Not installed" && return 1
+    }
 }
 dnf_file_query() {
     dnf provides "$1"
@@ -480,7 +492,9 @@ zypper_format_installed() {
     awk "{ print $FMT_NAME \$1 $FMT_GROUP \$2 $FMT_VERSION \$3 $FMT_RESET }"
 }
 zypper_is_installed() {
-    zypper se --installed-only "$1" >/dev/null 2>&1 && echo "Installed" || { echo "Not installed" && return 1; }
+    zypper se --installed-only "$1" > /dev/null 2>&1 && echo "Installed" || {
+        echo                                               "Not installed" && return 1
+    }
 }
 zypper_file_query() {
     zypper se --provides "$1"
@@ -513,7 +527,9 @@ apk_format_installed() {
     awk "{ print $FMT_NAME \$1 $FMT_GROUP \$2 $FMT_VERSION \$3 $FMT_RESET }"
 }
 apk_is_installed() {
-    apk info "$1" >/dev/null 2>&1 && echo "Installed" || { echo "Not installed" && return 1; }
+    apk info "$1" > /dev/null 2>&1 && echo "Installed" || {
+        echo                             "Not installed" && return 1
+    }
 }
 apk_file_query() {
     apk info --who-owns "$1"
@@ -537,7 +553,7 @@ brew_info() {
 brew_list_all() {
     INSTALLED_PKGS_FILE=$(mktemp)
     trap "rm -f -- '$INSTALLED_PKGS_FILE'" EXIT
-    brew list -1 | awk '{ print $1 " [installed]" }' >"$INSTALLED_PKGS_FILE"
+    brew list -1 | awk '{ print $1 " [installed]" }' > "$INSTALLED_PKGS_FILE"
     {
         brew formulae
         [ "$(uname -s)" = Darwin ] && brew casks
@@ -553,7 +569,9 @@ brew_format_installed() {
     awk "{ print $FMT_NAME \$1 $FMT_RESET }"
 }
 brew_is_installed() {
-    brew list --formula "$1" >/dev/null 2>&1 && echo "Installed" || { echo "Not installed" && return 1; }
+    brew list --formula "$1" > /dev/null 2>&1 && echo "Installed" || {
+        echo                                        "Not installed" && return 1
+    }
 }
 brew_file_query() {
     echo "file-query is not supported for Homebrew" >&2
@@ -567,7 +585,7 @@ scoop_remove() {
 }
 scoop_fetch() {
     echo >&2 "Fetching packages..."
-    scoop search | skip_table_header | grep . | awk '{ print $1 " " $3 " " $2 }' | sort >"$PM_CACHE_DIR/packages"
+    scoop search | skip_table_header | grep . | awk '{ print $1 " " $3 " " $2 }' | sort > "$PM_CACHE_DIR/packages"
 }
 scoop_upgrade() {
     scoop update
@@ -578,7 +596,7 @@ scoop_info() {
 scoop_list_all() {
     INSTALLED_PKGS_FILE=$(mktemp)
     trap "rm -f -- '$INSTALLED_PKGS_FILE'" EXIT
-    scoop list | skip_table_header | grep . | awk '{ print $1 " [installed]" }' >"$INSTALLED_PKGS_FILE"
+    scoop list | skip_table_header | grep . | awk '{ print $1 " [installed]" }' > "$INSTALLED_PKGS_FILE"
     [ -f "$PM_CACHE_DIR/packages" ] || scoop_fetch
     join -j1 -a1 "$PM_CACHE_DIR/packages" "$INSTALLED_PKGS_FILE"
 }
@@ -592,7 +610,9 @@ scoop_format_installed() {
     awk "{ print $FMT_NAME \$1 $FMT_GROUP \$2 $FMT_VERSION \$3 $FMT_RESET }"
 }
 scoop_is_installed() {
-    scoop list "$1" >/dev/null 2>&1 && echo "Installed" || { echo "Not installed" && return 1; }
+    scoop list "$1" > /dev/null 2>&1 && echo "Installed" || {
+        echo                               "Not installed" && return 1
+    }
 }
 scoop_file_query() {
     echo "file-query is not supported for Scoop" >&2
@@ -626,7 +646,9 @@ flatpak_format_installed() {
     awk "{ print $FMT_NAME \$1 $FMT_GROUP \$2 $FMT_VERSION \$3 $FMT_RESET }"
 }
 flatpak_is_installed() {
-    flatpak list --columns=application | grep -q "^$1$" && echo "Installed" || { echo "Not installed" && return 1; }
+    flatpak list --columns=application | grep -q "^$1$" && echo "Installed" || {
+        echo                                                   "Not installed" && return 1
+    }
 }
 flatpak_file_query() {
     echo "file-query is not supported for Flatpak" >&2

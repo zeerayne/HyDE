@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 usage() {
-    cat <<USAGE
+    cat << USAGE
 Usage: battery.sh [OPTIONS]
 
 Options:
@@ -27,7 +27,7 @@ for bat in /sys/class/power_supply/BAT*; do
 done
 for capacity in /sys/class/power_supply/BAT*/capacity; do
     if [[ -f $capacity ]]; then
-        total_capacity=$((total_capacity + $(<"$capacity")))
+        total_capacity=$((total_capacity + $(< "$capacity")))
         battery_count=$((battery_count + 1))
     fi
 done
@@ -43,39 +43,39 @@ battery_status=$(cat "$battery_path/status")
 formats=("$@")
 output_format() {
     case "$1" in
-    icon)
-        if
-            [[ $battery_status == "Charging" ]]
-        then
-            echo -n "${charging_icons[$index]} "
-        else
-            echo -n "${discharging_icons[$index]} "
-        fi
-        ;;
-    percentage)
-        echo -n "$average_capacity% "
-        ;;
-    int)
-        echo -n "$average_capacity "
-        ;;
-    status)
-        echo -n "$battery_status "
-        ;;
-    status-icon)
-        case "$battery_status" in
-        "Charging")
-            echo -n "${status_icons[0]} "
+        icon)
+            if
+                [[ $battery_status == "Charging" ]]
+            then
+                echo -n "${charging_icons[$index]} "
+            else
+                echo -n "${discharging_icons[$index]} "
+            fi
             ;;
-        "Not Charging")
-            echo -n "${status_icons[1]} "
+        percentage)
+            echo -n "$average_capacity% "
             ;;
-        *) echo -n "${status_icons[2]} " ;;
-        esac
-        ;;
-    *)
-        echo "Invalid format option: $1. Use 'icon', 'percentage', 'int', 'status', or 'status-icon'."
-        exit 1
-        ;;
+        int)
+            echo -n "$average_capacity "
+            ;;
+        status)
+            echo -n "$battery_status "
+            ;;
+        status-icon)
+            case "$battery_status" in
+                "Charging")
+                    echo -n "${status_icons[0]} "
+                    ;;
+                "Not Charging")
+                    echo -n "${status_icons[1]} "
+                    ;;
+                *) echo -n "${status_icons[2]} " ;;
+            esac
+            ;;
+        *)
+            echo "Invalid format option: $1. Use 'icon', 'percentage', 'int', 'status', or 'status-icon'."
+            exit 1
+            ;;
     esac
 }
 if [ ${#formats[@]} -eq 0 ]; then
