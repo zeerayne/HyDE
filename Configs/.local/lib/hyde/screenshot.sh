@@ -88,6 +88,23 @@ ocr_screenshot() {
         return 1
     fi
 }
+qr_screenshot() {
+    local mode=$1
+    shift
+    local extra_args=("$@")
+    if "$LIB_DIR/hyde/screenshot/grimblast" "${extra_args[@]}" copysave "$mode" "$temp_screenshot"; then
+        source "${LIB_DIR}/hyde/shutils/qr.sh"
+        print_log -g  "Performing QR scan on $temp_screenshot"
+        send_notifs "QR Scan" "Performing QR scan on screenshot..." -i "document-scan" -r 9
+        if ! qr_extract "$temp_screenshot"; then
+            send_notifs -a "HyDE Alert" "QR: extraction error" -e -i "dialog-error"
+            return 1
+        fi
+    else
+        send_notifs -a "HyDE Alert" "QR: screenshot error" -e -i "dialog-error"
+        return 1
+    fi
+}
 
 pre_cmd
 
@@ -97,6 +114,7 @@ case $1 in
     sf) take_screenshot "area" "--freeze" ;;
     m) take_screenshot "output" ;;
     sc) ocr_screenshot "area" "--freeze" ;;
+    sq) qr_screenshot "area" "--freeze" ;;
     *) USAGE ;;
 esac
 
