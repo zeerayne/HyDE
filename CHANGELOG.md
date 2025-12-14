@@ -21,6 +21,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Gamelauncher: "hyde-shell gamelauncher" now has --style and --backend args
 - Python: added pyproject.toml for ruff formatter
 - Shell: Added ".editorconfig" for shell scripts.
+- Cliphist: Added OCR backend. Invoking "hyde-shell cliphist -scan-image" or `Alt+V` on clipboard will extract the text of the latest image that exist in cliphist. 
+- Screenshot: Added QR code reading feature using `zbar` package. No default hotkey is provided. Call it via `hyde-shell screenshot sq`
 
 ### Changed
 
