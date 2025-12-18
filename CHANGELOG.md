@@ -4,6 +4,12 @@ All notable changes to `HyDE` will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to _Modified_ [CalVer](https://calver.org/). See [Versioning](https://github.com/HyDE-Project/HyDE/blob/master/RELEASE_POLICY.md#versioning-yymq) For more info
 
+## v26.10.2
+### Added
+- Weather Applet: Added automatic locale detection for temperature units (°C/°F), time formats (12h/24h), and wind speed (km/h/mph).
+- Weather Applet: Implemented multi-language support based on system locale and added `WEATHER_LANG` for manual overrides.
+- Weather Applet: Added support for a user-defined configuration file at `~/.config/weather.env`.
+
 ## v25.10.1
 
 ### Fixed
