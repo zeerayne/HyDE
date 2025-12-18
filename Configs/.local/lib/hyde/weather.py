@@ -4,7 +4,7 @@ import os
 import sys
 import json
 from datetime import datetime
-
+import locale
 
 import pyutils.pip_env as pip_env
 
@@ -174,22 +174,36 @@ def format_chances(hour):
     ]
     return ", ".join(conditions)
 
+def get_default_locale():
+    try:
+        locale.setlocale(locale.LC_ALL, '')
+        loc_info = locale.getlocale(locale.LC_CTYPE)
+        if loc_info and loc_info[0]:
+            country_code = loc_info[0].split('_')[-1].upper()
+            if country_code in ['US', 'LR', 'MM']:
+                return 'f', '12h', 'mph'
+    except Exception:
+        pass
+    return 'f', '24h', 'km/h'
 
 ### Variables ###
+def_temp, def_time, def_wind = get_default_locale() # default vals based on locale
 load_env_file(
     os.path.join(os.environ.get("HOME"), ".rlocal", "state", "hyde", "staterc")
 )
 load_env_file(os.path.join(os.environ.get("HOME"), ".local", "state", "hyde", "config"))
+load_env_file(os.path.join(os.environ.get("HOME"), ".config", "weather.env")) # user overrides
+
 
 temp_unit = os.getenv(
-    "WEATHER_TEMPERATURE_UNIT", "c"
-).lower()  # c or f            (default: c)
+    "WEATHER_TEMPERATURE_UNIT", def_temp
+).lower()  # c or f
 time_format = os.getenv(
-    "WEATHER_TIME_FORMAT", "12h"
-).lower()  # 12h or 24h        (default: 12h)
+    "WEATHER_TIME_FORMAT", def_time
+).lower()  # 12h or 24h
 windspeed_unit = os.getenv(
-    "WEATHER_WINDSPEED_UNIT", "km/h"
-).lower()  # km/h or mph       (default: Km/h)
+    "WEATHER_WINDSPEED_UNIT", def_wind
+).lower()  # km/h or mph
 show_icon = os.getenv("WEATHER_SHOW_ICON", "True").lower() in (
     "true",
     "1",
