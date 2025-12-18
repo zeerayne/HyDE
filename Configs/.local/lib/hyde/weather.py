@@ -51,9 +51,7 @@ WEATHER_CODES = {
         "🌧️ ",
     ),
     **dict.fromkeys(["200"], "⛈️ "),
-    **dict.fromkeys(
-        ["227", "230", "320", "323", "326", "374", "377", "386", "389"], "🌨️ "
-    ),
+    **dict.fromkeys(["227", "230", "320", "323", "326", "374", "377", "386", "389"], "🌨️ "),
     **dict.fromkeys(["329", "332", "335", "338", "371", "395"], "❄️ "),
 }
 
@@ -172,9 +170,7 @@ def format_chances(hour):
     }
 
     conditions = [
-        f"{chances[event]} {hour[event]}%"
-        for event in chances
-        if int(hour.get(event, 0)) > 0
+        f"{chances[event]} {hour[event]}%" for event in chances if int(hour.get(event, 0)) > 0
     ]
     return ", ".join(conditions)
 
@@ -197,25 +193,15 @@ def get_default_locale():
 
 ### Variables ###
 def_lang, def_temp, def_time, def_wind = get_default_locale() # default vals based on locale
-load_env_file(
-    os.path.join(os.environ.get("HOME"), ".rlocal", "state", "hyde", "staterc")
-)
+load_env_file(os.path.join(os.environ.get("HOME"), ".rlocal", "state", "hyde", "staterc"))
 load_env_file(os.path.join(os.environ.get("HOME"), ".local", "state", "hyde", "config"))
 load_env_file(os.path.join(os.environ.get("HOME"), ".config", "weather.env")) # user overrides
 
 
-weather_lang = os.getenv(
-    "WEATHER_LANG", def_lang
-).lower()  # default to 'en', based on user's locale
-temp_unit = os.getenv(
-    "WEATHER_TEMPERATURE_UNIT", def_temp
-).lower()  # c or f
-time_format = os.getenv(
-    "WEATHER_TIME_FORMAT", def_time
-).lower()  # 12h or 24h
-windspeed_unit = os.getenv(
-    "WEATHER_WINDSPEED_UNIT", def_wind
-).lower()  # km/h or mph
+weather_lang = os.getenv("WEATHER_LANG", def_lang).lower()  # default to 'en', based on user's locale
+temp_unit = os.getenv("WEATHER_TEMPERATURE_UNIT", def_temp).lower()  # c or f
+time_format = os.getenv("WEATHER_TIME_FORMAT", def_time).lower()  # 12h or 24h
+windspeed_unit = os.getenv("WEATHER_WINDSPEED_UNIT", def_wind).lower()  # km/h or mph
 show_icon = os.getenv("WEATHER_SHOW_ICON", "True").lower() in (
     "true",
     "1",
@@ -289,9 +275,7 @@ if show_today_details:
         f"<b>{get_description(current_weather)} {get_temperature(current_weather)}</b>\n"
     )
     data["tooltip"] += f"Feels like: {get_feels_like(current_weather)}\n"
-    data["tooltip"] += (
-        f"Location: {get_city_name(weather)}, {get_country_name(weather)}\n"
-    )
+    data["tooltip"] += f"Location: {get_city_name(weather)}, {get_country_name(weather)}\n"
     data["tooltip"] += f"Wind: {get_wind_speed(current_weather)}\n"
     data["tooltip"] += f"Humidity: {current_weather['humidity']}%\n"
 # Get the weather forecast for the next 2 days
