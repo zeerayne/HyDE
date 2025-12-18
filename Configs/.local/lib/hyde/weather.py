@@ -77,6 +77,10 @@ def get_weather_icon(weatherinstance):
 
 
 def get_description(weatherinstance):
+    lang_key = f"lang_{weather_lang}"
+    if lang_key in weatherinstance:
+        return weatherinstance[lang_key][0]["value"]
+    
     return weatherinstance["weatherDesc"][0]["value"]
 
 
@@ -256,7 +260,7 @@ if FORECAST_DAYS not in range(4):
 
 ### Main Logic ###
 data = {}
-URL = f"https://wttr.in/{get_location}?format=j1"
+URL = f"https://wttr.in/{get_location}?format=j1&lang={weather_lang}"
 
 # Get the weather data
 headers = {
