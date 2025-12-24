@@ -193,7 +193,7 @@ def get_default_locale():
 
 ### Variables ###
 def_lang, def_temp, def_time, def_wind = get_default_locale() # default vals based on locale
-load_env_file(os.path.join(os.environ.get("HOME"), ".rlocal", "state", "hyde", "staterc"))
+load_env_file(os.path.join(os.environ.get("HOME"), ".local", "state", "hyde", "staterc"))
 load_env_file(os.path.join(os.environ.get("HOME"), ".local", "state", "hyde", "config"))
 load_env_file(os.path.join(os.environ.get("HOME"), ".config", "weather.env")) # user overrides
 
