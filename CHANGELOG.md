@@ -13,7 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 We are trying our best to fix any issues. So please try to your best to search for any duplicate issues and potential fixes! 
 
-Keep HyDEra
+Stay HyDErated!
 
 ### Fixed
 
