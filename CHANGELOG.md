@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
+- Rofi: Added search functionality to the game launcher menu.
 - Cliphist: image-history #1360
 - Cliphist: Rofi binds #1360
 - Gamelauncher: lutris inspector py script now uses the lutris DB to get meta dat making it faster than using lutris CLI
