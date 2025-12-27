@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Migration 
 
+#### Hyprland
+
 - Before updating HyDE, Please make sure your hyprland version is 0.53.0!
 - After Updating HyDE please make sure to fix any syntax error in ~/.config/hypr/*
 
