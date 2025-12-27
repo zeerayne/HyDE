@@ -10,13 +10,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 #### NVIDIA
 
-The driver selection logic has been updated to align with Arch Linux recommendations.
+The driver selection/installation logic has been updated to align with Arch Linux recommendations.
 
 - **Turing (NV160) and newer**: Now defaults to `nvidia-open-dkms`.
 - **Maxwell (NV110) to Volta (NV140)**: Now defaults to `nvidia-580xx-dkms`.
 
+
+**Existing Users**
+- nv110-nv140 cards, please install `nvidia-580xx-dkms` before updating your whole system or before rebooting. `nvidia-open-dkms` could potentially borke your display. Goodluck!
+- nv160 (Turing) and above see **Fallback**
+
 **Fallback:**
 Users with Turing or newer cards using `nvidia-open-dkms` can fallback to `nvidia-580xx-dkms` if they encounter issues, as the 580xx branch still supports these architectures. 
+
 
 - Read wiki https://wiki.archlinux.org/title/NVIDIA
 - See common solutions https://github.com/HyDE-Project/HyDE/discussions/1477 
