@@ -1,8 +1,10 @@
 # Changelog
 
+<!--  
 All notable changes to `HyDE` will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to _Modified_ [CalVer](https://calver.org/). See [Versioning](https://github.com/HyDE-Project/HyDE/blob/master/RELEASE_POLICY.md#versioning-yymq) For more info
+ -->
 
 ## Upcoming Release
 
@@ -10,9 +12,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - Gamelauncher: steamdeck holograph
 - Formatting using 
+- Some old hyprdots theme parsing. 
 
 ### Added
 
+- Restore: Added option to trash the config to avoid conflicts
+- Waybar: Added pavucontrol-qt in the module
 - Rofi: Added search functionality to the game launcher menu.
 - Cliphist: image-history #1360
 - Cliphist: Rofi binds #1360
@@ -30,6 +35,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 
+- QT: Move qtXct/colors.conf into qtXct/colors/wallbash.conf. This is how qtXct Settings parses color schemes the proper way.
 - Core: Moved core "color" switch inside directory in lib path. Prepare to make `~/.local/lib/hyde` external only scripts and corresponding directories will be sourced or executed internally. 
 - Wallbash: Remove wallbash.qt as it is a simple cp command now in the qtct.dcol template
 - UWSM: Start processes launched with app2unit.sh,rofi,`hyde-shell app` as services
