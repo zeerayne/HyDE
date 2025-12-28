@@ -1,41 +1,23 @@
 # Changelog
 
+<!--  
 All notable changes to `HyDE` will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to _Modified_ [CalVer](https://calver.org/). See [Versioning](https://github.com/HyDE-Project/HyDE/blob/master/RELEASE_POLICY.md#versioning-yymq) For more info
+ -->
 
 ## Upcoming Release
-
-## Migration
-
-#### NVIDIA
-
-The driver selection/installation logic has been updated to align with Arch Linux recommendations.
-
-- **Turing (NV160) and newer**: Now defaults to `nvidia-open-dkms`.
-- **Maxwell (NV110) to Volta (NV140)**: Now defaults to `nvidia-580xx-dkms`.
-
-
-**Existing Users**
-- nv110-nv140 cards, please install `nvidia-580xx-dkms` before updating your whole system or before rebooting. `nvidia-open-dkms` could potentially borke your display. Goodluck!
-- nv160 (Turing) and above see **Fallback**
-
-**Fallback:**
-Users with Turing or newer cards using `nvidia-open-dkms` can fallback to `nvidia-580xx-dkms` if they encounter issues, as the 580xx branch still supports these architectures. 
-
-
-- Read wiki https://wiki.archlinux.org/title/NVIDIA
-- See common solutions https://github.com/HyDE-Project/HyDE/discussions/1477 
-
-
 
 ### Fixed
 
 - Gamelauncher: steamdeck holograph
 - Formatting using 
+- Some old hyprdots theme parsing. 
 
 ### Added
 
+- Restore: Added option to trash the config to avoid conflicts
+- Waybar: Added pavucontrol-qt in the module
 - Rofi: Added search functionality to the game launcher menu.
 - Cliphist: image-history #1360
 - Cliphist: Rofi binds #1360
@@ -54,9 +36,32 @@ Users with Turing or newer cards using `nvidia-open-dkms` can fallback to `nvidi
 ### Changed
 
 - NVIDIA: Updated driver database to separate legacy and modern GPU support. `nvidia-open-dkms` now targets Turing (NV160) and newer, while `nvidia-580xx-dkms` covers Maxwell (NV110) through Volta (NV140).
+- QT: Move qtXct/colors.conf into qtXct/colors/wallbash.conf. This is how qtXct Settings parses color schemes the proper way.
 - Core: Moved core "color" switch inside directory in lib path. Prepare to make `~/.local/lib/hyde` external only scripts and corresponding directories will be sourced or executed internally. 
 - Wallbash: Remove wallbash.qt as it is a simple cp command now in the qtct.dcol template
 - UWSM: Start processes launched with app2unit.sh,rofi,`hyde-shell app` as services
+
+
+## Migration
+
+##### NVIDIA
+
+The driver selection/installation logic has been updated to align with Arch Linux recommendations.
+
+- **Turing (NV160) and newer**: Now defaults to `nvidia-open-dkms`.
+- **Maxwell (NV110) to Volta (NV140)**: Now defaults to `nvidia-580xx-dkms`.
+
+
+**Existing Users**
+- nv110-nv140 cards, please install `nvidia-580xx-dkms` before updating your whole system or before rebooting. `nvidia-open-dkms` could potentially borke your display. Goodluck!
+- nv160 (Turing) and above see **Fallback**
+
+**Fallback:**
+Users with Turing or newer cards using `nvidia-open-dkms` can fallback to `nvidia-580xx-dkms` if they encounter issues, as the 580xx branch still supports these architectures. 
+
+
+- Read wiki https://wiki.archlinux.org/title/NVIDIA
+- See common solutions https://github.com/HyDE-Project/HyDE/discussions/1477 
 
 
 ## v25.10.1
