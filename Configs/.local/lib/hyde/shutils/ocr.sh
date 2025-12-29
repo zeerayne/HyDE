@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-[[ ${HYDE_SHELL_INIT} -ne 1   ]] && eval "$(hyde-shell init)"
+[[ ${HYDE_SHELL_INIT} -ne 1 ]] && eval "$(hyde-shell init)"
 
 ocr_extract() {
     image_path="$1"
@@ -21,17 +21,17 @@ ocr_extract() {
     done
 
     tesseract_languages_prepared=$(
-            IFS=+
-            echo "${tesseract_languages[*]}"
+        IFS=+
+        echo "${tesseract_languages[*]}"
     )
 
     tesseract_output=$(
-            tesseract \
-                --psm 6 \
-                --oem 3 \
-                -l "${tesseract_languages_prepared}" \
-                "${image_path}" \
-                stdout 2> /dev/null
+        tesseract \
+            --psm 6 \
+            --oem 3 \
+            -l "${tesseract_languages_prepared}" \
+            "${image_path}" \
+            stdout 2> /dev/null
     )
 
     printf "%s" "$tesseract_output" | wl-copy
