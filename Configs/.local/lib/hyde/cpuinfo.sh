@@ -41,23 +41,24 @@ init_query() {
         echo "CPUINFO_PREV_IDLE=\"$CPUINFO_PREV_IDLE\"" >> "$cpu_info_file"
     fi
 }
+
 get_temp_color() {
     local temp=$1
     declare -A temp_colors=(
-                                      [90]="#8b0000"
-                                      [85]="#ad1f2f"
-                                      [80]="#d22f2f"
-                                      [75]="#ff471a"
-                                      [70]="#ff6347"
-                                      [65]="#ff8c00"
-                                      [60]="#ffa500"
-                                      [45]=""
-                                      [40]="#add8e6"
-                                      [35]="#87ceeb"
-                                      [30]="#4682b4"
-                                      [25]="#4169e1"
-                                      [20]="#0000ff"
-                                      [0]="#00008b")
+          [90]="#8b0000"
+          [85]="#ad1f2f"
+          [80]="#d22f2f"
+          [75]="#ff471a"
+          [70]="#ff6347"
+          [65]="#ff8c00"
+          [60]="#ffa500"
+          [45]=""
+          [40]="#add8e6"
+          [35]="#87ceeb"
+          [30]="#4682b4"
+          [25]="#4169e1"
+          [20]="#0000ff"
+          [0]="#00008b")
     for threshold in $(echo "${!temp_colors[@]}" | tr ' ' '\n' | sort -nr); do
         if ((temp >= threshold)); then
             color=${temp_colors[$threshold]}
@@ -96,19 +97,19 @@ fi
 util_lv="90:, 60:󰓅, 30:󰾅, 󰾆"
 sensors_json=$(sensors -j 2> /dev/null)
 cpu_temps="$(jq -r '[
-.["coretemp-isa-0000"], 
+.["coretemp-isa-0000"],
 .["k10temp-pci-00c3"]
-] | 
-map(select(. != null)) | 
-map(to_entries) | 
-add | 
-map(select(.value | 
-objects) | 
-"\(.key): \((.value | 
-to_entries[] | 
-select(.key | 
-test("temp[0-9]+_input")) | 
-.value | floor))°C") | 
+] |
+map(select(. != null)) |
+map(to_entries) |
+add |
+map(select(.value |
+objects) |
+"\(.key): \((.value |
+to_entries[] |
+select(.key |
+test("temp[0-9]+_input")) |
+.value | floor))°C") |
 join("\\n\t")' <<< "$sensors_json")"
 if [ -n "$CPUINFO_TEMPERATURE_ID" ]; then
     temperature=$(grep -oP "(?<=$CPUINFO_TEMPERATURE_ID: )\d+" <<< "$cpu_temps")

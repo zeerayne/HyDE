@@ -1,9 +1,6 @@
 #!/usr/bin/env bash
-if ! source "$(which hyde-shell)"; then
-    echo "[wallbash] code :: Error: hyde-shell not found."
-    echo "[wallbash] code :: Is HyDE installed?"
-    exit 1
-fi
+[[ $HYDE_SHELL_INIT -ne 1 ]] && eval "$(hyde-shell init)"
+
 if [[ ! -f "$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/hyprpaper.lock" ]]; then
     systemctl --user start hyprpaper.service || setsid hyprpaper &
     sleep 1
@@ -19,4 +16,6 @@ if [ "$is_video" -eq 1 ]; then
     extract_thumbnail "$selected_wall" "$cached_thumb"
     selected_wall="$cached_thumb"
 fi
-hyprctl hyprpaper reload ",$selected_wall"
+
+hyprctl hyprpaper wallpaper ",$selected_wall" ||
+    hyprctl hyprpaper reload ,~/.cache/hyde/wall.set #TODO: I do not know when did they change this command but yeah will remove this line after some time

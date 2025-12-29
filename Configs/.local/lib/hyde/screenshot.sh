@@ -65,7 +65,7 @@ take_screenshot() {
     shift
     local extra_args=("$@")
     if "$LIB_DIR/hyde/screenshot/grimblast" "${extra_args[@]}" copysave "$mode" "$temp_screenshot"; then
-        [[ "${SCREENSHOT_ANNOTATION_ENABLED}" == false ]] && return 0
+        [[ ${SCREENSHOT_ANNOTATION_ENABLED} == false ]] && return 0
         if ! "$annotation_tool" "${annotation_args[@]}"; then
             send_notifs -r 9 -a "HyDE Alert" "Screenshot Error" "Failed to open annotation tool"
             return 1
@@ -82,7 +82,7 @@ ocr_screenshot() {
     if "$LIB_DIR/hyde/screenshot/grimblast" "${extra_args[@]}" copysave "$mode" "$temp_screenshot"; then
         source "${LIB_DIR}/hyde/shutils/ocr.sh"
         source ${XDG_STATE_HOME}/hyde/config
-        print_log -g  "Performing OCR on $temp_screenshot"
+        print_log -g "Performing OCR on $temp_screenshot"
         send_notifs "OCR" "Performing OCR on screenshot..." -i "document-scan" -r 9
         if ! ocr_extract "$temp_screenshot"; then
             send_notifs -r 9 -a "HyDE Alert" "OCR: extraction error" -e -i "dialog-error"
@@ -99,7 +99,7 @@ qr_screenshot() {
     local extra_args=("$@")
     if "$LIB_DIR/hyde/screenshot/grimblast" "${extra_args[@]}" copysave "$mode" "$temp_screenshot"; then
         source "${LIB_DIR}/hyde/shutils/qr.sh"
-        print_log -g  "Performing QR scan on $temp_screenshot"
+        print_log -g "Performing QR scan on $temp_screenshot"
         send_notifs "QR Scan" "Performing QR scan on screenshot..." -i "document-scan" -r 9
         if ! qr_extract "$temp_screenshot"; then
             send_notifs -r 9 -a "HyDE Alert" "QR: extraction error" -e -i "dialog-error"
