@@ -140,20 +140,20 @@ map_floor() {
 get_temp_color() {
     local temp=$1
     declare -A temp_colors=(
-                                      [90]="#8b0000"
-                                      [85]="#ad1f2f"
-                                      [80]="#d22f2f"
-                                      [75]="#ff471a"
-                                      [70]="#ff6347"
-                                      [65]="#ff8c00"
-                                      [60]="#ffa500"
-                                      [45]=""
-                                      [40]="#add8e6"
-                                      [35]="#87ceeb"
-                                      [30]="#4682b4"
-                                      [25]="#4169e1"
-                                      [20]="#0000ff"
-                                      [0]="#00008b")
+             [90]="#8b0000"
+             [85]="#ad1f2f"
+             [80]="#d22f2f"
+             [75]="#ff471a"
+             [70]="#ff6347"
+             [65]="#ff8c00"
+             [60]="#ffa500"
+             [45]=""
+             [40]="#add8e6"
+             [35]="#87ceeb"
+             [30]="#4682b4"
+             [25]="#4169e1"
+             [20]="#0000ff"
+             [0]="#00008b")
     for threshold in $(echo "${!temp_colors[@]}" | tr ' ' '\n' | sort -nr); do
         if ((temp >= threshold)); then
             color=${temp_colors[$threshold]}

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-[[ ${HYDE_SHELL_INIT} -ne 1   ]] && eval "$(hyde-shell init)"
+[[ ${HYDE_SHELL_INIT} -ne 1 ]] && eval "$(hyde-shell init)"
 
 qr_extract() {
 
@@ -12,12 +12,12 @@ qr_extract() {
     fi
 
     qr_output=$(
-            zbarimg \
-                --quiet \
-                --oneshot \
-                --raw \
-                "${image_path}" \
-                2> /dev/null
+        zbarimg \
+            --quiet \
+            --oneshot \
+            --raw \
+            "${image_path}" \
+            2> /dev/null
     )
 
     printf "%s" "$qr_output" | wl-copy

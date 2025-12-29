@@ -117,7 +117,7 @@ argparse "--help,-h" "" "Show this help message"
 argparse_finalize
 
 # Handle the parsed arguments
-[[ -z $ARGPARSE_ACTION   ]] && ARGPARSE_ACTION=help
+[[ -z $ARGPARSE_ACTION ]] && ARGPARSE_ACTION=help
 
 case "$ARGPARSE_ACTION" in
     select)
