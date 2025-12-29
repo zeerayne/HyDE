@@ -94,4 +94,4 @@ rofi -show "$r_mode" \
     -theme "$rofi_config" \
     -dump-theme | {
     grep -q "fullscreen.*true" && touch "$HYDE_STATE_HOME/fullscreen_$r_mode"
-}                                                                                             || rm -f "$HYDE_STATE_HOME/fullscreen_$r_mode"
+} || rm -f "$HYDE_STATE_HOME/fullscreen_$r_mode"

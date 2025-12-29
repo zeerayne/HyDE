@@ -17,6 +17,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
+- Wallpaper: Added wallpaper '--multi-select' for multiple --outputs. Useful for per monitor or lockscreen/display manager background.  
+- Wallpaper: Selector option to modify column count
+- Theme: Selector option to modify thumbnail types and column count
+- CLI: Added 'hyde-shell open' for apps with mimetypes
+- Core: Clean up 'hyde-shell wallpaper' script 
 - Restore: Added option to trash the config to avoid conflicts
 - Waybar: Added pavucontrol-qt in the module
 - Rofi: Added search functionality to the game launcher menu.
