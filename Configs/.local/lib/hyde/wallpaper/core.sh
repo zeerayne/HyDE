@@ -22,7 +22,7 @@ Wall_Json() {
     else
         wallPathArray=("$HYDE_THEME_DIR")
     fi
-    wallPathArray+=("${WALLPAPER_CUSTOM_PATHS[@]}" "${XDG_PICTURES_DIR}/Wallpapers/${HYDE_THEME}" )
+    wallPathArray+=("${WALLPAPER_CUSTOM_PATHS[@]}" "${XDG_PICTURES_DIR}/Wallpapers/${HYDE_THEME}")
     get_hashmap "${wallPathArray[@]}"
     wallListJson=$(printf '%s\n' "${wallList[@]}" | jq -R . | jq -s .)
     wallHashJson=$(printf '%s\n' "${wallHash[@]}" | jq -R . | jq -s .)
@@ -56,7 +56,6 @@ Wall_Hash() {
     [ ! -e "$(readlink -f "$wallSet")" ] && echo "fixing link :: $wallSet" && ln -fs "${wallList[setIndex]}" "$wallSet"
 }
 
-
 Wall_Cache() {
     if [[ ${WALLPAPER_RELOAD_ALL:-1} -eq 1 ]] && [[ $wallpaper_setter_flag != "link" ]]; then
         print_log -sec "wallpaper" "Reloading themes and wallpapers"
@@ -75,4 +74,3 @@ Wall_Cache() {
         ln -fs "$dcolDir/${wallHash[setIndex]}.dcol" "$wallDcl"
     fi
 }
-

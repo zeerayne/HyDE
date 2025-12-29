@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 show_help() {
-    cat << EOF
+    cat <<EOF
 Usage: $(basename "$0") --[options|flags] [parameters]
 options:
     -j, --json                List wallpapers in JSON format to STDOUT
@@ -13,6 +13,7 @@ options:
         --start               Start/apply current wallpaper to backend
     -g, --get                 Get current wallpaper of specified backend
     -o, --output <file>       Copy current wallpaper to specified file
+        --multi-select        Enable multi-selection in select mode (Works for --output only)
         --link                Resolved the linked wallpaper according to the theme
     -t  --filetypes <types>   Specify file types to override (colon-separated ':')
     -h, --help                Display this help message
