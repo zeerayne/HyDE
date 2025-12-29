@@ -10,7 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Fixed
 
-- Gamelauncher: steamdeck holograph
+- Game launcher: steamdeck holograph
 - Formatting using 
 - Hyprland 0.53 Syntax Revamp
 - Some old hyprdots theme parsing. 
@@ -27,10 +27,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Rofi: Added search functionality to the game launcher menu.
 - Cliphist: image-history #1360
 - Cliphist: Rofi binds #1360
-- Gamelauncher: lutris inspector py script now uses the lutris DB to get meta dat making it faster than using lutris CLI
-- Gamelauncher: steam inspector py script is translated from fn_steam shell script. 
-- Gamelancher: catalog backend will merge both lutris and steam with hints for duplicates
-- Gamelauncher: "hyde-shell gamelauncher" now has --style and --backend args
+- Game launcher: lutris inspector py script now uses the lutris DB to get meta dat making it faster than using lutris CLI
+- Game launcher: steam inspector py script is translated from fn_steam shell script. 
+- Game launcher: catalog backend will merge both lutris and steam with hints for duplicates
+- Game launcher: "hyde-shell game launcher" now has --style and --backend args
 - Python: added pyproject.toml for ruff formatter
 - Shell: Added ".editorconfig" for shell scripts.
 - Cliphist: Added OCR backend. Invoking "hyde-shell cliphist -scan-image" or `Alt+V` on clipboard will extract the text of the latest image that exist in cliphist. 
