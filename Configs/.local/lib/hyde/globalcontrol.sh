@@ -296,17 +296,17 @@ get_hyprConf() {
     gsVal="$(grep "^[[:space:]]*\$$hyVar\s*=" "$file" | cut -d '=' -f2 | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
     [ -n "$gsVal" ] && [[ $gsVal != \$* ]] && echo "$gsVal" && return 0
     declare -A gsMap=(
-                                      [GTK_THEME]="gtk-theme"
-                                      [ICON_THEME]="icon-theme"
-                                      [COLOR_SCHEME]="color-scheme"
-                                      [CURSOR_THEME]="cursor-theme"
-                                      [CURSOR_SIZE]="cursor-size"
-                                      [FONT]="font-name"
-                                      [DOCUMENT_FONT]="document-font-name"
-                                      [MONOSPACE_FONT]="monospace-font-name"
-                                      [FONT_SIZE]="font-size"
-                                      [DOCUMENT_FONT_SIZE]="document-font-size"
-                                      [MONOSPACE_FONT_SIZE]="monospace-font-size")
+             [GTK_THEME]="gtk-theme"
+             [ICON_THEME]="icon-theme"
+             [COLOR_SCHEME]="color-scheme"
+             [CURSOR_THEME]="cursor-theme"
+             [CURSOR_SIZE]="cursor-size"
+             [FONT]="font-name"
+             [DOCUMENT_FONT]="document-font-name"
+             [MONOSPACE_FONT]="monospace-font-name"
+             [FONT_SIZE]="font-size"
+             [DOCUMENT_FONT_SIZE]="document-font-size"
+             [MONOSPACE_FONT_SIZE]="monospace-font-size")
     if [[ -n ${gsMap[$hyVar]} ]]; then
         gsVal="$(awk -F"[\"']" '/^[[:space:]]*exec[[:space:]]*=[[:space:]]*gsettings[[:space:]]*set[[:space:]]*org.gnome.desktop.interface[[:space:]]*'"${gsMap[$hyVar]}"'[[:space:]]*/ {last=$2} END {print last}' "$file")"
     fi
@@ -327,6 +327,7 @@ get_hyprConf() {
     fi
 }
 get_rofi_pos() {
+    [[ -n $HYPRLAND_INSTANCE_SIGNATURE ]] || return 1
     readarray -t curPos < <(hyprctl cursorpos -j | jq -r '.x,.y')
     eval "$(hyprctl -j monitors | jq -r '.[] | select(.focused==true) |
         "monRes=(\(.width) \(.height) \(.scale) \(.x) \(.y)) offRes=(\(.reserved | join(" ")))"')"
@@ -352,6 +353,7 @@ get_rofi_pos() {
     fi
     local coordinates="window{location:$x_pos $y_pos;anchor:$x_pos $y_pos;x-offset:${x_off}px;y-offset:${y_off}px;}"
     echo "$coordinates"
+
 }
 paste_string() {
     if ! command -v wtype > /dev/null; then exit 0; fi
