@@ -154,6 +154,7 @@ generate_json() {
     ((temp_val < 0)) && temp_val=0
     ((temp_val > 999)) && temp_val=999
     local temp_bucket=$(((temp_val / 5) * 5))
+    ((temp_bucket > 100)) && temp_bucket=100
     local temp_class="temp-$temp_bucket"
 
     local util_val=${utilization%.*}
@@ -216,8 +217,8 @@ general_query() {
         GPUINFO_PREV_STAT=$currStat
         GPUINFO_PREV_IDLE=$currIdle
         sed -i -e "/^GPUINFO_PREV_STAT=/c\GPUINFO_PREV_STAT=\"$currStat\"" -e "/^GPUINFO_PREV_IDLE=/c\GPUINFO_PREV_IDLE=\"$currIdle\"" "$gpuinfo_file" || {
-            echo "GPUINFO_PREV_STAT=\"$currStat\"" >>"$gpuinfo_file"
-            echo "GPUINFO_PREV_IDLE=\"$currIdle\"" >>"$gpuinfo_file"
+            echo "GPUINFO_PREV_STAT=\"$currStat\"" >>"$cpuinfo_file"
+            echo "GPUINFO_PREV_IDLE=\"$currIdle\"" >>"$cpuinfo_file"
         }
         awk -v stat="$diffStat" -v idle="$diffIdle" 'BEGIN {printf "%.1f", (stat/(stat+idle))*100}'
     }
