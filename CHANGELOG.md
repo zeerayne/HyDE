@@ -49,7 +49,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Migration 
 
-##### Hyprland
+##### Hyprland v0.53.0
 
 - Before updating HyDE, Please make sure your hyprland version is 0.53.0!
 - After Updating HyDE please make sure to fix any syntax error in ~/.config/hypr/*
@@ -58,9 +58,7 @@ We are trying our best to fix any issues. So please try to your best to search f
 
 Stay HyDErated!
 
-## Migration
-
-##### NVIDIA
+##### NVIDIA Legacy Support
 
 The driver selection/installation logic has been updated to align with Arch Linux recommendations.
 
