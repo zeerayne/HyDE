@@ -298,7 +298,7 @@ def main(args):
 
     venv_path = get_venv_path()
     requirements_file = os.path.join(
-        os.path.expanduser("~/.local/lib/hyde/pyutils"), "requirements.txt"
+        xdg_base_dirs.xdg_data_home(), "hyde", "pyutils", "requirements.txt"
     )
 
     if args.command == "create":
