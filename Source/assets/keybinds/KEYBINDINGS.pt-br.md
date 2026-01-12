@@ -6,7 +6,7 @@
 
 ###### _<div align="right"><a id=-design-by-t2></a><sub>// design by t2</sub></div>_
 
-![hyde_banner](Source/assets/hyde_banner.png)
+![hyde_banner](../hyde_banner.png)
 
 <!--
 Multi-language KEYBINDINGS support
