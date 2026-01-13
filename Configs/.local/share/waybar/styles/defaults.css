@@ -253,6 +253,12 @@ tooltip {
     min-height: 0.1em;
 }
 
+#tray menu menuitem check,
+#tray menu menuitem radio {
+    min-height: 1em;
+    min-width: 1em;
+}
+
 #language {
     min-width: 1.11em;
 }
