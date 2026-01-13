@@ -235,7 +235,6 @@ window#waybar.right button {
     border: 0em
 }
 
-
 tooltip {
     /* all: unset; */
     background: @main-bg;
@@ -244,9 +243,13 @@ tooltip {
     border-color: @main-fg;
 }
 
+window.popup decoration {
+    border-width: 0.1em;
+    border-color: @main-fg;
+}
+
 #tray menu * {
     min-height: 1.6em;
-
 }
 
 #tray menu separator {
