@@ -240,8 +240,8 @@ tooltip {
     /* all: unset; */
     background: @main-bg;
     color: @main-fg;
-    border-width: 0.1pt;
-    border-color: @main-fg ;
+    border-width: 0.1em;
+    border-color: @main-fg;
 }
 
 #tray menu * {
