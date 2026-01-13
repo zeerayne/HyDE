@@ -270,4 +270,13 @@ window.popup decoration {
 #temperature.warning,
 #temperature.critical {
     background-color: transparent;
+
+menu {
+    background-color: @main-bg;
+}
+
+menu menuitem:hover {
+    background-color: @wb-act-bg;
+    color: @wb-act-fg;
+}
 }
