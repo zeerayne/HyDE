@@ -11,10 +11,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Fixed
 
+- Waybar: visual fixes for menus, tooltips and tray (borders, radii, checkbox/radio shapes)
 - Broken venvs are now auto-rebuilt when installing a dependency
 
 ### Changed
 
+- Waybar: improved menus and popups; added fade animation and theme color support (#1542, #1549)
+- Font: avoid forcing font hinting to "full"; prefer system default (commits 7ceff6a, bf7cee2)
+- Misc: removed stray "hyprquery" binary (af551c6) and branch sync/merges (dev → rc, docs-ptbr)
+- Docs: Portuguese translations for documentation and keybinds (#1543)
 - Cpuinfo: colors are now available as css class instead hardcoding in scripts.
 - Gpuinfo: colors are now available as css class instead hardcoding in scripts.
 
