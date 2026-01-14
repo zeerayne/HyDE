@@ -298,6 +298,10 @@ menu {
     border-radius: 10pt;
 }
 
+menu menuitem:hover {
+    border-radius: 10pt;
+}
+
 window.popup decoration {
     border-radius: 10pt;
 }
