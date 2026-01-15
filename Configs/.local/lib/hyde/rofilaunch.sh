@@ -62,7 +62,7 @@ case "$1" in
         ;;
 esac
 
-rofi_args+=($@)
+rofi_args+=("$@")
 
 hypr_border="${hypr_border:-10}"
 hypr_width="${hypr_width:-2}"
