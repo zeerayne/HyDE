@@ -58,7 +58,6 @@ case "$1" in
         rofi_args+=("${ROFI_LAUNCH_DRUN_ARGS[@]:-}")
         rofi_args+=("-run-command" "app2unit.sh  --fuzzel-compat -- {cmd}")
         rofi_config="${ROFI_LAUNCH_DRUN_STYLE:-$rofi_config}"
-        shift
         ;;
 esac
 
