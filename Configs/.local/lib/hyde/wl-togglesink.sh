@@ -14,21 +14,41 @@ for ctl in "${ctlcheck[@]}"; do
 done
 
 if (( ${#missing[@]} )); then
+  if printf '%s\n' "${missing[@]}" | grep -qx "pactl"; then
+    notify-send -a "t1" -r 91190 -t 2000 -i "${dunstDir}/hyprdots.svg" "Pactl Not Installed!"
+  fi
   echo "Missing required dependencies: \"${missing[*]}\"" >&2
   exit 1
 fi
 
 #// Parse .pid, .class, .title to __pid, __class, __title.
 active_json="$(hyprctl -j activewindow 2>/dev/null)" || { echo "Did hyprctl fail to run? [EXIT-CODE:-1]" >&2; exit 1; }
-PID="$(jq -r '"\(.pid)\t\(.class)\t\(.title)"' <<< "${active_json}")" || { echo "Did jq fail to run? [EXIT-CODE:-1]" >&2; exit 1; }
+PID="$(jq -r '"\(.pid)\t\(.class)\t\(.title)\t(.initialTitle)"' <<< "${active_json}")" || { echo "Did jq fail to run? [EXIT-CODE:-1]" >&2; exit 1; }
 
-IFS=$'\t' read -r __pid __class __title <<< "${PID}"
+IFS=$'\t' read -r __pid __class __title __initialTitle <<< "${PID}"
 
 [[ -z "${__pid}" || "${__pid}" == "null" || "${__pid}" -le 0 ]] 2>/dev/null && { echo "Could not resolve PID for focused window." >&2; exit 1; }
 sink_json="$(pactl -f json list sink-inputs 2>/dev/null | iconv -f utf-8 -t utf-8 -c)" || { echo "Did pactl or iconv fail to run? Required manual intervention." >&2; exit 1; }
 
-#// Check if the __pid matches application.process.id or else verify other statements.
-mapfile -t sink_ids < <(jq -r --arg pid "${__pid}" --arg class "${__class}" --arg title "${__title}" '
+#// Collect all descendant PIDs for the active window (Chrome/Wayland audio often runs in child processes).
+declare -A seen_pids=()
+queue=("${__pid}")
+all_pids=()
+while ((${#queue[@]})); do
+  pid="${queue[0]}"
+  queue=("${queue[@]:1}")
+  [[ -n "${seen_pids[$pid]:-}" ]] && continue
+  seen_pids["$pid"]=1
+  all_pids+=("$pid")
+  mapfile -t children < <(pgrep -P "$pid" || true)
+  for child in "${children[@]}"; do
+    [[ -n "${seen_pids[$child]:-}" ]] || queue+=("$child")
+  done
+done
+idsJson="$(printf '%s\n' "${all_pids[@]}" | jq -s 'map(tonumber)')"
+
+#// Check if any descendant PID matches application.process.id or else verify other statements.
+mapfile -t sink_ids < <(jq -r --arg pid "${idsJson}" --arg class "${__class}" --arg title "${__title}" '
 .[] |
  def lc(x): (x // "" | ascii_downcase);
   def normalize(x): x | gsub("[-_~.]+";" ") ;
@@ -46,10 +66,25 @@ mapfile -t sink_ids < <(jq -r --arg pid "${__pid}" --arg class "${__class}" --ar
 )
 
 if [[ "${#sink_ids[@]}" -eq 0 ]]; then
-  fallback_pid="$(pgrep -x "${__class}" | head -n 1 || true)"
-  if [[ -n "${fallback_pid}" ]]; then
-    mapfile -t sink_ids < <( jq -r --arg pid "${fallback_pid}" '.[] |
-      select(.properties["application.process.id"] == $pid) | .index' <<< "${sink_json}" )
+  mapfile -t fallback_pids < <(pgrep -f "${__class}" || true)
+  if [[ "${#fallback_pids[@]}" -gt 0 ]]; then
+    declare -A seen_fallback=()
+    queue=("${fallback_pids[@]}")
+    all_fallback=()
+    while ((${#queue[@]})); do
+      pid="${queue[0]}"
+      queue=("${queue[@]:1}")
+      [[ -n "${seen_fallback[$pid]:-}" ]] && continue
+      seen_fallback["$pid"]=1
+      all_fallback+=("$pid")
+      mapfile -t children < <(pgrep -P "$pid" || true)
+      for child in "${children[@]}"; do
+        [[ -n "${seen_fallback[$child]:-}" ]] || queue+=("$child")
+      done
+    done
+    fallbackJson="$(printf '%s\n' "${all_fallback[@]}" | jq -s 'map(tonumber)')"
+    mapfile -t sink_ids < <( jq -r --argjson pids "${fallbackJson}" '.[] | 
+      select((.properties["application.process.id"] | tostring | tonumber? as $p | $p != null and ($pids | index($p)))) | .index' <<< "${sink_json}" )
   fi
 fi
 
@@ -88,7 +123,7 @@ fi
 
 errors=0
 for id in "${sink_ids[@]}"; do
-  pactl set-sink-input-mute "$id" "$want_mute" || (( ++errors ))
+  pactl set-sink-input-mute "$id" "$want_mute" || ((++errors))
 done
 if ((errors)); then
   echo -e "pactl failed to set \"${id}\" to be \"${state_msg}\"! Manual intervention required." >&2
