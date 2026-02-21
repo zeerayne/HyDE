@@ -130,9 +130,13 @@ if ((errors)); then
   echo -e "pactl failed to set \"${id}\" to be \"${state_msg}\"! Manual intervention required." >&2
   notify-send -a "t1" -r 91190 -t 1200 -i "${dunstDir}/hyprdots.svg" "Failed to set \"${id}\" to be \"${state_msg}\"!"
 else
+if ((errors)); then
+  echo -e "pactl failed to set \"${id}\" to be \"${state_msg}\"! Manual intervention required." >&2
+  notify-send -a "t1" -r 91190 -t 1200 -i "${dunstDir}/hyprdots.svg" "Failed to set \"${id}\" to be \"${state_msg}\"!"
+else
   # // Append paxmier to get a nice result. Pamixer is complete optional here.
   if command -v pamixer >/dev/null; then
-    notify-send -a "t2" -r 91190 -t 800 -i "${swayIcon}" "${state_msg} ${__initialTitle}" "$(pamixer --get-default-sink | awk -F '"' 'END{print $(NF - 1)}')"
+    notify-send -a "t2" -r 91190 -t 800 -i "${swayIcon}" "${state_msg} ${__initialTitle}" "$(pamixer --get-default-sink | awk -F '"' 'END{print $(NF - 1)}' || true)"
   else
     notify-send -a "t2" -r 91190 -t 800 -i "${swayIcon}" "${state_msg} ${__initialTitle}"
   fi
