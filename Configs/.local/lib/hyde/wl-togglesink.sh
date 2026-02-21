@@ -3,7 +3,7 @@ set -eo pipefail
 
 scrDir="$(dirname "$(realpath "${0}")")"
 source "${scrDir}/globalcontrol.sh"
-[[ -n "${iconDir}" ]] || { echo "globalcontrol.sh did not set iconsDir" >&2; iconsDir="${XDG_DATA_HOME}/icons"; }
+[[ -n "${iconsDir}" ]] || { echo "globalcontrol.sh did not set iconsDir" >&2; iconsDir="${XDG_DATA_HOME}/icons"; }
 dunstDir="${iconsDir}/Wallbash-Icon"
 
 #// Credits to sl1ng for the orginal script. Rewritten by Vyle.
@@ -67,7 +67,7 @@ idsJson="$(printf '%s\n' "${all_pids[@]}" | jq -s 'map(tonumber)')"
 )
 
 if [[ "${#sink_ids[@]}" -eq 0 ]]; then
-  mapfile -t fallback_pids < <(pgrep -f "${__class}" || true)
+  mapfile -t fallback_pids < <(pgrep -x "${__class}" || true)
   if [[ "${#fallback_pids[@]}" -gt 0 ]]; then
     declare -A seen_fallback=()
     queue=("${fallback_pids[@]}")
