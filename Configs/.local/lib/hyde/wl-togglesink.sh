@@ -89,9 +89,12 @@ fi
 
 errors=0
 for id in "${sink_ids[@]}"; do
-  pactl set-sink-input-mute "$id" "$want_mute" ||  (( errors++)) 
+  pactl set-sink-input-mute "$id" "$want_mute" || (( ++errors ))
 done
-((errors)) && { echo -e "pactl failed to set \"${id}\" to be \"${state_msg}\"! Manual intervention required." >&2; notify-send -a "t1" -r 91190 -t 1200 -i "${dunstDir}/hyprdots.svg" "Failed to set \"${id}\" to be \"${state_msg}\"!"; }
+if (( errors )); then
+  echo "pactl failed to set mute for ${errors} sink input(s). Manual intervention required." >&2
+  notify-send -a "t1" -r 91190 -t 1200 -i "${dunstDir}/hyprdots.svg" "Failed to set mute for ${errors} sink input(s)."
+fi
 
 #// Append paxmier to get a nice result. Pamixer is complete optional here.
 if command -v pamixer >/dev/null; then
