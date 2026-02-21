@@ -20,14 +20,13 @@ if (( ${#missing[@]} )); then
 fi
 
 #// Parse .pid, .class, .title to __pid, __class, __title.
-active_json="$(hyprctl -j activewindow 2>/dev/null || { echo -e "Did hyprctl fail to run? [EXIT-CODE:-1]"; exit 1; } )"
-PID="$(jq -r '"\(.pid)\t\(.class)\t\(.title)"' <<< "${active_json}" || { echo -e "Did jq fail to run? [EXIT-CODE:-1]"; exit 1; } )"
+active_json="$(hyprctl -j activewindow 2>/dev/null)" || { echo "Did hyprctl fail to run? [EXIT-CODE:-1]" >&2; exit 1; }
+PID="$(jq -r '"\(.pid)\t\(.class)\t\(.title)"' <<< "${active_json}")" || { echo "Did jq fail to run? [EXIT-CODE:-1]" >&2; exit 1; }
 
 IFS=$'\t' read -r __pid __class __title <<< "${PID}"
-unset IFS
 
-[[ -z "${__pid}" ]] && { echo -e "Could not resolve PID for focused window."; exit 1; }
-sink_json="$(pactl -f json list sink-inputs 2>/dev/null | iconv -f utf-8 -t utf-8 -c || { echo -e "Did pactl or iconv fail to run? Required manual intervention."; exit 1; } )"
+[[ -z "${__pid}" || "${__pid}" == "null" || "${__pid}" -le 0 ]] 2>/dev/null && { echo "Could not resolve PID for focused window." >&2; exit 1; }
+sink_json="$(pactl -f json list sink-inputs 2>/dev/null | iconv -f utf-8 -t utf-8 -c)" || { echo "Did pactl or iconv fail to run? Required manual intervention." >&2; exit 1; }
 
 #// Check if the __pid matches application.process.id or else verify other statements.
 mapfile -t sink_ids < <(jq -r --arg pid "${__pid}" --arg class "${__class}" --arg title "${__title}" '
@@ -86,11 +85,13 @@ else
   swayIcon="${dunstDir}/media/muted-speaker.svg"
 fi
 
-[[ -f "${swayIcon}" ]] || echo -e "Missing swaync icons."
+[[ -f "${swayIcon}" ]] || { echo -e "Missing swaync icons." >&2; swayIcon=""; }
 
+errors=0
 for id in "${sink_ids[@]}"; do
-  pactl set-sink-input-mute "$id" "$want_mute"
+  pactl set-sink-input-mute "$id" "$want_mute" ||  (( errors++)) 
 done
+((errors)) && { echo -e "pactl failed to set \"${id}\" to be \"${state_msg}\"! Manual intervention required." >&2; notify-send -a "t1" -r 91190 -t 1200 -i "${dunstDir}/hyprdots.svg" "Failed to set \"${id}\" to be \"${state_msg}\"!"; }
 
 #// Append paxmier to get a nice result. Pamixer is complete optional here.
 if command -v pamixer >/dev/null; then
