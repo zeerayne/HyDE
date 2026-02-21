@@ -3,7 +3,6 @@ set -eo pipefail
 
 scrDir="$(dirname "$(realpath "${0}")")"
 source "${scrDir}/globalcontrol.sh"
-
 dunstDir="${iconsDir}/Wallbash-Icon"
 
 #// Credits to sl1ng for the orginal script. Rewritten by Vyle.
@@ -59,10 +58,10 @@ if [[ ${#sink_ids[@]} -eq 0 ]]; then
   if [[ -n "${HYPRLAND_INSTANCE_SIGNATURE}" ]]; then
     # If even the fallback_pid remains empty, we will dispatch exit code based on $HYPRLAND_INSTANCE_SIGNATURE.
     notify-send -a "t1" -r 91190 -t 1200 -i "${dunstDir}/hyprdots.svg" "No sink input available."
-    echo "No sink input for focused window: ${__class}"
+    echo "No sink input for focused window: ${__class}" >&2
     exit 1
   else
-    echo "No sink input for focused active_window ${__class}"
+    echo "No sink input for focused active_window ${__class}" >&2
     exit 1
   fi
 fi
@@ -91,14 +90,14 @@ errors=0
 for id in "${sink_ids[@]}"; do
   pactl set-sink-input-mute "$id" "$want_mute" || (( ++errors ))
 done
-if (( errors )); then
-  echo "pactl failed to set mute for ${errors} sink input(s). Manual intervention required." >&2
-  notify-send -a "t1" -r 91190 -t 1200 -i "${dunstDir}/hyprdots.svg" "Failed to set mute for ${errors} sink input(s)."
-fi
-
-#// Append paxmier to get a nice result. Pamixer is complete optional here.
-if command -v pamixer >/dev/null; then
-  notify-send -a "t2" -r 91190 -t 800 -i "${swayIcon}" "${state_msg} ${__class}" "$(pamixer --get-default-sink | awk -F '"' 'END{print $(NF - 1)}')"
+if ((errors)); then
+  echo -e "pactl failed to set \"${id}\" to be \"${state_msg}\"! Manual intervention required." >&2
+  notify-send -a "t1" -r 91190 -t 1200 -i "${dunstDir}/hyprdots.svg" "Failed to set \"${id}\" to be \"${state_msg}\"!"
 else
-  notify-send -a "t2" -r 91190 -t 800 -i "${swayIcon}" "${state_msg} ${__class}"
+  # // Append paxmier to get a nice result. Pamixer is complete optional here.
+  if command -v pamixer >/dev/null; then
+    notify-send -a "t2" -r 91190 -t 800 -i "${swayIcon}" "${state_msg} ${__class}" "$(pamixer --get-default-sink | awk -F '"' 'END{print $(NF - 1)}')"
+  else
+    notify-send -a "t2" -r 91190 -t 800 -i "${swayIcon}" "${state_msg} ${__class}"
+  fi
 fi
