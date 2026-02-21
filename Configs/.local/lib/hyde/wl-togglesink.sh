@@ -3,6 +3,7 @@ set -eo pipefail
 
 scrDir="$(dirname "$(realpath "${0}")")"
 source "${scrDir}/globalcontrol.sh"
+[[ -n "${iconDir}" ]] || { echo "globalcontrol.sh did not set iconsDir" >&2; iconsDir="${XDG_DATA_HOME}/icons"; }
 dunstDir="${iconsDir}/Wallbash-Icon"
 
 #// Credits to sl1ng for the orginal script. Rewritten by Vyle.
@@ -15,7 +16,7 @@ done
 
 if (( ${#missing[@]} )); then
   if printf '%s\n' "${missing[@]}" | grep -qx "pactl"; then
-    notify-send -a "t1" -r 91190 -t 2000 -i "${dunstDir}/hyprdots.svg" "Pactl Not Installed!"
+    printf '%s\n' "${missing[@]}" | grep -qx "notify-send" || notify-send -a "t1" -r 91190 -t 2000 -i "${dunstDir}/hyprdots.svg" "Pactl Not Installed!"
   fi
   echo "Missing required dependencies: \"${missing[*]}\"" >&2
   exit 1
@@ -23,7 +24,7 @@ fi
 
 #// Parse .pid, .class, .title to __pid, __class, __title.
 active_json="$(hyprctl -j activewindow 2>/dev/null)" || { echo "Did hyprctl fail to run? [EXIT-CODE:-1]" >&2; exit 1; }
-PID="$(jq -r '"\(.pid)\t\(.class)\t\(.title)\t(.initialTitle)"' <<< "${active_json}")" || { echo "Did jq fail to run? [EXIT-CODE:-1]" >&2; exit 1; }
+PID="$(jq -r '"\(.pid)\t\(.class)\t\(.title)\t\(.initialTitle)"' <<< "${active_json}")" || { echo "Did jq fail to run? [EXIT-CODE:-1]" >&2; exit 1; }
 
 IFS=$'\t' read -r __pid __class __title __initialTitle <<< "${PID}"
 
@@ -48,12 +49,12 @@ done
 idsJson="$(printf '%s\n' "${all_pids[@]}" | jq -s 'map(tonumber)')"
 
 #// Check if any descendant PID matches application.process.id or else verify other statements.
-mapfile -t sink_ids < <(jq -r --arg pid "${idsJson}" --arg class "${__class}" --arg title "${__title}" '
++mapfile -t sink_ids < <(jq -r --argjson pids "${idsJson}" --arg class "${__class}" --arg title "${__title}" '
 .[] |
  def lc(x): (x // "" | ascii_downcase);
   def normalize(x): x | gsub("[-_~.]+";" ") ;
   select(
-  (.properties["application.process.id"] // "") == $pid
+  (.properties["application.process.id"] | tostring | tonumber? as $p | $p != null and ($pids | index($p) != null))
   or
   ($class != "" and (lc(.properties["application.name"]) | contains(lc($class))))
   or
@@ -131,8 +132,8 @@ if ((errors)); then
 else
   # // Append paxmier to get a nice result. Pamixer is complete optional here.
   if command -v pamixer >/dev/null; then
-    notify-send -a "t2" -r 91190 -t 800 -i "${swayIcon}" "${state_msg} ${__class}" "$(pamixer --get-default-sink | awk -F '"' 'END{print $(NF - 1)}')"
+    notify-send -a "t2" -r 91190 -t 800 -i "${swayIcon}" "${state_msg} ${__initialTitle}" "$(pamixer --get-default-sink | awk -F '"' 'END{print $(NF - 1)}')"
   else
-    notify-send -a "t2" -r 91190 -t 800 -i "${swayIcon}" "${state_msg} ${__class}"
+    notify-send -a "t2" -r 91190 -t 800 -i "${swayIcon}" "${state_msg} ${__initialTitle}"
   fi
 fi
