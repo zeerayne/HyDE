@@ -15,7 +15,7 @@ for ctl in "${ctlcheck[@]}"; do
 done
 
 if (( ${#missing[@]} )); then
-  echo "Missing required dependencies: \"${missing[*]}\""
+  echo "Missing required dependencies: \"${missing[*]}\"" >&2
   exit 1
 fi
 
@@ -36,13 +36,13 @@ mapfile -t sink_ids < <(jq -r --arg pid "${__pid}" --arg class "${__class}" --ar
   select(
   (.properties["application.process.id"] // "") == $pid
   or
-  (lc(.properties["application.name"]) | contains(lc($class)))
+  ($class != "" and (lc(.properties["application.name"]) | contains(lc($class))))
   or
-  (lc(.properties["application.id"]) | contains(lc($class)))
+  ($class != "" and (lc(.properties["application.id"]) | contains(lc($class))))
   or
-  (lc(.properties["application.process.binary"]) | contains(lc($class)))
+  ($class != "" and (lc(.properties["application.process.binary"]) | contains(lc($class))))
   or
-  ((normalize(lc(.properties["media.name"])) | contains(normalize(lc($title)))))
+  ($title != "" and (normalize(lc(.properties["media.name"])) | contains(normalize(lc($title)))))
   ) | .index' <<< "${sink_json}"
 )
 
