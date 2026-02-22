@@ -54,7 +54,7 @@ idsJson="$(printf '%s\n' "${all_pids[@]}" | jq -s 'map(tonumber)')"
  def lc(x): (x // "" | ascii_downcase);
   def normalize(x): x | gsub("[-_~.]+";" ") ;
   select(
-  (.properties["application.process.id"] | tostring | tonumber? as $p | $p != null and ($pids | index($p) != null))
+  ((.properties["application.process.id"] | tostring | (tonumber? // null)) as $p | $p != null and ($pids | index($p) != null))
   or
   ($class != "" and (lc(.properties["application.name"]) | contains(lc($class))))
   or
@@ -85,7 +85,7 @@ if [[ "${#sink_ids[@]}" -eq 0 ]]; then
     done
     fallbackJson="$(printf '%s\n' "${all_fallback[@]}" | jq -s 'map(tonumber)')"
     mapfile -t sink_ids < <( jq -r --argjson pids "${fallbackJson}" '.[] | 
-      select((.properties["application.process.id"] | tostring | tonumber? as $p | $p != null and ($pids | index($p)))) | .index' <<< "${sink_json}" )
+      select(((.properties["application.process.id"] | tostring | (tonumber? // null)) as $p | $p != null and ($pids | index($p)))) | .index')
   fi
 fi
 
@@ -126,10 +126,7 @@ errors=0
 for id in "${sink_ids[@]}"; do
   pactl set-sink-input-mute "$id" "$want_mute" || ((++errors))
 done
-if ((errors)); then
-  echo -e "pactl failed to set \"${id}\" to be \"${state_msg}\"! Manual intervention required." >&2
-  notify-send -a "t1" -r 91190 -t 1200 -i "${dunstDir}/hyprdots.svg" "Failed to set \"${id}\" to be \"${state_msg}\"!"
-else
+
 if ((errors)); then
   echo -e "pactl failed to set \"${id}\" to be \"${state_msg}\"! Manual intervention required." >&2
   notify-send -a "t1" -r 91190 -t 1200 -i "${dunstDir}/hyprdots.svg" "Failed to set \"${id}\" to be \"${state_msg}\"!"
