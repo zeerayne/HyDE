@@ -85,7 +85,7 @@ if [[ "${#sink_ids[@]}" -eq 0 ]]; then
     done
     fallbackJson="$(printf '%s\n' "${all_fallback[@]}" | jq -s 'map(tonumber)')"
     mapfile -t sink_ids < <( jq -r --argjson pids "${fallbackJson}" '.[] | 
-      select(((.properties["application.process.id"] | tostring | (tonumber? // null)) as $p | $p != null and ($pids | index($p)))) | .index')
+      select(((.properties["application.process.id"] | tostring | (tonumber? // null)) as $p | $p != null and ($pids | index($p)))) | .index' <<< "${sink_json}")
   fi
 fi
 
