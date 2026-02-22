@@ -49,7 +49,7 @@ done
 idsJson="$(printf '%s\n' "${all_pids[@]}" | jq -s 'map(tonumber)')"
 
 #// Check if any descendant PID matches application.process.id or else verify other statements.
-+mapfile -t sink_ids < <(jq -r --argjson pids "${idsJson}" --arg class "${__class}" --arg title "${__title}" '
+mapfile -t sink_ids < <(jq -r --argjson pids "${idsJson}" --arg class "${__class}" --arg title "${__title}" '
 .[] |
  def lc(x): (x // "" | ascii_downcase);
   def normalize(x): x | gsub("[-_~.]+";" ") ;
