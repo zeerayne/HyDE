@@ -281,6 +281,7 @@ themeselect.sh configuration.
 
 | Key | Description | Default |
 | --- | ----------- | ------- |
+| column_count | Number of columns for theme selector. | 3 |
 | scale | Scaling for theme selector. | 6 |
 
 ### [rofi.wallpaper]
@@ -289,6 +290,7 @@ swwwallselect.sh configuration.
 
 | Key | Description | Default |
 | --- | ----------- | ------- |
+| column_count | Number of columns for wallpaper selector. | 3 |
 | scale | Scaling for wallpaper. | 10 |
 
 ### [rofi.websearch]
