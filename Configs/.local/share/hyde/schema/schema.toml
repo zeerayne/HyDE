@@ -195,6 +195,11 @@ type      = "object"
     description = "Scaling for wallpaper."
     type        = "integer"
 
+[properties.rofi.properties.wallpaper.properties.column_count]
+    default     = 3
+    description = "Number of columns for wallpaper selector."
+    type        = "integer"
+
 [properties.rofi.properties.emoji]
     description = "emoji-picker.sh configuration."
     type        = "object"
@@ -226,6 +231,16 @@ type      = "object"
     default     = 6
     description = "Scaling for theme selector."
     type        = "integer"
+
+[properties.rofi.properties.theme.properties.column_count]
+    default     = 3
+    description = "Number of columns for theme selector."
+    type        = "integer"
+
+[properties.rofi.properties.theme.properties.thumb_style]
+    description = "Thumbnail style for theme selector."
+    options     = [ "sqre", "quad", "blur" ]
+    type        = "string"
 
 [properties.rofi.properties.websearch]
     description = "hyde-shell rofi.websearch.sh configuration."
@@ -855,6 +870,10 @@ type      = "object"
     description = "Qt5 font."
     type        = "string"
 
+[properties.qt5.properties.font_style]
+    description = "Qt5 font style."
+    type        = "string"
+
 [properties.qt5.properties.font_size]
     default     = 10
     description = "Qt5 font size."
@@ -877,6 +896,10 @@ type      = "object"
 [properties.qt6.properties.font]
     default     = "Canterell"
     description = "Qt6 font."
+    type        = "string"
+
+[properties.qt6.properties.font_style]
+    description = "Qt6 font style."
     type        = "string"
 
 [properties.qt6.properties.font_size]
