@@ -1,10 +1,10 @@
-# Hi! 👋 Khing here
+# Bonjour ! 👋 C'est Khing qui vous parle
 
 [![de](https://img.shields.io/badge/lang-de-black.svg)](Source/docs/Hyprdots-to-HyDE.de.md)
 [![中文](https://img.shields.io/badge/lang-中文-orange.svg)](Source/docs/Hyprdots-to-HyDE.zh.md)
 [![es](https://img.shields.io/badge/lang-es-yellow.svg)](Source/docs/Hyprdots-to-HyDE.es.md)
 
-## Ce fork va améliorer et réparer prasanthrangan/hyprdots au file des anneé (et des mise à jours) 
+## Ce fork va améliorer et réparer prasanthrangan/hyprdots au file des année (et des mise à jours) 
 
 ### Pourquoi ?
 
@@ -13,74 +13,74 @@
 - Par respect, ne changerai pas tous* dans les dotfoles.
 - Cet repo ne va **remplacer** les dotsfiles du $USER.
 
-**Ce fork est temporaire et va passer ce l'ancienne structure à une nouvelle [Arive bientôt...].**
+**Ce fork est temporaire et va passer ce l'ancienne structure à une nouvelle [Arrive bientôt...].**
 
 ### Qui est $USER?
 
-> **NOTE**: Si vous êtes confus avec le fichier `install.sh -r` overwrites your configs, you should fork [HyDE](https://github.com/HyDE-Project/HyDE), edit the `*.lst` file, and run the script. That’s the intended way.
+> **NOTE**: Si vous êtes confus avec le fichier `install.sh -r` sur le fait qu'il remplace vos configs, vous devriez fork [HyDE](https://github.com/HyDE-Project/HyDE), editer le fichier `*.lst`, et lancer le script. C'est le fonctionnement prévu.
 
-Who are the $USER?
+Qui est $USER?
 
-✅ Don’t want to maintain a fork
-✅ Want to stay updated with this great dotfile
-✅ Don’t know how the repo works
-✅ Don’t have time to create your own dotfiles, just use this as inspiration
-✅ Want a cleaner `~/.config` with everything structured like a real Linux package
-✅ Demands a DE like experience
+✅ Ne veux pas maintenir un fork
+✅ Veux rester à jour avec cet SUPER config
+✅ Ne sais pas comment les repo fonctionnent
+✅ Vous n'avez pas le temps de créer vos propres fichiers de configuration ? Utilisez ceci comme source d'inspiration.
+✅ Veux un `~/.config` propre avec tout structuré comme un vrai packet linux 
+✅ Demande une expérience qui ressemble à celle d'un DE ( Environnement de Bureau)
 
 ### ROADMAP 🛣️📍
 
 - [ ] **Portable**
 
-  - [ ] HyDE-specific files should be imported into $USER, not the other way around
-  - [x] Keep it minimal
-  - [ ] Make it packageable
-  - [x] Follow XDG specs
-  - [ ] Add Makefile
+  - [ ] Les fichiers spécifique à HyDE devraient être importé dans $USER, pas d'autre chemin autour
+  - [x] Garder miniature
+  - [ ] Faire en sorte qu'il soit empaquetable
+  - [x] Garde les specs XDG
+  - [ ] Ajouter un fichier Makefile
 
-- [ ] **Extensible**
+- [ ] **Extensible** *
 
-  - [ ] Add HyDE extension system
-  - [ ] Predictable installation
+  - [ ] Ajouter un système d'extension pour HyDE
+  - [ ] Une installation predisable*
 
-- [ ] **Performance**
+- [ ] **Performant**
 
-  - [ ] Optimize scripts for speed and efficiency
-  - [ ] Make a single CLI to manage all the core script
+  - [ ] Optimiser les scripts pour qu'il soient rapides et efficaces
+  - [ ] Faire une seul CLI (client) pour tous les scripts du noyau
 
-- [ ] **Manageable**
+- [ ] **Gérable**
 
-  - [ ] Fix scripts (shellcheck compatible)
-  - [x] Move scripts to `./lib/hyde`
-  - [x] Make `wallbash*.sh` scripts monolithic, to fix wallbash issues
+  - [ ] Réparer les scripts (compatble shellcheck)
+  - [x] Bouger les script vers `./lib/hyde`
+  - [x] Faire du script `wallbash*.sh` monolithic*, pour réparer les bugs*
 
-- [ ] **Better Abstraction**
+- [ ] **Meilleur abstraction**
 
   - [ ] Waybar
   - [x] Hyprlock
   - [x] Animations
   - [ ] ...
 
-- [ ] Clean up
+- [ ] Netoyer
 - [ ] **...**
 
 ---
 
-Here's how we can update HyDE-specific Hyprland settings without changing user preferences. We don't need the "userprefs" file. Instead, we can source HyDE's `hyprland.conf` and make $USER preferred changes directly in the config. With this approach, you won't potentially break hyde and hyde won't break your own dots.
+Comment mettre-à-jour les parmètres de Hyprland spécifique à HyDE sans changer les préférences de l'utilisateur. Nous n'avons pas besoin du fichier "userprefs".  À la place, nous faisons le fichier `hyprland.conf` de HyDE et faisons les changement préféré de $USER directement dans les configs. Avec cet approche, vous n'allez pas potentiellement cassez HyDE et HyDE ne vas pas casser vos dots.
 
-![Hyprland structure](https://github.com/user-attachments/assets/91b35c2e-0003-458f-ab58-18fc29541268)
+![La structure d'hyprland](https://github.com/user-attachments/assets/91b35c2e-0003-458f-ab58-18fc29541268)
 
-# Why name it HyDE?
+# Pourquoi HyDE comme nom ?
 
-As the last man standing collaborator, I don't know what the original creator intended. But I think it's a good name. I just don't know what it stands for. 🤷‍♂️
+Comme étant le dernier contributeur restant, Je ne sais pas à quoi penssait le créateur original. Mais je pense que c'est un super nom. Je ne sais juste pas ce que cela signifie. 🤷‍♂️
 
-Here are the speculations from some of the contributors:
+Certain contributeur penssent que:
 
-> - "**Hy**pr**D**otfiles **E**nhanced" - Enhanced version of hyprdots when @prasanthrangan introduced wallbash as our main theme management engine.
+> - "**Hy**pr**D**otfiles **E**nhanced" - Une version amélioré de hyprdots quand @prasanthrangan à sorti wallbash qui est notre principal moteur de theme. *
 
-> - But the one that makes the most sense is - "**Hy**prland **D**esktop **E**nvironment" - as Hyprland is usually considered a WM for Wayland, not a full-fledged D.E. and this dotfile kind of turns it into a full-blown D.E.
->   -chrollorifat
+> - Mais celui qui à le plus de sens est  - "**Hy**prland **D**esktop **E**nvironment" - comme Hyprland est souvent considéré comme étant une WM pour Wayland, pas un DE à part et ces dotfiles en font un DE à part entière.
+> - chlorofat *
 
-> - "HyDE, your Development Environment" - khing
+> - "HyDE, environnement de développement" - khing
 
-**Feel free to suggest your own meaning of HyDE. 🤔**
+**Sentez vous libre de suggerer votre sens * de HyDE. 🤔**
