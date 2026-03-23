@@ -9,15 +9,15 @@
 ### Pourquoi ?
 
 - Tittu (le créateur original (le premier quoi)) est AFK pour l'instant, et je suis le seul contributeur restant. ⁉️
-- Mes permissions sont limité, donc je peux seulement merge les PRs*. Si il y a My permissions are limited, so I can only merge PRs. If something breaks, I have to wait for help. 😭
-- I won’t change everything in his dotfiles out of respect.
-- This repo won't **overwrite** $USER's dotfiles.
+- Mes permissions sont limité, donc je peux seulement merge les PRs*. Si il quelque chose se casse, je doit attendre de l'aide. 😭
+- Par respect, ne changerai pas tous* dans les dotfoles.
+- Cet repo ne va **remplacer** les dotsfiles du $USER.
 
-**This fork is temporary and will bridge the old structure to a newer one [coming soon...].**
+**Ce fork est temporaire et va passer ce l'ancienne structure à une nouvelle [Arive bientôt...].**
 
-### Who are the $USER?
+### Qui est $USER?
 
-> **NOTE**: If you're confused why every `install.sh -r` overwrites your configs, you should fork [HyDE](https://github.com/HyDE-Project/HyDE), edit the `*.lst` file, and run the script. That’s the intended way.
+> **NOTE**: Si vous êtes confus avec le fichier `install.sh -r` overwrites your configs, you should fork [HyDE](https://github.com/HyDE-Project/HyDE), edit the `*.lst` file, and run the script. That’s the intended way.
 
 Who are the $USER?
 
