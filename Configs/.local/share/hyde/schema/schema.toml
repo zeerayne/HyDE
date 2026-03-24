@@ -771,6 +771,11 @@ type      = "object"
     description = "Idle manager."
     type        = "string"
 
+[properties.hyprland.properties.blue_light_filter]
+    default     = "hyprsunset"
+    description = "Blue-light filter."
+    type        = "string"
+
 [properties.hyprland.properties.lockscreen]
     default     = "lockscreen.sh"
     description = "Lockscreen."
@@ -964,7 +969,10 @@ type      = "object"
     default     = "hypridle"
     description = "Idle daemon."
     type        = "string"
-
+[properties.hyprland-start.properties.blue_light_filter_daemon]
+    default     = "hyprsunset"
+    description = "Blue-light filter daemon."
+    type        = "string"
 [properties.hyprland-start.properties.image_clipboard]
     default     = "wl-paste --type image --watch cliphist store"
     description = "Image clipboard."
