@@ -4,4 +4,4 @@ if [ -d /run/current-system/sw/libexec ]; then
 else
     libDir=/usr/lib
 fi
-$libDir/polkit-gnome/polkit-gnome-authentication-agent-1 &
+$libDir/hyprpolkitagent &
