@@ -67,7 +67,7 @@ Qui est $USER?
 
 ---
 
-Comment mettre-à-jour les parmètres de Hyprland spécifique à HyDE sans changer les préférences de l'utilisateur. Nous n'avons pas besoin du fichier "userprefs".  À la place, nous faisons le fichier `hyprland.conf` de HyDE et faisons les changement préféré de $USER directement dans les configs. Avec cet approche, vous n'allez pas potentiellement cassez HyDE et HyDE ne vas pas casser vos dots.
+Comment mettre à jour les parmètres de Hyprland spécifique à HyDE sans changer les préférences de l'utilisateur. Nous n'avons pas besoin du fichier "userprefs".  À la place, nous faisons le fichier `hyprland.conf` de HyDE et faisons les changement préféré de $USER directement dans les configs. Avec cet approche, vous n'allez pas potentiellement cassez HyDE et HyDE ne vas pas casser vos dots.
 
 ![La structure d'hyprland](https://github.com/user-attachments/assets/91b35c2e-0003-458f-ab58-18fc29541268)
 
