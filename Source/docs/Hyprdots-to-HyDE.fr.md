@@ -10,7 +10,7 @@
 ### Pourquoi ?
 
 - Tittu (le créateur original (le premier quoi)) est AFK pour l'instant, et je suis le seul contributeur restant. ⁉️
-- Mes permissions sont limité, donc je peux seulement merge les PRs*. Si il quelque chose se casse, je doit attendre de l'aide. 😭
+- Mes permissions sont limitées, donc je peux seulement merge les PRs*. Si il quelque chose se casse, je doit attendre de l'aide. 😭
 - Par respect, ne changerai pas tous* dans les dotfiles.
 - Ce repo ne va pas **remplacer** les dotfiles du $USER.
 
