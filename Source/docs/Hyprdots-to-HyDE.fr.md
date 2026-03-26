@@ -1,8 +1,9 @@
 # Bonjour ! 👋 C'est Khing qui vous parle
 
-[![de](https://img.shields.io/badge/lang-de-black.svg)](Source/docs/Hyprdots-to-HyDE.de.md)
-[![中文](https://img.shields.io/badge/lang-中文-orange.svg)](Source/docs/Hyprdots-to-HyDE.zh.md)
-[![es](https://img.shields.io/badge/lang-es-yellow.svg)](Source/docs/Hyprdots-to-HyDE.es.md)
+[![de](https://img.shields.io/badge/lang-de-black.svg)](./Hyprdots-to-HyDE.de.md)
+[![中文](https://img.shields.io/badge/lang-中文-orange.svg)](./Hyprdots-to-HyDE.zh.md)
+[![es](https://img.shields.io/badge/lang-es-yellow.svg)](./Hyprdots-to-HyDE.es.md)
+[![en](https://img.shields.io/badge/lang-en-blue.svg)](../../Hyprdots-to-HyDE.md)
 
 ## Ce fork va améliorer et réparer prasanthrangan/hyprdots au file des année (et des mise à jours) 
 
