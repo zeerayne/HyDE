@@ -882,6 +882,11 @@
                     "description": "Idle manager.",
                     "type": "string"
                 },
+                "blue_light_filter": {
+                    "default": "hyprsunset",
+                    "description": "Blue-light filter.",
+                    "type": "string"
+                },
                 "lockscreen": {
                     "default": "lockscreen.sh",
                     "description": "Lockscreen.",
@@ -1084,6 +1089,12 @@
                     "description": "Idle daemon.",
                     "type": "string"
                 },
+                "blue_light_filter_daemon": {
+                    "default": "hyprsunset",
+                    "description": "Blue-light filter daemon.",
+                    "type": "string"
+                },
+
                 "image_clipboard": {
                     "default": "wl-paste --type image --watch cliphist store",
                     "description": "Image clipboard.",
