@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
+extract_thumbnail() {
+    local x_wall="$1"
+    x_wall=$(realpath "$x_wall")
+    local temp_image="$2"
+    ffmpeg -y -i "$x_wall" -vf "thumbnail,scale=1000:-1" -frames:v 1 -update 1 "$temp_image" &>/dev/null
+}
+
 wallpaper_cache_bootstrap() {
 	if [[ ${HYDE_SHELL_INIT:-0} -ne 1 ]]; then
 		eval "$(hyde-shell init)"
