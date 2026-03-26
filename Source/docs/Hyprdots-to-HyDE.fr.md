@@ -5,7 +5,7 @@
 [![es](https://img.shields.io/badge/lang-es-yellow.svg)](./Hyprdots-to-HyDE.es.md)
 [![en](https://img.shields.io/badge/lang-en-blue.svg)](../../Hyprdots-to-HyDE.md)
 
-## Ce fork va améliorer et réparer prasanthrangan/hyprdots au file des année (et des mise à jours) 
+## Ce fork va améliorer et réparer prasanthrangan/hyprdots au fil des années (et des mise à jours) 
 
 ### Pourquoi ?
 
