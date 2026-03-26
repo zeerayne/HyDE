@@ -288,7 +288,7 @@ themeselect.sh configuration.
 
 ### [rofi.wallpaper]
 
-swwwallselect.sh configuration.
+wallpaper select configuration.
 
 | Key | Description | Default |
 | --- | ----------- | ------- |
@@ -370,12 +370,12 @@ Wallpaper configuration.
 
 | Key | Description | Default |
 | --- | ----------- | ------- |
-| backend | Wallpaper backend, requires 'wallpaper.<backend>.sh' as handler script in $PATH | swww |
+| backend | Wallpaper backend, requires 'wallpaper.<backend>.sh' as handler script in $PATH | awww |
 | custom_paths | List of paths to search for wallpapers. | [] |
 
-### [wallpaper.swww]
+### [wallpaper.awww]
 
-swwwallselect.sh configuration.
+wallpaper select configuration.
 
 | Key | Description | Default |
 | --- | ----------- | ------- |
