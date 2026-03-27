@@ -6,11 +6,19 @@ All notable changes to `HyDE` will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to _Modified_ [CalVer](https://calver.org/). See [Versioning](https://github.com/HyDE-Project/HyDE/blob/master/RELEASE_POLICY.md#versioning-yymq) For more info
  -->
 
-## v26.3.1
+## Unreleased
 
 ### Changed
 
 - Wallpaper: Pt. 1 of multi theming backend.
+- Hyprland: Remove `hyde.conf` as it is too brittle. Use `hyprland.conf` instead!
+- Window: Moved 'windowpin' to 'window.pin'. For consistency.
+- pyutils: Kinda clean up libnotify wrapper.
+
+### Added
+- Window: added 'hyde-shell window.mute' to toggle window audio. This is a python implementation for 'wl-togglesink'
+
+
 
 
 ## v26.1.2
