@@ -14,6 +14,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Hyprland: Remove `hyde.conf` as it is too brittle. Use `hyprland.conf` instead!
 - Window: Moved 'windowpin' to 'window.pin'. For consistency.
 - pyutils: Kinda clean up libnotify wrapper.
+- Updated app2unit. https://github.com/Vladimir-csp/app2unit/blob/87dd9cd14e020b199256854c84f31b62680d1b21/app2unit
+
 
 ### Added
 - Window: added 'hyde-shell window.mute' to toggle window audio. This is a python implementation for 'wl-togglesink'
