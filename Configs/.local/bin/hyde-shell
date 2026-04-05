@@ -123,6 +123,11 @@ list_script_path() {
 	find -L "$LIB_DIR/hyde" -type f \( -name "*.sh" -o -name "*.py" \) -exec echo {} \;
 }
 
+list_script() {
+	# Plain newline-delimited script names (no extension) for completion consumers.
+	list_script_path | xargs -I{} basename {} | sed 's/\.[^.]*$//' | sort -u
+}
+
 get_version() {
 	# shellcheck source=/dev/null
 	if [[ ! -f "${XDG_STATE_HOME:-$HOME/.local/state}/hyde/version" ]]; then
@@ -681,10 +686,13 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
 	-s | scripts)
 		list_scripts_pretty
 		;;
+	--list-script)
+		list_script
+		;;
 	--list-script-path)
 		list_script_path
 		;;
-	--completions)
+	--completions | completions)
 		shift
 		generate_completions "$1"
 		;;
