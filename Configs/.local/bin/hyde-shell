@@ -512,7 +512,7 @@ run_pypr() {
 		fi
 
 	else
-		pip install --no-input pyprland==2.4.7
+		UV_PROJECT_ENVIRONMENT="${XDG_STATE_HOME:-$HOME/.local/state}/hyde/pip_env" uv add "pyprland==2.4.7" --project "${LIB_DIR}/hyde"
 	fi
 
 }
