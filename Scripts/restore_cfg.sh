@@ -275,6 +275,11 @@ if ! command -v uv &>/dev/null; then
         curl -LsSf https://astral.sh/uv/install.sh | sh
         # shellcheck disable=SC1091
         source "$HOME/.local/bin/env" 2>/dev/null || true
+        
+        # Ensure uv is available after installation
+        if ! command -v uv &>/dev/null; then
+            export PATH="$HOME/.local/bin:$PATH"
+        fi
     fi
 fi
 
