@@ -187,7 +187,6 @@ dependencies = [
     { name = "inotify-simple" },
     { name = "loguru" },
     { name = "pulsectl" },
-    { name = "pyamdgpuinfo" },
     { name = "pygobject" },
     { name = "pyqt6" },
     { name = "pywayland" },
@@ -199,7 +198,6 @@ requires-dist = [
     { name = "inotify-simple" },
     { name = "loguru", specifier = "==0.7.3" },
     { name = "pulsectl", specifier = "==24.12.0" },
-    { name = "pyamdgpuinfo" },
     { name = "pygobject" },
     { name = "pyqt6" },
     { name = "pywayland" },
@@ -244,24 +242,6 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/f5/c5/f070a8c5f0a5742f7aebb5d90869ee1805174c03928dfafd3833de58bd57/pulsectl-24.12.0.tar.gz", hash = "sha256:288d6715232ac6f3dcdb123fbecaa2c0b9a50ea4087e6e87c3f841ab0a8a07fc", size = 41200, upload-time = "2024-12-26T13:22:57.389Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/62/a9/5b119f86dd1a053c55da7d0355fca2ad215bae6f7f4777d46b307a8cc3e9/pulsectl-24.12.0-py2.py3-none-any.whl", hash = "sha256:13a60be940594f03ead3245b3dfe3aff4a3f9a792af347674bde5e716d4f76d2", size = 35133, upload-time = "2024-12-26T13:22:53.395Z" },
-]
-
-[[package]]
-name = "pyamdgpuinfo"
-version = "2.1.8"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/61/b1/399158002f4246d54d2757021544dea89038ecd320cc8ea1db36bdddac23/pyamdgpuinfo-2.1.8.tar.gz", hash = "sha256:e389981f00bf42fde41233958a21c6288853a46c7dfe7b062b2abe054cfb1d7b", size = 21876, upload-time = "2026-03-28T14:06:08.416Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/26/26/ce7f6e55ab5d95d2180a6e483cec66c25721c803cbdda1bf8c4640ccc73a/pyamdgpuinfo-2.1.8-cp311-cp311-manylinux_2_28_x86_64.whl", hash = "sha256:ba6c478f552a22b86b684ab3cd87510596fafc94afc6ddd98765e171ae9d1919", size = 374641, upload-time = "2026-03-28T14:08:48.063Z" },
-    { url = "https://files.pythonhosted.org/packages/5d/4e/3263b6c09f472b19fedc592c73ad5cb62eb44c491dd8f60e27372fc54e1d/pyamdgpuinfo-2.1.8-cp311-cp311-musllinux_1_2_x86_64.whl", hash = "sha256:dc6ee60cc62bf416fa2b77d11176c277c3dd36bf3530df5e609f2a5308f1dc0d", size = 363552, upload-time = "2026-03-28T14:08:49.443Z" },
-    { url = "https://files.pythonhosted.org/packages/a7/af/1431c481ec0f52e3313773b0244c65081ccc18e40b485eabe846a494914d/pyamdgpuinfo-2.1.8-cp312-cp312-manylinux_2_28_x86_64.whl", hash = "sha256:9925571d64ba9ad69fcd88b993a7b4b674639cab5d9c3c2170684448a43d460b", size = 386305, upload-time = "2026-03-28T14:08:50.648Z" },
-    { url = "https://files.pythonhosted.org/packages/bd/e5/57a67b0092b46a15581085349b4b62db6a1f8f0b5d2a86bab1ba601a8101/pyamdgpuinfo-2.1.8-cp312-cp312-musllinux_1_2_x86_64.whl", hash = "sha256:64c76edbe96bb90a3feb02ff81abae49f6054a345e42e885b2d05bb4008402a9", size = 374383, upload-time = "2026-03-28T14:08:51.781Z" },
-    { url = "https://files.pythonhosted.org/packages/7b/8f/6ed9a6324632e2ce2467df9b3d485a4de1d13268fb73689056d2e6c5e855/pyamdgpuinfo-2.1.8-cp313-cp313-manylinux_2_28_x86_64.whl", hash = "sha256:ea02fa624fed78c5d19f97136c4696123fdd7503d1cf86055176143fdc290c36", size = 374964, upload-time = "2026-03-28T14:08:52.954Z" },
-    { url = "https://files.pythonhosted.org/packages/9b/8e/fd134a10a55cb1cec422f8de4cef4974a9092a670b1e91094992c6ec1ee5/pyamdgpuinfo-2.1.8-cp313-cp313-musllinux_1_2_x86_64.whl", hash = "sha256:17e783a0a8890f33711aa028610fe03023e73f6f613e0263ae7749947d65a12b", size = 363002, upload-time = "2026-03-28T14:08:54.227Z" },
-    { url = "https://files.pythonhosted.org/packages/a4/c8/0b7414944bc6a3e8da931684a15dc5dc8f775f7d6a72082ad009ab386783/pyamdgpuinfo-2.1.8-cp314-cp314-manylinux_2_28_x86_64.whl", hash = "sha256:1ae569bd3d9e7305f1f542bdd1e0b2b8746fd454d43272b385da72af2144769f", size = 372823, upload-time = "2026-03-28T14:08:55.456Z" },
-    { url = "https://files.pythonhosted.org/packages/2d/85/4caac5ce82a1d3b2264ede98905513cf1ab8540015e9e9b0c2fb4b193b7d/pyamdgpuinfo-2.1.8-cp314-cp314-musllinux_1_2_x86_64.whl", hash = "sha256:b78dcc38876a192bfeea986aa33256ae25445f47909cf060938581384ae16da1", size = 361630, upload-time = "2026-03-28T14:08:56.673Z" },
-    { url = "https://files.pythonhosted.org/packages/cc/ba/93055b30af897cf01de03d93d91ea1be4d9d7a691be8fe8cbf6d02ba6dbe/pyamdgpuinfo-2.1.8-cp314-cp314t-manylinux_2_28_x86_64.whl", hash = "sha256:0ac59065ffe1303f4887b1b0b6d16e836e90005e14c4a7a48feecfd5fc382f77", size = 390597, upload-time = "2026-03-28T14:08:57.992Z" },
-    { url = "https://files.pythonhosted.org/packages/bd/a0/f4e951f64468ce4adbc063f856cf1419f587e3bc77087bc9651cee9f9326/pyamdgpuinfo-2.1.8-cp314-cp314t-musllinux_1_2_x86_64.whl", hash = "sha256:f614089edbb674020946a6f63a7f7f501303d08ccb32e92008544b089865b969", size = 374945, upload-time = "2026-03-28T14:08:59.14Z" },
 ]
 
 [[package]]
