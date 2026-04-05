@@ -266,6 +266,18 @@ echo ""
 
 hyprland_hook
 
+print_log -g "[uv]" -b " :: " "Checking uv availability..."
+if ! command -v uv &>/dev/null; then
+    print_log -warn "[uv]" "uv not found, installing..."
+    if command -v pacman &>/dev/null; then
+        sudo pacman -S --noconfirm uv
+    else
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+        # shellcheck disable=SC1091
+        source "$HOME/.local/bin/env" 2>/dev/null || true
+    fi
+fi
+
 print_log -g "[python env]" -b " :: " "Rebuilding HyDE Python environment..."
 if command -v hyde-shell >/dev/null 2>&1; then
     hyde-shell pyinit
