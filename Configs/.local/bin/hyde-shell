@@ -432,7 +432,7 @@ run_command() {
 	fi
 }
 
-run_pip() {
+run_uv() {
 	local project_dir="${LIB_DIR}/hyde"
 	local venv_path="${XDG_STATE_HOME:-$HOME/.local/state}/hyde/pip_env"
 	shift
@@ -449,7 +449,7 @@ run_pip() {
 			UV_PROJECT_ENVIRONMENT="$venv_path" uv pip list --python "${venv_path}/bin/python"
 			;;
 		*)
-			echo "Usage: hyde-shell pip [install|uninstall|list] [packages...]"
+			echo "Usage: hyde-shell uv [install|uninstall|list] [packages...]"
 			echo "  install   <pkg>  → runs: uv add"
 			echo "  uninstall <pkg>  → runs: uv remove"
 			echo "  list             → list installed packages"
@@ -669,8 +669,8 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
 		exit 0
 		;;
 
-	pip)
-		run_pip "${@}"
+	uv)
+		run_uv "${@}"
 		exit 0
 		;;
 	-r | reload)
