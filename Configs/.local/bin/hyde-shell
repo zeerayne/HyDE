@@ -120,7 +120,14 @@ hyde_reload() {
 }
 
 list_script_path() {
-	find -L "$LIB_DIR/hyde" -type f \( -name "*.sh" -o -name "*.py" \) -exec echo {} \;
+	IFS=':' read -ra RAW_DIRS <<<"$HYDE_SCRIPTS_PATH"
+	declare -A _seen_dirs
+	for dir in "${RAW_DIRS[@]}"; do
+		[[ -z "$dir" ]] && continue
+		[[ -n "${_seen_dirs[$dir]}" ]] && continue
+		_seen_dirs["$dir"]=1
+		[[ -d "$dir" ]] && find -L "$dir" -type f \( -name "*.sh" -o -name "*.py" \) -exec echo {} \;
+	done
 }
 
 list_script() {
