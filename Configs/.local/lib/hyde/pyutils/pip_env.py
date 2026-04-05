@@ -4,14 +4,12 @@ import subprocess
 import shutil
 import argparse
 import importlib
-import xdg_base_dirs
-import wrapper.libnotify as notify
 
 lib_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, lib_dir)
 
-if lib_dir is None:
-    raise FileNotFoundError("None of the specified lib directories exist.")
+import xdg_base_dirs
+import wrapper.libnotify as notify
 
 
 def _get_uv():
@@ -131,7 +129,7 @@ def install_dependencies():
 
 
 def install_package(venv_path=None, package=None):
-    """Add and install a single package using uv."""
+    """Add a package to pyproject.toml and sync the venv via uv add + uv sync."""
     if package is None:
         return
     uv = _get_uv()
@@ -152,7 +150,7 @@ def install_package(venv_path=None, package=None):
 
 
 def uninstall_package(venv_path=None, package=None):
-    """Remove a package using uv."""
+    """Remove a package from pyproject.toml and sync the venv via uv remove."""
     if package is None:
         return
     uv = _get_uv()
@@ -195,11 +193,14 @@ def rebuild_venv(venv_path=None, requirements_file=None):
 
 
 def v_import(module_name):
-    """Dynamically import a module, installing it if necessary."""
+    """Dynamically import a module, installing it if necessary.
+
+    Uses uv add so pyproject.toml and uv.lock are updated — the dependency
+    is tracked for all users going forward.
+    """
     _inject_site_packages()
     try:
-        module = importlib.import_module(module_name)
-        return module
+        return importlib.import_module(module_name)
     except ImportError:
         notify.send("HyDE UV", f"Installing {module_name} module...")
         install_package(package=module_name)
@@ -221,6 +222,9 @@ def v_import(module_name):
 
 def v_install(module_name, force_reinstall=False):
     """Install a module in the virtual environment without importing it.
+
+    Uses uv add so pyproject.toml and uv.lock are updated — the dependency
+    is tracked for all users going forward.
 
     Args:
         module_name (str): Name of module to install
@@ -270,7 +274,7 @@ def main(args):
             for package in args.packages:
                 install_package(venv_path, package)
         else:
-            install_dependencies(venv_path)
+            install_dependencies()
     elif args.command == "uninstall":
         uninstall_package(venv_path, args.package)
     elif args.command == "destroy":
@@ -292,6 +296,3 @@ def hyde(args):
 
 if __name__ == "__main__":
     hyde(sys.argv[1:])
-
-
-_inject_site_packages()
