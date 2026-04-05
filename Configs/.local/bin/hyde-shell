@@ -59,6 +59,7 @@ USAGE() {
 		'completions [shell]'  'Generate completions (bash|zsh|fish)'
 		'validate [args]'      'Validate HyDE configuration'
 		'pyinit'               'Initialize Python virtual environment'
+		'uv <cmd> [pkg]'       'Manage packages (install|uninstall|list)'
 		'init'                 'Source initialization script'
 		'logout'               'Log out of the current session'
 		'lock-session'         'Lock the current session'
@@ -184,7 +185,7 @@ get_release_notes() {
 
 get_completion_data() {
 	# Get all available commands and scripts
-	local built_in_commands=("--help" "help" "-h" "-r" "reload" "-s" "scripts" "wallbash" "--version" "version" "-v" "--release-notes" "release-notes" "--list-script" "--list-script-path" "--completions" "completions")
+	local built_in_commands=("--help" "help" "-h" "-r" "reload" "-s" "scripts" "wallbash" "--version" "version" "-v" "--release-notes" "release-notes" "--list-script" "--list-script-path" "--completions" "completions" "uv")
 	export HYDE_BUILT_IN_COMMANDS="${built_in_commands[*]}"
 }
 
@@ -202,7 +203,7 @@ _hyde_shell_completion() {
     }
     
     local built_in_commands hyde_scripts wallbash_scripts
-    built_in_commands="--help help -h -r reload -s scripts wallbash --version version -v --release-notes release-notes --list-script --list-script-path --completions"
+    built_in_commands="--help help -h -r reload -s scripts wallbash --version version -v --release-notes release-notes --list-script --list-script-path --completions uv"
     
     # Get dynamic completions from hyde-shell
     if command -v hyde-shell >/dev/null 2>&1; then
@@ -257,7 +258,7 @@ _hyde_shell() {
     prev="${words[CURRENT-1]}"
     
     local built_in_commands hyde_scripts wallbash_scripts
-    built_in_commands=("--help" "help" "-h" "-r" "reload" "-s" "scripts" "wallbash" "--version" "version" "-v" "--release-notes" "release-notes" "--list-script" "--list-script-path" "--completions")
+    built_in_commands=("--help" "help" "-h" "-r" "reload" "-s" "scripts" "wallbash" "--version" "version" "-v" "--release-notes" "release-notes" "--list-script" "--list-script-path" "--completions" "uv")
     
     # Get dynamic completions
     if (( $+commands[hyde-shell] )); then
@@ -414,8 +415,7 @@ run_command() {
 			exec bash "$dir/${1}.sh" "${@:2}"
 		# Try .py extension
 		elif [[ -f "$dir/${1}.py" ]]; then
-			python_activate
-			exec python3 "$dir/${1}.py" "${@:2}"
+			exec "${XDG_STATE_HOME:-$HOME/.local/state}/hyde/pip_env/bin/python" "$dir/${1}.py" "${@:2}"
 		# Try exact name (executable)
 		elif [[ -f "$dir/${1}" && -x "$dir/${1}" ]]; then
 			exec "$dir/${1}" "${@:2}"
@@ -495,8 +495,7 @@ run_pypr() {
 
 	else
 		UV_PROJECT_ENVIRONMENT="${XDG_STATE_HOME:-$HOME/.local/state}/hyde/pip_env" uv add "pyprland==2.4.7" --project "${LIB_DIR}/hyde"
-	fi
-
+	fi	
 }
 
 list_scripts_pretty() {
