@@ -10,7 +10,6 @@ dependencies = [
     "pywayland",
     "PyGObject",
     "PyQt6",
-    "pyamdgpuinfo"
 ]
 
 [tool.ruff]
