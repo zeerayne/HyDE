@@ -519,8 +519,8 @@ list_scripts_pretty() {
 
         printf '\n  %s%s%s\n' "$_VIOLET" "$dir" "$_R"
 
-        declare -A groups
-        declare -A roots
+        unset groups roots
+        declare -A groups roots
 
         # --- detectar raíces ---
         for s in "${scripts[@]}"; do
