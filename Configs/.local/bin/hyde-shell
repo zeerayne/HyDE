@@ -177,7 +177,7 @@ get_release_notes() {
 
 get_completion_data() {
 	# Get all available commands and scripts
-	local built_in_commands=("--help" "help" "-h" "-r" "reload" "-s" "scripts" "wallbash" "--version" "version" "-v" "--release-notes" "release-notes" "--list-script" "--list-script-path" "--completions")
+	local built_in_commands=("--help" "help" "-h" "-r" "reload" "-s" "scripts" "wallbash" "--version" "version" "-v" "--release-notes" "release-notes" "--list-script" "--list-script-path" "--completions" "completions")
 	local hyde_scripts=()
 	local wallbash_scripts=()
 
