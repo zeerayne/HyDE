@@ -485,67 +485,95 @@ run_pypr() {
 }
 
 list_scripts_pretty() {
-	local cols
-	cols=$(tput cols 2>/dev/null || echo 80)
-	local sep
-	sep=$(printf '─%.0s' $(seq 1 "$((cols - 2))"))
+    local cols
+    cols=$(tput cols 2>/dev/null || echo 80)
+    local sep
+    sep=$(printf '─%.0s' $(seq 1 "$((cols - 2))"))
 
-	# Colors defined as variables so formatters leave them alone
-	local _R=$'\e[0m' _BOLD=$'\e[1m' _DIM=$'\e[2m'
-	local _VIOLET=$'\e[35m' _GREEN=$'\e[92m' _YELLOW=$'\e[93m'
+    local _R=$'\e[0m' _BOLD=$'\e[1m' _DIM=$'\e[2m'
+    local _VIOLET=$'\e[35m' _GREEN=$'\e[92m'
 
-	IFS=':' read -ra RAW_DIRS <<<"$HYDE_SCRIPTS_PATH"
-	declare -A seen_dirs
-	local SCRIPT_DIRS=()
-	for dir in "${RAW_DIRS[@]}"; do
-		[[ -z "$dir" ]] && continue
-		[[ -n "${seen_dirs[$dir]}" ]] && continue
-		seen_dirs["$dir"]=1
-		[[ -d "$dir" ]] && SCRIPT_DIRS+=("$dir")
-	done
+    IFS=':' read -ra RAW_DIRS <<<"$HYDE_SCRIPTS_PATH"
+    declare -A seen_dirs
+    local SCRIPT_DIRS=()
 
-	local total=0
-	printf '\n%s  Available Scripts%s\n' "$_BOLD" "$_R"
-	printf '  %s%s%s\n' "$_DIM" "$sep" "$_R"
+    for dir in "${RAW_DIRS[@]}"; do
+        [[ -z "$dir" ]] && continue
+        [[ -n "${seen_dirs[$dir]}" ]] && continue
+        seen_dirs["$dir"]=1
+        [[ -d "$dir" ]] && SCRIPT_DIRS+=("$dir")
+    done
 
-	for dir in "${SCRIPT_DIRS[@]}"; do
-		local scripts=()
-		while IFS= read -r f; do
-			[[ -n "$f" ]] && scripts+=("$f")
-		done < <(find -L "$dir" -maxdepth 1 -type f \( -name "*.sh" -o -name "*.py" \) -exec basename {} \; 2>/dev/null | sort)
+    local total=0
 
-		[[ ${#scripts[@]} -eq 0 ]] && continue
+    printf '\n%s  Available Scripts%s\n' "$_BOLD" "$_R"
+    printf '  %s%s%s\n' "$_DIM" "$sep" "$_R"
 
-		printf '\n  %s%s%s\n' "$_VIOLET" "$dir" "$_R"
+    for dir in "${SCRIPT_DIRS[@]}"; do
+        local scripts=()
+        while IFS= read -r f; do
+            [[ -n "$f" ]] && scripts+=("$f")
+        done < <(find -L "$dir" -maxdepth 1 -type f \( -name "*.sh" -o -name "*.py" \) -exec basename {} \; 2>/dev/null | sort)
 
-		local max_len=0
-		for s in "${scripts[@]}"; do
-			local name="${s%.*}"
-			(( ${#name} > max_len )) && max_len=${#name}
-		done
-		local col_w=$(( max_len + 3 ))
-		local num_cols=$(( (cols - 4) / col_w ))
-		(( num_cols < 1 )) && num_cols=1
+        [[ ${#scripts[@]} -eq 0 ]] && continue
 
-		local i=0
-		for s in "${scripts[@]}"; do
-			local name="${s%.*}"
-			local ext="${s##*.}"
-			local color="$_GREEN"
-			[[ "$ext" == "py" ]] && color="$_YELLOW"
-			(( i % num_cols == 0 )) && printf '    '
-			printf "%s%-${col_w}s%s" "$color" "$name" "$_R"
-			(( ++i % num_cols == 0 )) && printf '\n'
-		done
-		(( i % num_cols != 0 )) && printf '\n'
+        printf '\n  %s%s%s\n' "$_VIOLET" "$dir" "$_R"
 
-		total=$(( total + ${#scripts[@]} ))
-	done
+        declare -A groups
+        declare -A roots
 
-	local dir_word="directories"
-	(( ${#SCRIPT_DIRS[@]} == 1 )) && dir_word="directory"
-	printf '\n  %s%s%s\n' "$_DIM" "$sep" "$_R"
-	printf '  %s%d scripts across %d %s%s\n\n' "$_DIM" "$total" "${#SCRIPT_DIRS[@]}" "$dir_word" "$_R"
+        # --- detectar raíces ---
+        for s in "${scripts[@]}"; do
+            local name="${s%.*}"
+            if [[ "$name" == *.* ]]; then
+                root="${name%%.*}"
+                roots["$root"]=1
+            fi
+        done
+
+        # --- agrupar correctamente ---
+        for s in "${scripts[@]}"; do
+            local name="${s%.*}"
+
+            if [[ "$name" == *.* ]]; then
+                root="${name%%.*}"
+                groups["$root"]+="$name "
+            else
+                if [[ -n "${roots[$name]}" ]]; then
+                    # es raíz de un grupo
+                    groups["$name"]="$name ${groups[$name]}"
+                else
+                    # standalone
+                    groups["$name"]="$name"
+                fi
+            fi
+        done
+
+        # --- imprimir ---
+        for key in $(printf "%s\n" "${!groups[@]}" | sort); do
+            read -ra items <<< "${groups[$key]}"
+
+            if [[ ${#items[@]} -gt 1 ]]; then
+                printf "    %s%s%s\n" "$_GREEN" "$key" "$_R"
+
+                for item in "${items[@]}"; do
+                    if [[ "$item" != "$key" ]]; then
+                        printf "      %s%s%s\n" "$_DIM" "$item" "$_R"
+                    fi
+                    ((total++))
+                done
+            else
+                printf "    %s%s%s\n" "$_GREEN" "$key" "$_R"
+                ((total++))
+            fi
+        done
+    done
+
+    local dir_word="directories"
+    (( ${#SCRIPT_DIRS[@]} == 1 )) && dir_word="directory"
+
+    printf '\n  %s%s%s\n' "$_DIM" "$sep" "$_R"
+    printf '  %s%d scripts across %d %s%s\n\n' "$_DIM" "$total" "${#SCRIPT_DIRS[@]}" "$dir_word" "$_R"
 }
 
 lock_session() {
