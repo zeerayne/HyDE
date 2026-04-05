@@ -108,7 +108,7 @@ def fetch_icon(appid: int, cache_dir: Path) -> str:
     icon_url = f"https://cdn.cloudflare.steamstatic.com/steam/apps/{appid}/header.jpg"
     icon_path = cache_dir / f"steam_{appid}.jpg"
 
-    if not icon_path.exists():
+    if not icon_path.is_file():
         try:
             response = requests.get(icon_url, timeout=10)
             if response.status_code == 200:
@@ -120,7 +120,7 @@ def fetch_icon(appid: int, cache_dir: Path) -> str:
                 print(f"Failed to fetch icon for AppID {appid}: HTTP {response.status_code}")
         except Exception as e:
             print(f"Error fetching icon for AppID {appid}: {e}")
-    return str(icon_path) if icon_path.exists() else ""
+    return str(icon_path) if icon_path.is_file() else ""
 
 
 def should_exclude_game(name: str) -> bool:
@@ -151,7 +151,8 @@ def list_games(steamapps_dirs: List[Path], fetch_icons: bool = False) -> List[Di
         Priority (best for portrait card UI):
           1. library_600x900.jpg  — old flat structure, explicit portrait
           2. library_capsule.jpg  — new hashed-subdir structure, ~300x450 portrait
-          3. header.jpg           — landscape fallback (old flat or hashed subdir)
+          3. library_hero.jpg     — landscape fallback (flat or hashed subdir)
+          4. header.jpg           — landscape fallback (flat or hashed subdir)
         Small thumbnails (.jpg files directly in the appid dir) are skipped.
         """
         for lc in librarycache_roots:
@@ -162,7 +163,7 @@ def list_games(steamapps_dirs: List[Path], fetch_icons: bool = False) -> List[Di
             # 1. Old flat structure — portrait preferred
             for name in ("library_600x900.jpg", "library_capsule.jpg"):
                 c = appid_dir / name
-                if c.exists():
+                if c.is_file():
                     return str(c)
 
             # 2. New hashed-subdir structure — search subdirs for portrait names
@@ -171,18 +172,29 @@ def list_games(steamapps_dirs: List[Path], fetch_icons: bool = False) -> List[Di
                     continue
                 for name in ("library_capsule.jpg", "library_600x900.jpg"):
                     c = subdir / name
-                    if c.exists():
+                    if c.is_file():
                         return str(c)
 
-            # 3. header.jpg fallback — old flat then hashed subdirs
+            # 3. library_hero.jpg fallback — old flat then hashed subdirs
+            flat_hero = appid_dir / "library_hero.jpg"
+            if flat_hero.is_file():
+                return str(flat_hero)
+            for subdir in sorted(appid_dir.iterdir()):
+                if not subdir.is_dir():
+                    continue
+                c = subdir / "library_hero.jpg"
+                if c.is_file():
+                    return str(c)
+
+            # 4. header.jpg fallback — old flat then hashed subdirs
             flat_header = appid_dir / "header.jpg"
-            if flat_header.exists():
+            if flat_header.is_file():
                 return str(flat_header)
             for subdir in sorted(appid_dir.iterdir()):
                 if not subdir.is_dir():
                     continue
                 c = subdir / "header.jpg"
-                if c.exists():
+                if c.is_file():
                     return str(c)
 
         return None
@@ -200,7 +212,7 @@ def list_games(steamapps_dirs: List[Path], fetch_icons: bool = False) -> List[Di
 
                 if not header:
                     cached_icon = cache_dir / f"steam_{appid}.jpg"
-                    if cached_icon.exists():
+                    if cached_icon.is_file():
                         header = str(cached_icon)
                 if not header and fetch_icons:
                     header = fetch_icon(appid, cache_dir)
