@@ -678,9 +678,6 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
 	-s | scripts)
 		list_scripts_pretty
 		;;
-	--list-script)
-		list_script
-		;;
 	--list-script-path)
 		list_script_path
 		;;
