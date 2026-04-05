@@ -172,7 +172,7 @@ get_release_notes() {
 
 get_completion_data() {
 	# Get all available commands and scripts
-	local built_in_commands=("--help" "help" "-h" "-r" "reload" "wallbash" "--version" "version" "-v" "--release-notes" "release-notes" "--list-script" "--list-script-path" "--completions")
+	local built_in_commands=("--help" "help" "-h" "-r" "reload" "-s" "scripts" "wallbash" "--version" "version" "-v" "--release-notes" "release-notes" "--list-script" "--list-script-path" "--completions")
 	local hyde_scripts=()
 	local wallbash_scripts=()
 
@@ -209,7 +209,7 @@ _hyde_shell_completion() {
     }
     
     local built_in_commands hyde_scripts wallbash_scripts
-    built_in_commands="--help help -h -r reload wallbash --version version -v --release-notes release-notes --list-script --list-script-path --completions"
+    built_in_commands="--help help -h -r reload -s scripts wallbash --version version -v --release-notes release-notes --list-script --list-script-path --completions"
     
     # Get dynamic completions from hyde-shell
     if command -v hyde-shell >/dev/null 2>&1; then
@@ -264,7 +264,7 @@ _hyde_shell() {
     prev="${words[CURRENT-1]}"
     
     local built_in_commands hyde_scripts wallbash_scripts
-    built_in_commands=("--help" "help" "-h" "-r" "reload" "wallbash" "--version" "version" "-v" "--release-notes" "release-notes" "--list-script" "--list-script-path" "--completions")
+    built_in_commands=("--help" "help" "-h" "-r" "reload" "-s" "scripts" "wallbash" "--version" "version" "-v" "--release-notes" "release-notes" "--list-script" "--list-script-path" "--completions")
     
     # Get dynamic completions
     if (( $+commands[hyde-shell] )); then
@@ -319,6 +319,8 @@ help
 -h
 -r
 reload
+-s
+scripts
 wallbash
 --version
 version
@@ -355,6 +357,7 @@ complete -c hyde-shell -n "__fish_seen_subcommand_from --completions" -a "bash z
 # Option descriptions
 complete -c hyde-shell -s h -l help -d "Display help message"
 complete -c hyde-shell -s r -d "Reload HyDE"
+complete -c hyde-shell -s s -l scripts -d "List available scripts (formatted)"
 complete -c hyde-shell -s v -l version -d "Show version information"
 complete -c hyde-shell -l release-notes -d "Show release notes"
 complete -c hyde-shell -l list-script -d "List available scripts"
