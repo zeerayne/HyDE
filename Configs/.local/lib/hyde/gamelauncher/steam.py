@@ -148,47 +148,59 @@ def list_games(steamapps_dirs: List[Path], fetch_icons: bool = False) -> List[Di
     def find_header(appid: int) -> str | None:
         """Search all known librarycache roots for a portrait cover image for appid.
 
+        Lookup is phased globally across all roots so a portrait asset in any
+        root beats a landscape asset in any other root.
+
         Priority (best for portrait card UI):
           1. library_600x900.jpg  — old flat structure, explicit portrait
           2. library_capsule.jpg  — new hashed-subdir structure, ~300x450 portrait
           3. library_hero.jpg     — landscape fallback (flat or hashed subdir)
           4. header.jpg           — landscape fallback (flat or hashed subdir)
         Small thumbnails (.jpg files directly in the appid dir) are skipped.
+        OSError on iterdir() for a given cache dir is treated as a miss.
         """
+        # Collect (appid_dir, subdirs) pairs once, skipping unreadable dirs.
+        candidates: list[tuple[Path, list[Path]]] = []
         for lc in librarycache_roots:
             appid_dir = lc / str(appid)
             if not appid_dir.is_dir():
                 continue
+            try:
+                subdirs = sorted(d for d in appid_dir.iterdir() if d.is_dir())
+            except OSError:
+                subdirs = []
+            candidates.append((appid_dir, subdirs))
 
-            # 1. Old flat structure — portrait preferred
+        # Phase 1 — flat portrait (library_600x900.jpg / library_capsule.jpg)
+        for appid_dir, _ in candidates:
             for name in ("library_600x900.jpg", "library_capsule.jpg"):
                 c = appid_dir / name
                 if c.is_file():
                     return str(c)
 
-            # Cache subdirectory listing once for all hashed-subdir lookups
-            subdirs = sorted(d for d in appid_dir.iterdir() if d.is_dir())
-
-            # 2. New hashed-subdir structure — search subdirs for portrait names
+        # Phase 2 — hashed-subdir portrait
+        for _, subdirs in candidates:
             for subdir in subdirs:
                 for name in ("library_capsule.jpg", "library_600x900.jpg"):
                     c = subdir / name
                     if c.is_file():
                         return str(c)
 
-            # 3. library_hero.jpg fallback — old flat then hashed subdirs
-            flat_hero = appid_dir / "library_hero.jpg"
-            if flat_hero.is_file():
-                return str(flat_hero)
+        # Phase 3 — library_hero.jpg (flat then hashed)
+        for appid_dir, subdirs in candidates:
+            c = appid_dir / "library_hero.jpg"
+            if c.is_file():
+                return str(c)
             for subdir in subdirs:
                 c = subdir / "library_hero.jpg"
                 if c.is_file():
                     return str(c)
 
-            # 4. header.jpg fallback — old flat then hashed subdirs
-            flat_header = appid_dir / "header.jpg"
-            if flat_header.is_file():
-                return str(flat_header)
+        # Phase 4 — header.jpg (flat then hashed)
+        for appid_dir, subdirs in candidates:
+            c = appid_dir / "header.jpg"
+            if c.is_file():
+                return str(c)
             for subdir in subdirs:
                 c = subdir / "header.jpg"
                 if c.is_file():
