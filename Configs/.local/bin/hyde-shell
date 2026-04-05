@@ -126,7 +126,7 @@ list_script_path() {
 		[[ -z "$dir" ]] && continue
 		[[ -n "${_seen_dirs[$dir]}" ]] && continue
 		_seen_dirs["$dir"]=1
-		[[ -d "$dir" ]] && find -L "$dir" -type f \( -name "*.sh" -o -name "*.py" \) -exec echo {} \;
+		[[ -d "$dir" ]] && find -L "$dir" -maxdepth 1 -type f \( -name "*.sh" -o -name "*.py" \) -exec echo {} \;
 	done
 }
 
@@ -185,26 +185,7 @@ get_release_notes() {
 get_completion_data() {
 	# Get all available commands and scripts
 	local built_in_commands=("--help" "help" "-h" "-r" "reload" "-s" "scripts" "wallbash" "--version" "version" "-v" "--release-notes" "release-notes" "--list-script" "--list-script-path" "--completions" "completions")
-	local hyde_scripts=()
-	local wallbash_scripts=()
-
-	# Get HyDE scripts (remove extensions)
-	while IFS= read -r script; do
-		if [[ -n "$script" ]]; then
-			script_name="${script%.*}"
-			hyde_scripts+=("$script_name")
-		fi
-	done < <(list_script 2>/dev/null | sort -u)
-
-	# Get wallbash scripts
-	local dirs=("${WALLBASH_DIRS[@]}")
-	wallbash_scripts=("--help") # Add --help as first option
-	# Simplified - just --help for now since dynamic parsing is complex
-
-	# Export arrays for use by completion generators
 	export HYDE_BUILT_IN_COMMANDS="${built_in_commands[*]}"
-	export HYDE_SCRIPTS="${hyde_scripts[*]}"
-	export HYDE_WALLBASH_SCRIPTS="${wallbash_scripts[*]}"
 }
 
 gen_bash_completion() {
@@ -705,7 +686,7 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
 		;;
 	validate)
 		shift
-		if command -v hyde-shell >/dev/null 2>&1; then
+		if command -v hyde-config >/dev/null 2>&1; then
 			hyde-config -no-daemon "${@}"
 		else
 			echo "hyde-config not found. Please make sure it is in \$PATH."
