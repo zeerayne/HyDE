@@ -14,6 +14,7 @@ import argparse
 import json
 import os
 import re
+import sys
 from pathlib import Path
 from typing import List, Dict
 import shutil
@@ -115,11 +116,11 @@ def fetch_icon(appid: int, cache_dir: Path) -> str:
                 icon_path.parent.mkdir(parents=True, exist_ok=True)
                 with open(icon_path, "wb") as f:
                     f.write(response.content)
-                print(f"Fetched icon for AppID {appid} and saved to {icon_path}")
+                print(f"Fetched icon for AppID {appid} and saved to {icon_path}", file=sys.stderr)
             else:
-                print(f"Failed to fetch icon for AppID {appid}: HTTP {response.status_code}")
+                print(f"Failed to fetch icon for AppID {appid}: HTTP {response.status_code}", file=sys.stderr)
         except Exception as e:
-            print(f"Error fetching icon for AppID {appid}: {e}")
+            print(f"Error fetching icon for AppID {appid}: {e}", file=sys.stderr)
     return str(icon_path) if icon_path.is_file() else ""
 
 
