@@ -4,18 +4,14 @@ import subprocess
 import shutil
 import argparse
 import importlib
+import xdg_base_dirs
+import wrapper.libnotify as notify
 
 lib_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, lib_dir)
 
-
-import xdg_base_dirs
-import wrapper.libnotify as notify
-
-
 if lib_dir is None:
     raise FileNotFoundError("None of the specified lib directories exist.")
-    sys.exit(1)
 
 
 def _get_uv():
@@ -127,7 +123,7 @@ def destroy_venv(venv_path=None):
         shutil.rmtree(venv_path)
 
 
-def install_dependencies(venv_path=None, requirements_file=None):
+def install_dependencies():
     """Sync dependencies using uv."""
     result = _uv_sync()
     if result.returncode != 0:
