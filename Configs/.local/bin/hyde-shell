@@ -526,7 +526,7 @@ list_scripts_pretty() {
         for s in "${scripts[@]}"; do
             local name="${s%.*}"
             if [[ "$name" == *.* ]]; then
-                root="${name%%.*}"
+                local root="${name%%.*}"
                 roots["$root"]=1
             fi
         done
@@ -536,7 +536,7 @@ list_scripts_pretty() {
             local name="${s%.*}"
 
             if [[ "$name" == *.* ]]; then
-                root="${name%%.*}"
+                local root="${name%%.*}"
                 groups["$root"]+="$name "
             else
                 if [[ -n "${roots[$name]}" ]]; then

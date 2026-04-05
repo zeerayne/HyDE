@@ -166,10 +166,11 @@ def list_games(steamapps_dirs: List[Path], fetch_icons: bool = False) -> List[Di
                 if c.is_file():
                     return str(c)
 
+            # Cache subdirectory listing once for all hashed-subdir lookups
+            subdirs = sorted(d for d in appid_dir.iterdir() if d.is_dir())
+
             # 2. New hashed-subdir structure — search subdirs for portrait names
-            for subdir in sorted(appid_dir.iterdir()):
-                if not subdir.is_dir():
-                    continue
+            for subdir in subdirs:
                 for name in ("library_capsule.jpg", "library_600x900.jpg"):
                     c = subdir / name
                     if c.is_file():
@@ -179,9 +180,7 @@ def list_games(steamapps_dirs: List[Path], fetch_icons: bool = False) -> List[Di
             flat_hero = appid_dir / "library_hero.jpg"
             if flat_hero.is_file():
                 return str(flat_hero)
-            for subdir in sorted(appid_dir.iterdir()):
-                if not subdir.is_dir():
-                    continue
+            for subdir in subdirs:
                 c = subdir / "library_hero.jpg"
                 if c.is_file():
                     return str(c)
@@ -190,9 +189,7 @@ def list_games(steamapps_dirs: List[Path], fetch_icons: bool = False) -> List[Di
             flat_header = appid_dir / "header.jpg"
             if flat_header.is_file():
                 return str(flat_header)
-            for subdir in sorted(appid_dir.iterdir()):
-                if not subdir.is_dir():
-                    continue
+            for subdir in subdirs:
                 c = subdir / "header.jpg"
                 if c.is_file():
                     return str(c)
