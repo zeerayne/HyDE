@@ -124,8 +124,8 @@ list_script_path() {
 }
 
 list_script() {
-	# Plain newline-delimited script names (no extension) for completion consumers.
-	list_script_path | xargs -I{} basename {} | sed 's/\.[^.]*$//' | sort -u
+	# Plain newline-delimited script filenames (with extension) for completion consumers.
+	list_script_path | xargs -I{} basename {} | sort -u
 }
 
 get_version() {
