@@ -6,10 +6,10 @@ import json
 from datetime import datetime
 import locale
 
-import pyutils.hyde_pyenv as hyde_pyenv
+import pyutils.python_env as python_env
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-hyde_pyenv.v_import(
+python_env.v_import(
     "requests"
 )  # fetches the module by name // does `pip install --update requests` under the hood
 import requests  # noqa: E402
