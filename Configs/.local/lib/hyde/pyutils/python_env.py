@@ -43,14 +43,17 @@ def get_uv() -> str:
 # Execution layer
 # =========================
 
-def run_uv(args, venv_path: str = None, notify_msg: str = None) -> subprocess.CompletedProcess[str]:
-    """Runs a uv command with the given arguments and environment."""
+def run_uv(args, venv_path: str = None, notify_msg: str = None, stream: bool = False) -> subprocess.CompletedProcess[str]:
+    """Runs a uv command with the given arguments and environment.
+
+    If stream=True, uv output is written directly to the terminal (for animations/progress).
+    """
     try:
         uv = get_uv()
     except FileNotFoundError as e:
         notify.send("HyDE UV", str(e), urgency="critical")
         raise
-    
+
     venv_path = venv_path or get_venv_path()
     project_dir = get_project_dir()
 
@@ -62,15 +65,18 @@ def run_uv(args, venv_path: str = None, notify_msg: str = None) -> subprocess.Co
 
     cmd = [uv] + args + ["--project", project_dir]
 
+    if stream:
+        result = subprocess.run(cmd, env=env)
+        if result.returncode != 0:
+            notify.send("HyDE UV", "Command failed", urgency="critical")
+            raise RuntimeError(f"uv {args[0]} failed with exit code {result.returncode}")
+        return result
+
     result = subprocess.run(cmd, capture_output=True, text=True, env=env)
 
     if result.returncode != 0:
         err = result.stderr.strip() or result.stdout.strip() or "Unknown error"
-        notify.send(
-            "HyDE UV",
-            f"Error:\n{err}",
-            urgency="critical",
-        )
+        notify.send("HyDE UV", f"Error:\n{err}", urgency="critical")
         raise RuntimeError(err)
 
     return result
@@ -159,7 +165,7 @@ def install_package(package: str | Iterable[str]) -> None:
     
     notify.send("HyDE UV", f"Installing {', '.join(pkgs)}...")
     try:
-        run_uv(["add"] + pkgs)
+        run_uv(["add"] + pkgs, stream=True)
     except RuntimeError as e:
         notify.send("HyDE UV", f"Error installing packages: {e}", urgency="critical")
         raise
@@ -178,7 +184,7 @@ def uninstall_package(package: str | Iterable[str]) -> None:
     
     notify.send("HyDE UV", f"Uninstalling {', '.join(pkgs)}...")
     try:
-        run_uv(["remove"] + pkgs)
+        run_uv(["remove"] + pkgs, stream=True)
     except RuntimeError as e:
         notify.send("HyDE UV", f"Error uninstalling packages: {e}", urgency="critical")
         raise
