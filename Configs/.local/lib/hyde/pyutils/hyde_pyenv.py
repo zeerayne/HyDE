@@ -75,7 +75,7 @@ def is_venv_valid(venv_path):
 
 def get_venv_path():
     """Return the virtual environment path."""
-    return os.path.join(str(xdg_base_dirs.xdg_state_home()), "hyde", "pip_env")
+    return os.path.join(str(xdg_base_dirs.xdg_state_home()), "hyde", "hyde_pyenv")
 
 
 def _uv_sync(frozen=False):
