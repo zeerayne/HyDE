@@ -265,6 +265,13 @@ def cmd_rebuild(_) -> None:
     rebuild_venv()
 
 
+def cmd_uv(args) -> None:
+    uv = get_uv()
+    result = subprocess.run([uv] + args.uv_args, env=os.environ.copy())
+    if result.returncode != 0:
+        raise SystemExit(result.returncode)
+
+
 COMMANDS = {
     "create": cmd_create,
     "sync": cmd_sync,
@@ -272,6 +279,7 @@ COMMANDS = {
     "uninstall": cmd_uninstall,
     "destroy": cmd_destroy,
     "rebuild": cmd_rebuild,
+    "uv": cmd_uv,
 }
 
 
@@ -281,8 +289,9 @@ COMMANDS = {
 
 def main(argv) -> None:
     parser = argparse.ArgumentParser(
-        prog="hyde python-env",
-        description="HyDE UV + Python environment manager",
+        prog="python-env",
+        usage="%(prog)s [command] <options>",
+        description="HyDE's Python virtual environment manager",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
 
@@ -298,6 +307,9 @@ def main(argv) -> None:
 
     uninstall_p = subparsers.add_parser("uninstall", help="Uninstall packages")
     uninstall_p.add_argument("packages", nargs="+", metavar="package")
+
+    uv_p = subparsers.add_parser("uv", help="Run a raw uv command (e.g. uv cache clean)")
+    uv_p.add_argument("uv_args", nargs=argparse.REMAINDER, metavar="args")
 
     args = parser.parse_args(argv)
 
