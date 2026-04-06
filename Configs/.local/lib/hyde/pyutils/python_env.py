@@ -267,7 +267,12 @@ def cmd_rebuild(_) -> None:
 
 def cmd_uv(args) -> None:
     uv = get_uv()
-    result = subprocess.run([uv] + args.uv_args, env=os.environ.copy())
+    env = os.environ.copy()
+    cmd = [uv] + args.uv_args
+    if args.hyde:
+        env["UV_PROJECT_ENVIRONMENT"] = get_venv_path()
+        cmd += ["--project", get_project_dir()]
+    result = subprocess.run(cmd, env=env)
     if result.returncode != 0:
         raise SystemExit(result.returncode)
 
@@ -308,7 +313,8 @@ def main(argv) -> None:
     uninstall_p = subparsers.add_parser("uninstall", help="Uninstall packages")
     uninstall_p.add_argument("packages", nargs="+", metavar="package")
 
-    uv_p = subparsers.add_parser("uv", help="Run a raw uv command (e.g. uv cache clean)")
+    uv_p = subparsers.add_parser("uv", help="Run a raw uv command. Use --hyde to scope HyDE's venv")
+    uv_p.add_argument("--hyde", action="store_true", help="Run within HyDE's virtualenv context")
     uv_p.add_argument("uv_args", nargs=argparse.REMAINDER, metavar="args")
 
     args = parser.parse_args(argv)
