@@ -106,9 +106,9 @@ def _pulse_connect() -> Any:
         import pulsectl
     except ImportError:
         try:
-            import pyutils.hyde_pyenv as hyde_pyenv
+            import pyutils.python_env as python_env
 
-            hyde_pyenv.v_import("pulsectl")
+            python_env.v_import("pulsectl")
             import pulsectl
         except Exception:
             return None
