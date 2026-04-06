@@ -14,10 +14,10 @@ lib_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, lib_dir)
 
 import pyutils.logger  # noqa: E402
-import pyutils.pip_env as pip_env  # noqa: E402
+import pyutils.hyde_pyenv as hyde_pyenv  # noqa: E402
 
-pip_env.v_import("pywayland")  # noqa: E402
-pip_env.v_import("pulsectl")  # noqa: E402
+hyde_pyenv.v_import("pywayland")  # noqa: E402
+hyde_pyenv.v_import("pulsectl")  # noqa: E402
 import pulsectl  # noqa: E402
 from pywayland.client.display import Display  # noqa: E402
 from pywayland.protocol.idle_inhibit_unstable_v1.zwp_idle_inhibit_manager_v1 import (  # noqa: E402

@@ -3,12 +3,12 @@
 # wallbash script can source this script to resolve the paths cleanly on a separate shell
 python_initialized() {
 
-	python3 "${LIB_DIR}/hyde/pyutils/pip_env.py" rebuild
+	python3 "${LIB_DIR}/hyde/pyutils/hyde_pyenv.py" rebuild
 }
 
 python_activate() {
 
-	local python_env="${XDG_STATE_HOME:-$HOME/.local/state}/hyde/pip_env/bin/activate"
+	local python_env="${XDG_STATE_HOME:-$HOME/.local/state}/hyde/hyde_pyenv/bin/activate"
 	if [[ -r "${python_env}" ]]; then
 		# shellcheck disable=SC1090
 		source "${python_env}"
@@ -415,7 +415,7 @@ run_command() {
 			exec bash "$dir/${1}.sh" "${@:2}"
 		# Try .py extension
 		elif [[ -f "$dir/${1}.py" ]]; then
-			exec "${XDG_STATE_HOME:-$HOME/.local/state}/hyde/pip_env/bin/python" "$dir/${1}.py" "${@:2}"
+			exec "${XDG_STATE_HOME:-$HOME/.local/state}/hyde/hyde_pyenv/bin/python" "$dir/${1}.py" "${@:2}"
 		# Try exact name (executable)
 		elif [[ -f "$dir/${1}" && -x "$dir/${1}" ]]; then
 			exec "$dir/${1}" "${@:2}"
@@ -434,7 +434,7 @@ run_command() {
 
 run_uv() {
 	local project_dir="${LIB_DIR}/hyde"
-	local venv_path="${XDG_STATE_HOME:-$HOME/.local/state}/hyde/pip_env"
+	local venv_path="${XDG_STATE_HOME:-$HOME/.local/state}/hyde/hyde_pyenv"
 	shift
 	local subcmd="${1:-help}"
 	shift 2>/dev/null || true
@@ -494,7 +494,7 @@ run_pypr() {
 		fi
 
 	else
-		UV_PROJECT_ENVIRONMENT="${XDG_STATE_HOME:-$HOME/.local/state}/hyde/pip_env" uv add "pyprland==2.4.7" --project "${LIB_DIR}/hyde"
+		UV_PROJECT_ENVIRONMENT="${XDG_STATE_HOME:-$HOME/.local/state}/hyde/hyde_pyenv" uv add "pyprland==2.4.7" --project "${LIB_DIR}/hyde"
 	fi	
 }
 
