@@ -4,6 +4,8 @@ import subprocess
 import shutil
 import argparse
 import importlib
+from collections.abc import Iterable
+from types import ModuleType
 
 lib_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, lib_dir)
@@ -17,14 +19,17 @@ import wrapper.libnotify as notify  # noqa: E402
 # =========================
 
 def get_venv_path() -> str:
+    """Returns the path to the virtual environment directory."""
     return os.path.join(str(xdg_base_dirs.xdg_state_home()), "hyde", "python_env")
 
 
 def get_project_dir() -> str:
+    """Returns the path to the project directory (parent of this file)."""
     return os.path.dirname(lib_dir)
 
 
 def get_uv() -> str:
+    """Finds the 'uv' executable in the system."""
     uv = shutil.which("uv")
     if uv is None:
         raise FileNotFoundError(
@@ -38,8 +43,14 @@ def get_uv() -> str:
 # Execution layer
 # =========================
 
-def run_uv(args, venv_path=None, notify_msg=None) -> subprocess.CompletedProcess[str]:
-    uv = get_uv()
+def run_uv(args, venv_path: str = None, notify_msg: str = None) -> subprocess.CompletedProcess[str]:
+    """Runs a uv command with the given arguments and environment."""
+    try:
+        uv = get_uv()
+    except FileNotFoundError as e:
+        notify.send("HyDE UV", str(e), urgency="critical")
+        raise
+    
     venv_path = venv_path or get_venv_path()
     project_dir = get_project_dir()
 
@@ -69,7 +80,8 @@ def run_uv(args, venv_path=None, notify_msg=None) -> subprocess.CompletedProcess
 # Venv logic
 # =========================
 
-def is_venv_valid(venv_path) -> bool:
+def is_venv_valid(venv_path: str) -> bool:
+    """Checks if the virtual environment at the given path is valid."""
     python_exe = os.path.join(venv_path, "bin", "python")
     pyvenv_cfg = os.path.join(venv_path, "pyvenv.cfg")
 
@@ -93,11 +105,13 @@ def is_venv_valid(venv_path) -> bool:
 
 
 def create_venv() -> None:
+    """Creates a new virtual environment if it doesn't exist or is invalid."""
     run_uv(["sync"], notify_msg="⏳ Syncing virtual environment...")
     notify.send("HyDE UV", "✅ Virtual environment ready")
 
 
 def destroy_venv(venv_path=None) -> None:
+    """Removes the virtual environment directory."""
     venv_path = venv_path or get_venv_path()
     if os.path.exists(venv_path):
         shutil.rmtree(venv_path)
@@ -105,6 +119,7 @@ def destroy_venv(venv_path=None) -> None:
 
 
 def rebuild_venv() -> None:
+    """Destroys and recreates the virtual environment."""
     venv_path = get_venv_path()
 
     if os.path.exists(venv_path) and not is_venv_valid(venv_path):
@@ -120,24 +135,53 @@ def rebuild_venv() -> None:
 # =========================
 
 def install_dependencies() -> None:
+    """Installs dependencies from pyproject.toml."""
     run_uv(["sync"], notify_msg="📦 Syncing dependencies...")
 
 
-def install_package(package) -> None:
-    notify.send("HyDE UV", f"Installing {package}...")
-    run_uv(["add", package])
+def install_package(package: str | Iterable[str]) -> None:
+    """Installs a package or list of packages using uv."""
+    if isinstance(package, str):
+        pkgs = [package]
+    else:
+        pkgs = list(package)
+        
+    if not pkgs:
+        notify.send("HyDE UV", "No packages specified for installation", urgency="warning")
+        return
+    
+    notify.send("HyDE UV", f"Installing {', '.join(pkgs)}...")
+    try:
+        run_uv(["add"] + pkgs)
+    except RuntimeError as e:
+        notify.send("HyDE UV", f"Error installing packages: {e}", urgency="critical")
+        raise
 
 
-def uninstall_package(package) -> None:
-    notify.send("HyDE UV", f"Removing {package}...")
-    run_uv(["remove", package])
-
+def uninstall_package(package: str | Iterable[str]) -> None:
+    """Uninstalls a package or list of packages using uv."""
+    if isinstance(package, str):
+        pkgs = [package]
+    else:
+        pkgs = list(package)
+        
+    if not pkgs:
+        notify.send("HyDE UV", "No packages specified for uninstallation", urgency="warning")
+        return
+    
+    notify.send("HyDE UV", f"Uninstalling {', '.join(pkgs)}...")
+    try:
+        run_uv(["remove"] + pkgs)
+    except RuntimeError as e:
+        notify.send("HyDE UV", f"Error uninstalling packages: {e}", urgency="critical")
+        raise
 
 # =========================
 # Import helpers
 # =========================
 
 def inject_site_packages() -> None:
+    """Ensures the virtual environment's site-packages is in sys.path."""
     venv_path = get_venv_path()
     site_packages = os.path.join(
         venv_path,
@@ -151,7 +195,8 @@ def inject_site_packages() -> None:
             sys.path.insert(0, path)
 
 
-def v_import(module_name, auto_install=True) -> object:
+def v_import(module_name, auto_install=True) -> ModuleType:
+    """Imports a module from the virtual environment, optionally auto-installing it if missing."""
     inject_site_packages()
 
     try:
@@ -187,18 +232,18 @@ def cmd_create(_) -> None:
     create_venv()
 
 
+def cmd_sync(_) -> None:
+    install_dependencies()
+    
+
 def cmd_install(args) -> None:
-    if args.packages:
-        for pkg in args.packages:
-            install_package(pkg)
-    else:
-        install_dependencies()
+    install_package(args.packages)
 
 
 def cmd_uninstall(args) -> None:
-    uninstall_package(args.package)
+        uninstall_package(args.packages)
 
-
+    
 def cmd_destroy(_) -> None:
     destroy_venv()
 
@@ -209,6 +254,7 @@ def cmd_rebuild(_) -> None:
 
 COMMANDS = {
     "create": cmd_create,
+    "sync": cmd_sync,
     "install": cmd_install,
     "uninstall": cmd_uninstall,
     "destroy": cmd_destroy,
@@ -224,16 +270,18 @@ def main(argv) -> None:
     parser = argparse.ArgumentParser(description="HyDE Python environment manager")
     subparsers = parser.add_subparsers(dest="command")
 
-    subparsers.add_parser("create")
+    subparsers.add_parser("create", help="Create the virtual environment")
+    
+    subparsers.add_parser("sync", help="Sync dependencies from pyproject.toml")
 
     install_parser = subparsers.add_parser("install")
-    install_parser.add_argument("packages", nargs="*")
+    install_parser.add_argument("packages", nargs="*", help="Packages to install (1 ... N)")
 
     uninstall_parser = subparsers.add_parser("uninstall")
-    uninstall_parser.add_argument("package")
+    uninstall_parser.add_argument("package", nargs="+", help="Packages to uninstall (1 ... N)")
 
-    subparsers.add_parser("destroy")
-    subparsers.add_parser("rebuild")
+    subparsers.add_parser("destroy", help="Destroy the virtual environment")
+    subparsers.add_parser("rebuild", help="Rebuild the virtual environment (destroy + create)")
 
     args = parser.parse_args(argv)
 
