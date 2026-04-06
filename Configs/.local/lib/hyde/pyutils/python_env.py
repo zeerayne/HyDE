@@ -105,8 +105,15 @@ def is_venv_valid(venv_path: str) -> bool:
 
 
 def create_venv() -> None:
-    """Creates a new virtual environment if it doesn't exist or is invalid."""
-    run_uv(["sync"], notify_msg="⏳ Syncing virtual environment...")
+    """Creates and syncs the virtual environment. Skips if a valid one already exists."""
+    venv_path = get_venv_path()
+    if os.path.exists(venv_path):
+        if is_venv_valid(venv_path):
+            notify.send("HyDE UV", "ℹ️ Virtual environment already exists and is valid")
+            return
+        notify.send("HyDE UV", "⚠️ Broken venv detected, recreating…")
+        destroy_venv(venv_path)
+    run_uv(["sync"], notify_msg="⏳ Creating virtual environment...")
     notify.send("HyDE UV", "✅ Virtual environment ready")
 
 
@@ -122,11 +129,10 @@ def rebuild_venv() -> None:
     """Destroys and recreates the virtual environment."""
     venv_path = get_venv_path()
 
-    if os.path.exists(venv_path) and not is_venv_valid(venv_path):
-        notify.send("HyDE UV", "⚠️ Broken venv detected, rebuilding…")
+    if os.path.exists(venv_path):
         destroy_venv(venv_path)
 
-    run_uv(["sync"], notify_msg="⏳ Rebuilding virtual environment...")
+    run_uv(["sync"])
     notify.send("HyDE UV", "✅ Rebuild complete")
 
 
@@ -137,6 +143,7 @@ def rebuild_venv() -> None:
 def install_dependencies() -> None:
     """Installs dependencies from pyproject.toml."""
     run_uv(["sync"], notify_msg="📦 Syncing dependencies...")
+    notify.send("HyDE UV", "✅ Dependencies are up to date")
 
 
 def install_package(package: str | Iterable[str]) -> None:
@@ -267,21 +274,24 @@ COMMANDS = {
 # =========================
 
 def main(argv) -> None:
-    parser = argparse.ArgumentParser(description="HyDE Python environment manager")
-    subparsers = parser.add_subparsers(dest="command")
+    parser = argparse.ArgumentParser(
+        prog="hyde python-env",
+        description="HyDE UV + Python environment manager",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+
+    subparsers = parser.add_subparsers(dest="command", metavar="[command]")
 
     subparsers.add_parser("create", help="Create the virtual environment")
-    
     subparsers.add_parser("sync", help="Sync dependencies from pyproject.toml")
-
-    install_parser = subparsers.add_parser("install")
-    install_parser.add_argument("packages", nargs="*", help="Packages to install (1 ... N)")
-
-    uninstall_parser = subparsers.add_parser("uninstall")
-    uninstall_parser.add_argument("package", nargs="+", help="Packages to uninstall (1 ... N)")
-
     subparsers.add_parser("destroy", help="Destroy the virtual environment")
     subparsers.add_parser("rebuild", help="Rebuild the virtual environment (destroy + create)")
+
+    install_p = subparsers.add_parser("install", help="Install packages")
+    install_p.add_argument("packages", nargs="+", metavar="package")
+
+    uninstall_p = subparsers.add_parser("uninstall", help="Uninstall packages")
+    uninstall_p.add_argument("packages", nargs="+", metavar="package")
 
     args = parser.parse_args(argv)
 
