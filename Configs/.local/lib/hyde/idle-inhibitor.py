@@ -108,7 +108,7 @@ def main() -> None:
     inhibitor = None
 
     if args.all:
-        inhibitor = global_registry.inhibit_manager.create_inhibitor(  # type: ignore
+        inhibitor = global_registry.inhibit_manager.create_inhibitor(
             global_registry.surface
         )
         logger.debug("Inhibiting idle for all cases")
@@ -126,7 +126,7 @@ def main() -> None:
             if audio_playing_signal.is_set():
                 if inhibitor is None:
                     logger.debug("Creating inhibitor due to audio")
-                    inhibitor = global_registry.inhibit_manager.create_inhibitor(  # type: ignore
+                    inhibitor = global_registry.inhibit_manager.create_inhibitor(
                         global_registry.surface
                     )
                     display.dispatch()
