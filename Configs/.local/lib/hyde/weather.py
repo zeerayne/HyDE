@@ -5,7 +5,7 @@ import sys
 import json
 from datetime import datetime
 import locale
-import requests  # noqa: E402
+import requests
 
 
 ### Constants ###
