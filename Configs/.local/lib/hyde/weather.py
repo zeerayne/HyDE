@@ -4,15 +4,78 @@ import os
 import sys
 import json
 from datetime import datetime
+from pathlib import Path
 import locale
+from typing import TypeAlias, TypedDict, Literal, cast
 
-import pyutils.python_env as python_env
+import requests
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-python_env.v_import(
-    "requests"
-)  # fetches the module by name // does `pip install --update requests` under the hood
-import requests  # noqa: E402
+
+TempUnit: TypeAlias = Literal["c", "f"]
+TimeFormat: TypeAlias = Literal["12h", "24h"]
+WindUnit: TypeAlias = Literal["km/h", "mph"]
+
+
+class TextValue(TypedDict):
+    value: str
+
+
+class AstronomyEntry(TypedDict):
+    sunrise: str
+    sunset: str
+
+
+class CurrentCondition(TypedDict):
+    weatherCode: str
+    weatherDesc: list[TextValue]
+    temp_C: str
+    temp_F: str
+    FeelsLikeC: str
+    FeelsLikeF: str
+    windspeedKmph: str
+    windspeedMiles: str
+    humidity: str
+
+
+class HourlyPoint(TypedDict):
+    weatherCode: str
+    weatherDesc: list[TextValue]
+    tempC: str
+    tempF: str
+    FeelsLikeC: str
+    FeelsLikeF: str
+    windspeedKmph: str
+    windspeedMiles: str
+    time: str
+    chanceoffog: str
+    chanceoffrost: str
+    chanceofovercast: str
+    chanceofrain: str
+    chanceofsnow: str
+    chanceofsunshine: str
+    chanceofthunder: str
+    chanceofwindy: str
+
+
+class WeatherDay(TypedDict):
+    date: str
+    maxtempC: str
+    maxtempF: str
+    mintempC: str
+    mintempF: str
+    astronomy: list[AstronomyEntry]
+    hourly: list[HourlyPoint]
+
+
+class NearestArea(TypedDict):
+    areaName: list[TextValue]
+    country: list[TextValue]
+
+
+class WttrResponse(TypedDict):
+    current_condition: list[CurrentCondition]
+    weather: list[WeatherDay]
+    nearest_area: list[NearestArea]
 
 
 ### Constants ###
@@ -57,7 +120,8 @@ WEATHER_CODES = {
 
 
 ### Functions ###
-def load_env_file(filepath):
+def load_env_file(filepath: Path) -> None:
+    """Loads environment variables from a file, ignoring any lines that are empty or start with #."""
     try:
         with open(filepath, encoding="utf-8") as f:
             for line in f:
@@ -67,90 +131,108 @@ def load_env_file(filepath):
                     key, value = line.strip().split("=", 1)
                     os.environ[key] = value.strip('"')
     except Exception:
-        pass  # shhh
+        pass
 
 
-def get_weather_icon(weatherinstance):
+def get_weather_icon(weatherinstance: CurrentCondition | HourlyPoint) -> str:
+    """Returns the appropriate weather icon based on the weather code."""
     return WEATHER_CODES[weatherinstance["weatherCode"]]
 
 
-def get_description(weatherinstance):
+def get_description(weatherinstance: CurrentCondition | HourlyPoint) -> str:
+    """Returns the weather description in the specified language, or falls back to English if not available."""
     lang_key = f"lang_{weather_lang}"
-    if lang_key in weatherinstance:
-        return weatherinstance[lang_key][0]["value"]
+    translated = cast(dict[str, object], weatherinstance).get(lang_key)
+    if isinstance(translated, list) and translated and isinstance(translated[0], dict):
+        value = translated[0].get("value")
+        if isinstance(value, str):
+            return value
 
     return weatherinstance["weatherDesc"][0]["value"]
 
 
-def get_temperature(weatherinstance):
+def get_temperature(weatherinstance: CurrentCondition) -> str:
+    """Returns the current temperature in the specified unit (C or F)."""
     if temp_unit == "c":
         return weatherinstance["temp_C"] + "°C"
 
     return weatherinstance["temp_F"] + "°F"
 
 
-def get_temperature_hour(weatherinstance):
+def get_temperature_hour(weatherinstance: HourlyPoint) -> str:
+    """Returns the temperature for a specific hour in the specified unit (C or F)."""
     if temp_unit == "c":
         return weatherinstance["tempC"] + "°C"
 
     return weatherinstance["tempF"] + "°F"
 
 
-def get_feels_like(weatherinstance):
+def get_feels_like(weatherinstance: CurrentCondition) -> str:
+    """Returns the "feels like" temperature in the specified unit (C or F)."""
     if temp_unit == "c":
         return weatherinstance["FeelsLikeC"] + "°C"
 
     return weatherinstance["FeelsLikeF"] + "°F"
 
 
-def get_wind_speed(weatherinstance):
+def get_wind_speed(weatherinstance: CurrentCondition) -> str:
+    """Returns the wind speed in the specified unit (km/h or mph)."""
     if windspeed_unit == "km/h":
         return weatherinstance["windspeedKmph"] + "Km/h"
 
     return weatherinstance["windspeedMiles"] + "Mph"
 
 
-def get_max_temp(day):
+def get_max_temp(day: WeatherDay) -> str:
+    """Returns the maximum temperature for the day in the specified unit (C or F)."""
     if temp_unit == "c":
         return day["maxtempC"] + "°C"
 
     return day["maxtempF"] + "°F"
 
 
-def get_min_temp(day):
+def get_min_temp(day: WeatherDay) -> str:
+    """Returns the minimum temperature for the day in the specified unit (C or F)."""
     if temp_unit == "c":
         return day["mintempC"] + "°C"
 
     return day["mintempF"] + "°F"
 
 
-def get_sunrise(day):
+def get_sunrise(day: WeatherDay) -> str:
+    """Returns the sunrise time for the day, formatted according to the specified time format (12h or 24h)."""
     return get_timestamp(day["astronomy"][0]["sunrise"])
 
 
-def get_sunset(day):
+def get_sunset(day: WeatherDay) -> str:
+    """Returns the sunset time for the day, formatted according to the specified time format (12h or 24h)."""
     return get_timestamp(day["astronomy"][0]["sunset"])
 
 
-def get_city_name(weather):
+def get_city_name(weather: WttrResponse) -> str:
+    """Returns the city name from the weather data."""
     return weather["nearest_area"][0]["areaName"][0]["value"]
 
 
-def get_country_name(weather):
+def get_country_name(weather: WttrResponse) -> str:
+    """Returns the country name from the weather data."""
     return weather["nearest_area"][0]["country"][0]["value"]
 
 
-def format_time(time):
+def format_time(time: str) -> str:
+    """Formats the time string according to the specified time format (12h or 24h)."""
     return (time.replace("00", "")).ljust(3)
 
 
-def format_temp(temp):
+def format_temp(temp: str) -> str:
+    """Formats the temperature string, adding a leading space if it's positive for better alignment."""
     if temp[0] != "-":
         temp = " " + temp
     return temp.ljust(5)
 
 
-def get_timestamp(time_str):
+def get_timestamp(time_str: str) -> str:
+    """Formats the time string according to the specified time format (12h or 24h)."""
     # wttr.in always returns "HH:MM AM/PM" (English, locale-independent) — never use %p with strptime
     try:
         parts = time_str.strip().split()
@@ -167,8 +249,9 @@ def get_timestamp(time_str):
         return time_str
 
 
-def format_chances(hour):
-    chances = {
+def format_chances(hour: HourlyPoint) -> str:
+    """Formats the chance of various weather events for a specific hour."""
+    chances: dict[str, str] = {
         "chanceoffog": os.getenv("WEATHER_CHANCE_LABEL_FOG", "Fog"),
         "chanceoffrost": os.getenv("WEATHER_CHANCE_LABEL_FROST", "Frost"),
         "chanceofovercast": os.getenv("WEATHER_CHANCE_LABEL_OVERCAST", "Overcast"),
@@ -180,20 +263,30 @@ def format_chances(hour):
     }
 
     conditions = [
-        f"{chances[event]} {hour[event]}%" for event in chances if int(hour.get(event, 0)) > 0
+        f"{chances[event]} {hour[event]}%"  # type: ignore[literal-required]
+        for event in chances
+        if int(hour.get(event, 0))  # type: ignore[call-overload]
+        > 0
     ]
     return ", ".join(conditions)
 
 
-def _parse_lang_code(raw):
+def _parse_lang_code(raw: str) -> str:
+    """Parses a locale code to extract the language code (e.g., "en" from "en_US.UTF-8").
+    Returns an empty string if the code is not valid or indicates a C/POSIX locale."""
     if not raw:
         return ""
     code = raw.split(".")[0].split("@")[0].split("_")[0].lower()
     return "" if code in ("c", "posix") else code
 
 
-def get_default_locale():
-    lang, temp, time, wind = "en", "c", "24h", "km/h"
+def get_default_locale() -> tuple[str, TempUnit, TimeFormat, WindUnit]:
+    """Determines the default locale settings for language, temperature unit, time format,
+    and windspeed unit based on the system's locale configuration."""
+    lang: str = "en"
+    temp: TempUnit = "c"
+    time: TimeFormat = "24h"
+    wind: WindUnit = "km/h"
     try:
         lc_messages = getattr(locale, "LC_MESSAGES", None)
         if lc_messages is not None:
@@ -226,35 +319,36 @@ def get_default_locale():
     return lang, temp, time, wind
 
 
-weather_lang = "en"
-temp_unit = "c"
-time_format = "24h"
-windspeed_unit = "km/h"
+weather_lang: str = "en"
+temp_unit: TempUnit = "c"
+time_format: TimeFormat = "24h"
+windspeed_unit: WindUnit = "km/h"
 
 
-def main():
+def main() -> None:
     global weather_lang, temp_unit, time_format, windspeed_unit
 
     ### Variables ###
     def_lang, def_temp, def_time, def_wind = get_default_locale()  # default vals based on locale
-    load_env_file(os.path.join(os.environ.get("HOME"), ".local", "state", "hyde", "staterc"))
-    load_env_file(os.path.join(os.environ.get("HOME"), ".local", "state", "hyde", "config"))
+    home = Path.home()
+    load_env_file(home / ".local" / "state" / "hyde" / "staterc")
+    load_env_file(home / ".local" / "state" / "hyde" / "config")
 
     user_lang = os.getenv("WEATHER_LANG")
     weather_lang = user_lang.lower() if user_lang else def_lang
     user_temp = os.getenv("WEATHER_TEMPERATURE_UNIT")
     if user_temp and user_temp.lower() in ("c", "f"):
-        temp_unit = user_temp.lower()
+        temp_unit = cast(TempUnit, user_temp.lower())
     else:
         temp_unit = def_temp
     user_time = os.getenv("WEATHER_TIME_FORMAT")
     if user_time and user_time.lower() in ("12h", "24h"):
-        time_format = user_time.lower()
+        time_format = cast(TimeFormat, user_time.lower())
     else:
         time_format = def_time
     user_wind = os.getenv("WEATHER_WINDSPEED_UNIT")
     if user_wind and user_wind.lower() in ("km/h", "mph"):
-        windspeed_unit = user_wind.lower()
+        windspeed_unit = cast(WindUnit, user_wind.lower())
     else:
         windspeed_unit = def_wind
     show_icon = os.getenv("WEATHER_SHOW_ICON", "True").lower() in (
@@ -290,7 +384,7 @@ def main():
     # Parse the location to wttr.in format (snake_case)
 
     ### Main Logic ###
-    data = {}
+    data: dict[str, str] = {}
     url = f"https://wttr.in/{get_location}?format=j1"
     if user_lang and weather_lang:
         url += f"&lang={weather_lang}"
@@ -299,7 +393,7 @@ def main():
     headers = {"User-Agent": "Mozilla/5.0"}
     response = requests.get(url, timeout=10, headers=headers)
     try:
-        weather = response.json()
+        weather = cast(WttrResponse, response.json())
     except json.decoder.JSONDecodeError:
         sys.exit(1)
     current_weather = weather["current_condition"][0]
