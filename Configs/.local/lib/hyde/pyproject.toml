@@ -12,6 +12,9 @@ dependencies = [
     "PyQt6",
 ]
 
+[project.optional-dependencies]
+amd = ["pyamdgpuinfo"]
+
 [tool.ruff]
 line-length = 100
 indent-width = 4
