@@ -18,6 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Changed Shader main manu into 'Eye Care' and sub menus will have Temperature, Gamma and the Shaders Selector. 
 - Waybar: waybar now uses systemd run instead of app2unit to handle env properly.
 - Updated the hyde-config binary
+- Python-env: Deprecate pip and use uv instead.
 
 ### Added
 - Window: added 'hyde-shell window.mute' to toggle window audio. This is a python implementation for 'wl-togglesink'
@@ -26,7 +27,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Waybar: Added Eyecare menu
 - Session: *Experimental* feature which might be helpful as session restore in wayland is being worked on. 'hyde-shell session --help' to learn more!
 - Hyprland: *Experimental* Added an Alt-tab like feature that behaves like a browser. It is slow so I might port it to go. 
-- 
+
 
 
 
