@@ -145,7 +145,6 @@ def main() -> None:
                     inhibitor = None
                     logger.debug("Stopped inhibiting idle due to no audio")
                     print("Stopped inhibiting idle due to no audio")
-                    shutdown()
 
             time.sleep(1)
 
