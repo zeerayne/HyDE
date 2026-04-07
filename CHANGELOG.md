@@ -17,13 +17,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Updated app2unit. https://github.com/Vladimir-csp/app2unit/blob/87dd9cd14e020b199256854c84f31b62680d1b21/app2unit
 - Changed Shader main manu into 'Eye Care' and sub menus will have Temperature, Gamma and the Shaders Selector. 
 - Waybar: waybar now uses systemd run instead of app2unit to handle env properly.
-
+- Updated the hyde-config binary
 
 ### Added
 - Window: added 'hyde-shell window.mute' to toggle window audio. This is a python implementation for 'wl-togglesink'
 - l10n: Added a bash POC for localization. Python already has built in support for localization. This is just a POC for bash scripts. It is not yet fully implemented and is not yet available for all scripts. So we can share language packs. Please open a discussion if you are interested in helping with localization. (keeping this here just to see who really cared lol.)
 - hyprsunset: Added identity param to be used temp
 - Waybar: Added Eyecare menu
+- Session: *Experimental* feature which might be helpful as session restore in wayland is being worked on. 'hyde-shell session --help' to learn more!
+- Hyprland: *Experimental* Added an Alt-tab like feature that behaves like a browser. It is slow so I might port it to go. 
+- 
+
 
 
 
