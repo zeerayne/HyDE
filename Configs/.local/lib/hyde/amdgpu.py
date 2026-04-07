@@ -3,13 +3,13 @@ import json
 import os
 import sys
 import pyutils.logger as logger
-import pyutils.pip_env as pip_env
+import pyutils.python_env as python_env
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 logger = logger.get_logger()
 
-pip_env.v_import(
+python_env.v_import(
     "pyamdgpuinfo"
 )  # fetches the module by name // does `pip install --update pyamdgpuinfo` under the hood
 import pyamdgpuinfo
