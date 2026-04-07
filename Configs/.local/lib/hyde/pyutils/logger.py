@@ -44,21 +44,32 @@ def get_logger():
         def __init__(self, logger, logger_type):
             self.logger = logger
             self.logger_type = logger_type
+            self.use_loguru = logger_type == "loguru"
+
+        def _log(self, level: str, msg, *args, **kwargs):
+            method = getattr(self.logger, level)
+            if self.use_loguru:
+                # Keep loguru behavior stable by emitting a pre-formatted message.
+                if args or kwargs:
+                    msg = msg.format(*args, **kwargs)
+                method(msg)
+                return
+            method(msg, *args, **kwargs)
 
         def debug(self, msg, *args, **kwargs):
-            self.logger.debug(msg, *args, **kwargs)
+            self._log("debug", msg, *args, **kwargs)
 
         def info(self, msg, *args, **kwargs):
-            self.logger.info(msg, *args, **kwargs)
+            self._log("info", msg, *args, **kwargs)
 
         def warning(self, msg, *args, **kwargs):
-            self.logger.warning(msg, *args, **kwargs)
+            self._log("warning", msg, *args, **kwargs)
 
         def error(self, msg, *args, **kwargs):
-            self.logger.error(msg, *args, **kwargs)
+            self._log("error", msg, *args, **kwargs)
 
         def critical(self, msg, *args, **kwargs):
-            self.logger.critical(msg, *args, **kwargs)
+            self._log("critical", msg, *args, **kwargs)
 
         def get_logger_type(self):
             return self.logger_type
