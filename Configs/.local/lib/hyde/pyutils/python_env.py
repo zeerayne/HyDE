@@ -208,8 +208,12 @@ def inject_site_packages() -> None:
             sys.path.insert(0, path)
 
 
-def v_import(module_name, auto_install=True) -> ModuleType:
-    """Imports a module from the virtual environment, optionally auto-installing it if missing."""
+def v_import(module_name: str, auto_install: bool = True, extra: str = None) -> ModuleType:
+    """Imports a module from the virtual environment, optionally auto-installing it if missing.
+
+    If `extra` is provided (e.g. 'amd'), installs via `uv sync --extra <extra>` instead of
+    `uv add`, keeping the package declared in pyproject.toml optional-dependencies.
+    """
     inject_site_packages()
 
     try:
@@ -219,11 +223,14 @@ def v_import(module_name, auto_install=True) -> ModuleType:
             raise ImportError(f"Module '{module_name}' not found and auto_install is disabled")
 
         notify.send("HyDE UV", f"Installing missing module: {module_name}")
-        install_package(module_name)
+        if extra:
+            run_uv(["sync", "--extra", extra])
+        else:
+            install_package(module_name)
 
         inject_site_packages()
         importlib.invalidate_caches()
-        
+
         try:
             module = importlib.import_module(module_name)
             notify.send("HyDE UV", f"{module_name} installed successfully")
