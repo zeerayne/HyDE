@@ -5,13 +5,6 @@ import sys
 import json
 from datetime import datetime
 import locale
-
-import pyutils.python_env as python_env
-
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-python_env.v_import(
-    "requests"
-)  # fetches the module by name // does `pip install --update requests` under the hood
 import requests  # noqa: E402
 
 

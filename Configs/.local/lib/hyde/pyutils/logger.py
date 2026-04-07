@@ -1,11 +1,9 @@
+import logging
 import os
 import sys
-import importlib
 
-lib_dir = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, lib_dir)
 
-import python_env  # noqa: E402
+_VALID_LEVELS = {"DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"}
 
 
 def get_logger():
@@ -26,25 +24,21 @@ def get_logger():
         return NoOpLogger()
 
     log_level = log_level.upper()
+    if log_level not in _VALID_LEVELS:
+        log_level = "INFO"
 
-    # Dynamically import logging or loguru
+    # Prefer loguru when available; otherwise fall back to stdlib logging.
     try:
-        log = importlib.import_module("loguru")
-        log.logger.remove()
-        log.logger.add(sys.stderr, level=log_level)
-        logger_type = "loguru"
-    except ModuleNotFoundError:
-        try:
-            python_env.v_import("loguru")
-            log = importlib.import_module("loguru")
-            log.logger.remove()
-            log.logger.add(sys.stderr, level=log_level)
-            logger_type = "loguru"
-        except ImportError:
-            import logging as log
+        from loguru import logger as loguru_logger
 
-            log.basicConfig(level=getattr(log, log_level))
-            logger_type = "logging"
+        loguru_logger.remove()
+        loguru_logger.add(sys.stderr, level=log_level)
+        log = loguru_logger
+        logger_type = "loguru"
+    except ImportError:
+        logging.basicConfig(level=getattr(logging, log_level))
+        log = logging.getLogger("hyde")
+        logger_type = "logging"
 
     class UnifiedLogger:
         def __init__(self, logger, logger_type):
@@ -52,34 +46,19 @@ def get_logger():
             self.logger_type = logger_type
 
         def debug(self, msg, *args, **kwargs):
-            if hasattr(self.logger, "logger"):
-                self.logger.logger.debug(msg, *args, **kwargs)
-            else:
-                self.logger.debug(msg, *args, **kwargs)
+            self.logger.debug(msg, *args, **kwargs)
 
         def info(self, msg, *args, **kwargs):
-            if hasattr(self.logger, "logger"):
-                self.logger.logger.info(msg, *args, **kwargs)
-            else:
-                self.logger.info(msg, *args, **kwargs)
+            self.logger.info(msg, *args, **kwargs)
 
         def warning(self, msg, *args, **kwargs):
-            if hasattr(self.logger, "logger"):
-                self.logger.logger.warning(msg, *args, **kwargs)
-            else:
-                self.logger.warning(msg, *args, **kwargs)
+            self.logger.warning(msg, *args, **kwargs)
 
         def error(self, msg, *args, **kwargs):
-            if hasattr(self.logger, "logger"):
-                self.logger.logger.error(msg, *args, **kwargs)
-            else:
-                self.logger.error(msg, *args, **kwargs)
+            self.logger.error(msg, *args, **kwargs)
 
         def critical(self, msg, *args, **kwargs):
-            if hasattr(self.logger, "logger"):
-                self.logger.logger.critical(msg, *args, **kwargs)
-            else:
-                self.logger.critical(msg, *args, **kwargs)
+            self.logger.critical(msg, *args, **kwargs)
 
         def get_logger_type(self):
             return self.logger_type
