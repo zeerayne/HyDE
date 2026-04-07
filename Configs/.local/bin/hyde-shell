@@ -3,12 +3,12 @@
 # wallbash script can source this script to resolve the paths cleanly on a separate shell
 python_initialized() {
 
-	python "${LIB_DIR}/hyde/pyutils/pip_env.py" rebuild
+	python3 "${LIB_DIR}/hyde/pyutils/python_env.py" rebuild
 }
 
 python_activate() {
 
-	local python_env="${XDG_STATE_HOME:-$HOME/.local/state}/hyde/pip_env/bin/activate"
+	local python_env="${XDG_STATE_HOME:-$HOME/.local/state}/hyde/python_env/bin/activate"
 	if [[ -r "${python_env}" ]]; then
 		# shellcheck disable=SC1090
 		source "${python_env}"
@@ -59,6 +59,7 @@ USAGE() {
 		'completions [shell]'  'Generate completions (bash|zsh|fish)'
 		'validate [args]'      'Validate HyDE configuration'
 		'pyinit'               'Initialize Python virtual environment'
+		'uv <cmd> [pkg]'       'Manage packages (install|uninstall|list)'
 		'init'                 'Source initialization script'
 		'logout'               'Log out of the current session'
 		'lock-session'         'Lock the current session'
@@ -184,7 +185,7 @@ get_release_notes() {
 
 get_completion_data() {
 	# Get all available commands and scripts
-	local built_in_commands=("--help" "help" "-h" "-r" "reload" "-s" "scripts" "wallbash" "--version" "version" "-v" "--release-notes" "release-notes" "--list-script" "--list-script-path" "--completions" "completions")
+	local built_in_commands=("--help" "help" "-h" "-r" "reload" "-s" "scripts" "wallbash" "--version" "version" "-v" "--release-notes" "release-notes" "--list-script" "--list-script-path" "--completions" "completions" "uv")
 	export HYDE_BUILT_IN_COMMANDS="${built_in_commands[*]}"
 }
 
@@ -202,7 +203,7 @@ _hyde_shell_completion() {
     }
     
     local built_in_commands hyde_scripts wallbash_scripts
-    built_in_commands="--help help -h -r reload -s scripts wallbash --version version -v --release-notes release-notes --list-script --list-script-path --completions"
+    built_in_commands="--help help -h -r reload -s scripts wallbash --version version -v --release-notes release-notes --list-script --list-script-path --completions uv"
     
     # Get dynamic completions from hyde-shell
     if command -v hyde-shell >/dev/null 2>&1; then
@@ -257,7 +258,7 @@ _hyde_shell() {
     prev="${words[CURRENT-1]}"
     
     local built_in_commands hyde_scripts wallbash_scripts
-    built_in_commands=("--help" "help" "-h" "-r" "reload" "-s" "scripts" "wallbash" "--version" "version" "-v" "--release-notes" "release-notes" "--list-script" "--list-script-path" "--completions")
+    built_in_commands=("--help" "help" "-h" "-r" "reload" "-s" "scripts" "wallbash" "--version" "version" "-v" "--release-notes" "release-notes" "--list-script" "--list-script-path" "--completions" "uv")
     
     # Get dynamic completions
     if (( $+commands[hyde-shell] )); then
@@ -414,8 +415,7 @@ run_command() {
 			exec bash "$dir/${1}.sh" "${@:2}"
 		# Try .py extension
 		elif [[ -f "$dir/${1}.py" ]]; then
-			python_activate
-			exec python "$dir/${1}.py" "${@:2}"
+			exec "${XDG_STATE_HOME:-$HOME/.local/state}/hyde/python_env/bin/python" "$dir/${1}.py" "${@:2}"
 		# Try exact name (executable)
 		elif [[ -f "$dir/${1}" && -x "$dir/${1}" ]]; then
 			exec "$dir/${1}" "${@:2}"
@@ -432,10 +432,29 @@ run_command() {
 	fi
 }
 
-run_pip() {
-	python_activate
+run_uv() {
+	local project_dir="${LIB_DIR}/hyde"
+	local venv_path="${XDG_STATE_HOME:-$HOME/.local/state}/hyde/python_env"
 	shift
-	pip "$@"
+	local subcmd="${1:-help}"
+	shift 2>/dev/null || true
+	case "$subcmd" in
+		install)
+			UV_PROJECT_ENVIRONMENT="$venv_path" uv add "$@" --project "$project_dir"
+			;;
+		uninstall|remove)
+			UV_PROJECT_ENVIRONMENT="$venv_path" uv remove "$@" --project "$project_dir"
+			;;
+		list)
+			UV_PROJECT_ENVIRONMENT="$venv_path" uv pip list --python "${venv_path}/bin/python"
+			;;
+		*)
+			echo "Usage: hyde-shell uv [install|uninstall|list] [packages...]"
+			echo "  install   <pkg>  → runs: uv add"
+			echo "  uninstall <pkg>  → runs: uv remove"
+			echo "  list             → list installed packages"
+			;;
+	esac
 }
 
 run_pypr() {
@@ -475,9 +494,8 @@ run_pypr() {
 		fi
 
 	else
-		pip install --no-input pyprland==2.4.7
-	fi
-
+		UV_PROJECT_ENVIRONMENT="${XDG_STATE_HOME:-$HOME/.local/state}/hyde/python_env" uv add "pyprland==2.4.7" --project "${LIB_DIR}/hyde"
+	fi	
 }
 
 list_scripts_pretty() {
@@ -650,8 +668,8 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
 		exit 0
 		;;
 
-	pip)
-		run_pip "${@}"
+	uv)
+		run_uv "${@}"
 		exit 0
 		;;
 	-r | reload)

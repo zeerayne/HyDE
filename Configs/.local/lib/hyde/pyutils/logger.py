@@ -5,7 +5,7 @@ import importlib
 lib_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, lib_dir)
 
-import pip_env  # noqa: E402
+import python_env  # noqa: E402
 
 
 def get_logger():
@@ -35,7 +35,7 @@ def get_logger():
         logger_type = "loguru"
     except ModuleNotFoundError:
         try:
-            pip_env.v_import("loguru")
+            python_env.v_import("loguru")
             log = importlib.import_module("loguru")
             log.logger.remove()
             log.logger.add(sys.stderr, level=log_level)
