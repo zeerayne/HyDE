@@ -1,4 +1,5 @@
 # --------------------------------------------------- // System
+uwsm                                                   # A standalone Wayland session manager
 pipewire                                               # audio/video server
 pipewire-alsa                                          # pipewire alsa client
 pipewire-audio                                         # pipewire audio client
@@ -14,6 +15,7 @@ bluez                                                  # bluetooth protocol stac
 bluez-utils                                            # bluetooth utility cli
 blueman                                                # bluetooth manager gui
 brightnessctl                                          # screen brightness control
+playerctl                                              # media controls
 udiskie                                                # manage removable media
 
 # --------------------------------------------------- // Display Manager
@@ -25,24 +27,25 @@ qt5-graphicaleffects                                   # for sddm theme effects
 # --------------------------------------------------- // Window Manager
 hyprland                                               # wlroots-based wayland compositor
 dunst                                                  # notification daemon
-rofi-wayland                                           # application launcher
+rofi                                                   # application launcher
 waybar                                                 # system bar
-swww                                                   # wallpaper
+awww                                                   # wallpaper
 hyprlock                                               # lock screen
 wlogout                                                # logout menu
-# grimblast-git                                        # screenshot tool # DEPRECATED! We will ship our own version to avoid breaking changes
 grim                                                   # screenshot tool
 hyprpicker                                             # color picker
 slurp                                                  # region select for screenshot/screenshare
-swappy                                                 # screenshot editor
+satty                                                  # Modern Screenshot Annotation
 cliphist                                               # clipboard manager
+wl-clip-persist                                        # Keep Wayland clipboard even after programs close (avoids crashes)
 hyprsunset                                             # blue light filter
 
 # --------------------------------------------------- // Dependencies
-polkit-gnome                                           # authentication agent
+hyprpolkitagent                                        # authentication agent
 xdg-desktop-portal-hyprland                            # xdg desktop portal for hyprland
+xdg-desktop-portal-gtk                                 # file picker and dbus  integration
+xdg-user-dirs                                          # Manage user directories like ~/Desktop and ~/Music
 pacman-contrib                                         # for system update check
-python-pyamdgpuinfo                                    # for amd gpu info
 parallel                                               # for parallel processing
 jq                                                     # for json processing
 imagemagick                                            # for image processing
@@ -50,6 +53,7 @@ qt5-imageformats                                       # for dolphin image thumb
 ffmpegthumbs                                           # for dolphin video thumbnails
 kde-cli-tools                                          # for dolphin file type defaults
 libnotify                                              # for notifications
+noto-fonts-emoji                                       # emoji font
 
 # --------------------------------------------------- // Theming
 nwg-look                                               # gtk configuration tool
@@ -69,16 +73,14 @@ unzip                                                  # extracting zip files
 vim                                                    # terminal text editor
 code                                                   # ide text editor
 nwg-displays                                           # monitor management utility
+fzf                                                    # Command-line fuzzy finder
 
 # --------------------------------------------------- // Shell
-eza|zsh                                                # file lister for zsh
-# oh-my-zsh-git|zsh                                    #  plugin manager for zsh (Optional) // Moved to pkg_custom.lst
-zsh-theme-powerlevel10k-git|zsh                        # theme for zsh
-pokego-bin|zsh                                        # display pokemon sprites in terminal (written GO)
-eza|fish                                               # file lister for fish
+starship|zsh                                           # customizable shell prompt written in Rust
+# starship-git                                         # The cross-shell prompt for astronauts
 starship|fish                                          # customizable shell prompt
+
 fastfetch                                              # system information fetch tool
 
 # --------------------------------------------------- // HyDE
-# hyde-cli-git                                           # cli tool to manage hyde \\ Deprecated for HyDE
 hypridle                                               # idle daemon

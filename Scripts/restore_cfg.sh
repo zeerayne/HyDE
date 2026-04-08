@@ -70,11 +70,15 @@ deploy_list() {
 }
 
 deploy_psv() {
-
+    print_log -g "[file extension]" -b " :: " "File: ${CfgLst}"
     while read -r lst; do
 
         # Skip lines that do not have exactly 4 columns
         if [ "$(awk -F '|' '{print NF}' <<<"${lst}")" -ne 4 ]; then
+            if [[ "${lst}" =~ ^\  ]]; then
+                echo ""
+                print_log -b "${lst}"
+            fi
             continue
         fi
         # Skip lines that start with '#' or any space followed by '#'
@@ -90,7 +94,7 @@ deploy_psv() {
 
         # Check if ctlFlag is not one of the values 'O', 'R', 'B', 'S', or 'P'
         if [[ "${ctlFlag}" = "I" ]]; then
-            print_log -r "[ignore] //" "${pth}/${cfg}"
+            print_log -r "[ignore] :: " "${pth}/${cfg}"
             continue 2
         fi
 
@@ -100,7 +104,7 @@ deploy_psv() {
             # Call the function pkg_installed with the argument pkg_chk. If the function returns false (the package is not installed), then...
             if ! pkg_installed "${pkg_chk}"; then
                 # Print a message stating that the current configuration is being skipped because a dependency is not installed
-                print_log -y "[skip]  " -r "missing" -b " :: " "${pth}/${cfg} " -c "missing dependency" "'${pkg_chk}' as dependency"
+                print_log -y "[skip] " -r "missing" -b " :: " -y "missing dependency" -g " '${pkg_chk}'" -r " --> " "${pth}/${cfg}"
                 # Skip the rest of the current loop iteration and proceed to the next iteration
                 continue 2
             fi
@@ -116,6 +120,29 @@ deploy_psv() {
             tgt="${pth//${HOME}/}"
             crnt_cfg="${pth}/${cfg_chk}"
 
+            # Handle Trash Cleanup
+            if [ "${ctlFlag}" = "T" ]; then
+                # For Trash flag, act solely on the target's existence
+                [[ ! -d "${BkpDir}${tgt}" ]] && [[ ${flg_DryRun} -ne 1 ]] && mkdir -p "${BkpDir}${tgt}"
+                if [ -e "${crnt_cfg}" ]; then
+                    if [ "${flg_DryRun}" -ne 1 ]; then
+                        if mv "${crnt_cfg}" "${BkpDir}${tgt}"; then
+                            print_log -r "[trash]" -b " :: " "${crnt_cfg} --> ${BkpDir}${tgt}"
+                        else
+                            print_log -r "[error]" -b " :: " "Failed to move ${crnt_cfg} to ${BkpDir}${tgt}"
+                        fi
+                    else
+                        print_log -y "[dry-run]" -b " :: " "Would trash ${crnt_cfg} --> ${BkpDir}${tgt}"
+                    fi
+                else
+                    print_log -y "[trash]" -b " :: " "Target missing, nothing to move: ${crnt_cfg}"
+                fi
+                # Skip further processing for Trash
+                continue
+            fi
+            
+
+
             if [ ! -e "${CfgDir}${tgt}/${cfg_chk}" ] && [ "${ctlFlag}" != "B" ]; then
                 echo "Source: ${CfgDir}${tgt}/${cfg_chk} does not exist, skipping..."
                 print_log -y "[skip]" -b "no source" "${CfgDir}${tgt}/${cfg_chk} does not exist"
@@ -130,26 +157,26 @@ deploy_psv() {
                 [[ ! -d "${BkpDir}${tgt}" ]] && [[ ${flg_DryRun} -ne 1 ]] && mkdir -p "${BkpDir}${tgt}"
 
                 case "${ctlFlag}" in
-                "B")
+                "B") # Backup only
                     [ "${flg_DryRun}" -ne 1 ] && cp -r "${pth}/${cfg_chk}" "${BkpDir}${tgt}"
                     print_log -g "[copy backup]" -b " :: " "${pth}/${cfg_chk} --> ${BkpDir}${tgt}..."
                     ;;
-                "O")
+                "O") # Overwrite
                     [ "${flg_DryRun}" -ne 1 ] && mv "${pth}/${cfg_chk}" "${BkpDir}${tgt}"
                     [ "${flg_DryRun}" -ne 1 ] && cp -r "${CfgDir}${tgt}/${cfg_chk}" "${pth}"
-                    print_log -r "[move to backup]" " > " -r "[overwrite]" -b " :: " "${pth}" -r " <--  " "${CfgDir}${tgt}/${cfg_chk}"
+                    print_log -r "[move to backup]" " > " -r "[overwrite]" -b " :: " "${pth}" -r " <-- " "${CfgDir}${tgt}/${cfg_chk}"
                     ;;
-                "S")
+                "S") # Sync
                     [ "${flg_DryRun}" -ne 1 ] && cp -r "${pth}/${cfg_chk}" "${BkpDir}${tgt}"
                     [ "${flg_DryRun}" -ne 1 ] && cp -rf "${CfgDir}${tgt}/${cfg_chk}" "${pth}"
                     print_log -g "[copy to backup]" " > " -y "[sync]" -b " :: " "${pth}" -r " <--  " "${CfgDir}${tgt}/${cfg_chk}"
                     ;;
-                "P")
+                "P") # Preserve
                     [ "${flg_DryRun}" -ne 1 ] && cp -r "${pth}/${cfg_chk}" "${BkpDir}${tgt}"
                     if ! [ "${flg_DryRun}" -ne 1 ] && cp -rn "${CfgDir}${tgt}/${cfg_chk}" "${pth}" 2>/dev/null; then
-                        print_log -g "[copy to backup]" " > " -g "[populate]" -b " :: " "${pth}${tgt}/${cfg_chk}"
+                        print_log -g "[copy to backup]" " > " -y "[populate]" -b " :: " "${pth}${tgt}/${cfg_chk}"
                     else
-                        print_log -g "[copy to backup]" " > " -g "[preserved]" -b " :: " "${pth}" + 208 " <--  " "${CfgDir}${tgt}/${cfg_chk}"
+                        print_log -g "[copy to backup]" " > " -y "[preserved]" -b " :: " "${pth}" + 208 " <--  " "${CfgDir}${tgt}/${cfg_chk}"
                     fi
                     ;;
                 esac
@@ -163,6 +190,29 @@ deploy_psv() {
         done
 
     done <"${1}"
+}
+
+hyprland_hook() {
+
+    local hyde_config="${cloneDir}/Configs/.config/hypr/hyprland.conf"
+    local hyprland_default_config="${XDG_CONFIG_HOME:-$HOME/.config}/hypr/hyprland.conf"
+    local hyq_exec="${cloneDir}/Configs/.local/lib/hyde/hyq"
+    if [[ ! -x "${hyq_exec}" ]]; then
+        print_log -r "[error] :: " "Required executable '${hyq_exec}' not found or not executable. Please ensure it exists and has execute permissions."
+        return 1
+    fi
+    if ! "${hyq_exec}" "${hyprland_default_config}" --query "\$HYDE_HYPRLAND"; then
+        mkdir -p "$(dirname "${hyprland_default_config}")" "${BkpDir}/.config/hypr"
+        print_log -g "[hook] " -b "hyprland :: " "No HYDE_HYPRLAND variable found in ${hyprland_default_config}, restoring default HyDE marker..."
+
+        if [[ ${flg_DryRun} -ne 1 && -f "${hyprland_default_config}" ]]; then
+            cp -f "${hyprland_default_config}" "${BkpDir}/.config/hypr/hyprland.conf"
+        fi
+
+        print_log -r "[backup] :: " "${hyprland_default_config} to ${BkpDir}/.config/hypr/hyprland.conf"
+        [[ ${flg_DryRun} -ne 1 ]] && cp -f "${hyde_config}" "${hyprland_default_config}"
+        print_log -g "[restore] :: " "${hyde_config} to ${hyprland_default_config}"
+    fi
 }
 
 # shellcheck disable=SC2034
@@ -200,7 +250,7 @@ fi
 
 file_extension="${CfgLst##*.}"
 echo ""
-print_log -g "[file extension]" -b "::" "${file_extension}"
+print_log -g "[file extension]" -b " :: " "${file_extension}"
 case "${file_extension}" in
 "lst")
     deploy_list "${CfgLst}"
@@ -212,3 +262,37 @@ json)
     deploy_json "${CfgLst}"
     ;;
 esac
+echo ""
+
+hyprland_hook
+
+print_log -g "[uv]" -b " :: " "Checking uv availability..."
+if ! command -v uv &>/dev/null; then
+    print_log -warn "[uv]" "uv not found, installing..."
+    if command -v pacman &>/dev/null; then
+        sudo pacman -S --noconfirm uv
+    else
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+        # shellcheck disable=SC1091
+        source "$HOME/.local/bin/env" 2>/dev/null || true
+        
+        # Ensure uv is available after installation
+        if ! command -v uv &>/dev/null; then
+            export PATH="$HOME/.local/bin:$PATH"
+        fi
+    fi
+fi
+
+print_log -g "[python env]" -b " :: " "Rebuilding HyDE Python environment..."
+if command -v hyde-shell >/dev/null 2>&1; then
+    hyde-shell pyinit
+else
+    "${HOME}/.local/bin/hyde-shell" pyinit
+fi
+
+print_log -g "[version]" -b " :: " "saving version info..."
+"${scrDir}/version.sh" --cache || echo "Failed to save version info."
+
+state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/hyde"
+clone_dir=$(git rev-parse --show-toplevel 2>/dev/null || echo "${HOME}/HyDE")
+[[ -f ${clone_dir}/CHANGELOG.md ]] && cp -f "${clone_dir}/CHANGELOG.md" "${state_dir}/CHANGELOG.md"

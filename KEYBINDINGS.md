@@ -1,11 +1,63 @@
+<div align = center>
+    <a href="https://discord.gg/AYbJ9MJez7">
+<img alt="Dynamic JSON Badge" src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fdiscordapp.com%2Fapi%2Finvites%2FmT5YqjaJFh%3Fwith_counts%3Dtrue&query=%24.approximate_member_count&suffix=%20members&style=for-the-badge&logo=discord&logoSize=auto&label=The%20HyDe%20Project&labelColor=ebbcba&color=c79bf0">
+    </a>
+</div>
+
+###### _<div align="right"><a id=-design-by-t2></a><sub>// design by t2</sub></div>_
+
+![hyde_banner](Source/assets/hyde_banner.png)
+
 <!--
-Multi-language README support
+Multi-language KEYBINDINGS support
 -->
 
-[![en](https://img.shields.io/badge/lang-en-red.svg)](https://github.com/HyDE-Project/HyDE/blob/master/KEYBINDINGS.md)
-[![es](https://img.shields.io/badge/lang-es-yellow.svg)](https://github.com/HyDE-Project/HyDE/blob/master/Source/docs/KEYBINDINGS.es.md)
+<!-- [![en](https://img.shields.io/badge/lang-en-red.svg)](KEYBINDINGS.md) -->
 
-## Window Management
+[![es](https://img.shields.io/badge/lang-es-yellow.svg)](Source/assets/keybinds/KEYBINDINGS.es.md)
+[![de](https://img.shields.io/badge/lang-de-black.svg)](Source/assets/keybinds/KEYBINDINGS.de.md)
+[![nl](https://img.shields.io/badge/lang-nl-green.svg)](Source/assets/keybinds/KEYBINDINGS.nl.md)
+[![中文](https://img.shields.io/badge/lang-中文-orange.svg)](Source/assets/keybinds/KEYBINDINGS.zh.md)
+[![fr](https://img.shields.io/badge/lang-fr-blue.svg)](Source/assets/keybinds/KEYBINDINGS.fr.md)
+[![ar](https://img.shields.io/badge/lang-AR-orange.svg)](Source/assets/keybinds/KEYBINDINGS.ar.md)
+
+<div align="center">
+
+<br>
+
+<!-- <a href=#hyde-keybindings><kbd> <br> HyDE keybindings <br> </kbd></a>&ensp;&ensp; -->
+
+<a href=#window-management><kbd> <br> Window Management <br> </kbd></a>&ensp;&ensp;
+<a href=#misc><kbd> <br> Misc <br> </kbd></a>&ensp;&ensp;
+<a href=#launcher><kbd> <br> Launcher <br> </kbd></a>&ensp;&ensp;
+<a href=#hardware-controls><kbd> <br> Hardware Controls <br> </kbd></a>&ensp;&ensp;
+<a href=#utilities><kbd> <br> Utilities <br> </kbd></a>&ensp;&ensp;
+<a href="#theming-and-wallpaper"><kbd> <br> Theming and Wallpaper <br> </kbd></a>&ensp;&ensp;
+<a href=#workspaces><kbd> <br> Workspaces <br> </kbd></a>&ensp;&ensp;
+
+</div><br><br>
+
+<div align="center">
+  <div style="display: flex; flex-wrap: nowrap; justify-content: center;">
+    <img src="Source/assets/archlinux.png" alt="Arch Linux" style="width: 10%; margin: 10px;"/>
+    <img src="Source/assets/cachyos.png" alt="CachyOS" style="width: 10%; margin: 10px;"/>
+    <img src="Source/assets/endeavouros.png" alt="EndeavourOS" style="width: 10%; margin: 10px;"/>
+    <img src="Source/assets/garuda.png" alt="Garuda" style="width: 10%; margin: 10px;"/>
+    <img src="Source/assets/nixos.png" alt="NixOS" style="width: 10%; margin: 10px;"/>
+  </div>
+</div>
+
+<!-- # <a id=hyde-keybindings>HyDE Keybindings</a> -->
+<!-- # <a id=hyde-keybindings></a><img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=25&pause=1000&color=CCA9DD&width=435&lines=HyDE%20Keybindings" width="450"/> -->
+
+Here are all HyDE specific keybindings listed.
+
+> [!TIP]  
+> <kbd>Super</kbd> + <kbd>/</kbd> shows the keybindings.
+
+<!-- ## <a id=window-management>Window Management</a> -->
+
+## <a id=window-management></a><img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=23&pause=1000&color=CCA9DD&width=435&lines=Window%20Management" width="450"/>
 
 | Keys                                                 | Action                          |
 | :--------------------------------------------------- | :------------------------------ |
@@ -36,6 +88,7 @@ Multi-language README support
 | <kbd>SUPER</kbd> + <kbd>Right</kbd> | focus right |
 | <kbd>SUPER</kbd> + <kbd>Up</kbd>    | focus up    |
 | <kbd>SUPER</kbd> + <kbd>Down</kbd>  | focus down  |
+| <kbd>ALT</kbd> + <kbd>Tab</kbd>     | cycle focus |
 
 ### Resize Active Window
 
@@ -55,22 +108,27 @@ Multi-language README support
 | <kbd>SUPER</kbd> + <kbd>Z</kbd>         | hold to move window   |
 | <kbd>SUPER</kbd> + <kbd>X</kbd>         | hold to resize window |
 
-## Misc
+<!-- ## <a id=misc>Misc</a> -->
+
+## <a id=misc></a><img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=23&pause=1000&color=CCA9DD&width=435&lines=Misc" width="450"/>
 
 | Keys                                                                     | Action                         |
 | :----------------------------------------------------------------------- | :----------------------------- |
-| <kbd>SUPER</kbd> + <kbd>CTRL</kbd> + <kbd>SHIFT</kbd> + <kbd>left</kbd>  | Move activewindow to the right |
-| <kbd>SUPER</kbd> + <kbd>CTRL</kbd> + <kbd>SHIFT</kbd> + <kbd>right</kbd> | Move activewindow to the right |
-| <kbd>SUPER</kbd> + <kbd>CTRL</kbd> + <kbd>SHIFT</kbd> + <kbd>up</kbd>    | Move activewindow to the right |
-| <kbd>SUPER</kbd> + <kbd>CTRL</kbd> + <kbd>SHIFT</kbd> + <kbd>down</kbd>  | Move activewindow to the right |
+| <kbd>SUPER</kbd> + <kbd>CTRL</kbd> + <kbd>SHIFT</kbd> + <kbd>left</kbd>  | move activewindow to the left  |
+| <kbd>SUPER</kbd> + <kbd>CTRL</kbd> + <kbd>SHIFT</kbd> + <kbd>right</kbd> | move activewindow to the right |
+| <kbd>SUPER</kbd> + <kbd>CTRL</kbd> + <kbd>SHIFT</kbd> + <kbd>up</kbd>    | move activewindow up           |
+| <kbd>SUPER</kbd> + <kbd>CTRL</kbd> + <kbd>SHIFT</kbd> + <kbd>down</kbd>  | move activewindow down         |
 
-## Launcher
+<!-- ## <a id=launcher>Launcher</a> -->
+
+## <a id=launcher></a><img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=23&pause=1000&color=CCA9DD&width=435&lines=Launcher" width="450"/>
 
 ### Apps
 
 | Keys                                                   | Action            |
 | :----------------------------------------------------- | :---------------- |
 | <kbd>SUPER</kbd> + <kbd>T</kbd>                        | terminal emulator |
+| <kbd>SUPER</kbd> + <kbd>ALT</kbd> + <kbd>T</kbd>       | dropdown terminal |
 | <kbd>SUPER</kbd> + <kbd>E</kbd>                        | file explorer     |
 | <kbd>SUPER</kbd> + <kbd>C</kbd>                        | text editor       |
 | <kbd>SUPER</kbd> + <kbd>B</kbd>                        | web browser       |
@@ -80,7 +138,7 @@ Multi-language README support
 
 | Keys                                               | Action               |
 | :------------------------------------------------- | :------------------- |
-| <kbd>ALT</kbd> + <kbd>space</kbd>                  | application finder   |
+| <kbd>SUPER</kbd> + <kbd>A</kbd>                    | application finder   |
 | <kbd>SUPER</kbd> + <kbd>TAB</kbd>                  | window switcher      |
 | <kbd>SUPER</kbd> + <kbd>SHIFT</kbd> + <kbd>E</kbd> | file finder          |
 | <kbd>SUPER</kbd> + <kbd>slash</kbd>                | keybindings hint     |
@@ -90,7 +148,9 @@ Multi-language README support
 | <kbd>SUPER</kbd> + <kbd>SHIFT</kbd> + <kbd>V</kbd> | clipboard manager    |
 | <kbd>SUPER</kbd> + <kbd>SHIFT</kbd> + <kbd>A</kbd> | select rofi launcher |
 
-## Hardware Controls
+<!-- ## <a id="hardware-controls">Hardware Controls</a> -->
+
+## <a id="hardware-controls"></a><img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=23&pause=1000&color=CCA9DD&width=435&lines=Hardware%20Controls" width="450"/>
 
 ### Audio
 
@@ -120,7 +180,9 @@ Multi-language README support
 | <kbd>None</kbd> + <kbd>XF86MonBrightnessUp</kbd>   | increase brightness |
 | <kbd>None</kbd> + <kbd>XF86MonBrightnessDown</kbd> | decrease brightness |
 
-## Utilities
+<!-- ## <a id=utilities>Utilities</a> -->
+
+## <a id=utilities></a><img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=23&pause=1000&color=CCA9DD&width=435&lines=Utilities" width="450"/>
 
 | Keys                                             | Action                 |
 | :----------------------------------------------- | :--------------------- |
@@ -137,7 +199,9 @@ Multi-language README support
 | <kbd>SUPER</kbd> + <kbd>ALT</kbd> + <kbd>P</kbd>   | print monitor          |
 | <kbd>None</kbd> + <kbd>Print</kbd>                 | print all monitors     |
 
-## Theming and Wallpaper
+<!-- ## <a id=theming-and-wallpaper>Theming and Wallpaper</a> -->
+
+## <a id=theming-and-wallpaper></a><img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=23&pause=1000&color=CCA9DD&width=435&lines=Theming%20and%20Wallpaper" width="450"/>
 
 | Keys                                                 | Action                 |
 | :--------------------------------------------------- | :--------------------- |
@@ -148,8 +212,12 @@ Multi-language README support
 | <kbd>SUPER</kbd> + <kbd>ALT</kbd> + <kbd>Down</kbd>  | previous waybar layout |
 | <kbd>SUPER</kbd> + <kbd>SHIFT</kbd> + <kbd>R</kbd>   | wallbash mode selector |
 | <kbd>SUPER</kbd> + <kbd>SHIFT</kbd> + <kbd>T</kbd>   | select a theme         |
+| <kbd>SUPER</kbd> + <kbd>SHIFT</kbd> + <kbd>Y</kbd>   | select animations      |
+| <kbd>SUPER</kbd> + <kbd>SHIFT</kbd> + <kbd>U</kbd>   | select hyprlock layout |
 
-## Workspaces
+<!-- ## <a id=workspaces>Workspaces</a> -->
+
+## <a id=workspaces></a><img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=23&pause=1000&color=CCA9DD&width=435&lines=Workspaces" width="450"/>
 
 ### Navigation
 
@@ -178,11 +246,11 @@ Multi-language README support
 
 #### Special workspace
 
-| Keys                                                   | Action                      |
-| :----------------------------------------------------- | :-------------------------- |
-| <kbd>SUPER</kbd> + <kbd>SHIFT</kbd> + <kbd>grave</kbd> | move to scratchpad          |
-| <kbd>SUPER</kbd> + <kbd>ALT</kbd> + <kbd>grave</kbd>   | move to scratchpad (silent) |
-| <kbd>SUPER</kbd> + <kbd>grave</kbd>                    | toggle scratchpad           |
+| Keys                                               | Action                      |
+| :------------------------------------------------- | :-------------------------- |
+| <kbd>SUPER</kbd> + <kbd>SHIFT</kbd> + <kbd>S</kbd> | move to scratchpad          |
+| <kbd>SUPER</kbd> + <kbd>ALT</kbd> + <kbd>S</kbd>   | move to scratchpad (silent) |
+| <kbd>SUPER</kbd> + <kbd>S</kbd>                    | toggle scratchpad           |
 
 #### Move window silently
 
@@ -218,3 +286,46 @@ Multi-language README support
 | :--------------------------------------------------------------------- | :----------------------------------------- |
 | <kbd>SUPER</kbd> + <kbd>ALT</kbd> + <kbd>CTRL</kbd> + <kbd>Right</kbd> | move window to next relative workspace     |
 | <kbd>SUPER</kbd> + <kbd>ALT</kbd> + <kbd>CTRL</kbd> + <kbd>Left</kbd>  | move window to previous relative workspace |
+
+## <a id="custom-keybindings"></a><img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=23&pause=1000&color=CCA9DD&width=435&lines=Custom%20Keybindings" width="450"/>
+
+You can define your own keybindings by editing your preferences file at:
+
+```bash
+~/.config/hypr/userprefs.conf
+```
+
+For example, to create a keybinding that launches the **HyDE Game Launcher**, add the following line:
+
+```ini
+bind = $mainMod, SPACE, exec, $HOME/.local/lib/hyde/gamelauncher.sh
+```
+
+This will bind the **Game Launcher** to <kbd>SUPER</kbd> + <kbd>Space</kbd>.  
+You can replace `SPACE` with any other key you prefer.
+
+The `gamelauncher.sh` script is included by default and lives at:
+
+```bash
+~/.local/lib/hyde/gamelauncher.sh
+```
+
+<!--
+<div align="right">
+  <br>
+  <a href="#-design-by-t2"><kbd> <br> 🡅 <br> </kbd></a>
+</div>
+
+<div align="center">
+
+</div>
+-->
+
+<div align="right">
+  <br>
+  <a href="#-design-by-t2"><kbd> <br> 🡅 <br> </kbd></a>
+</div>
+
+<div align="right">
+  <sub>Last edited on: 02/01/2025<span id="last-edited"></span></sub>
+</div>
