@@ -71,6 +71,7 @@ done
 
 [ -d "$HOME/.config/hyde" ] && rm -rf "$HOME/.config/hyde"
 [ -d "$HOME/.cache/hyde" ] && rm -rf "$HOME/.cache/hyde"
+[ -d "$HOME/.local/state/hyde" ] && rm -rf "$HOME/.local/state/hyde"
 
 cat <<"NOTE"
 -------------------------------------------------------
@@ -86,15 +87,15 @@ $HOME/.icons                            # remove icons from here
 $HOME/.themes                           # remove themes from here
 
 Revert back bootloader/pacman/sddm settings manually from these backups
-/boot/loader/entries/*.conf.t2.bkp      # restore systemd-boot from this backup
-/etc/default/grub.t2.bkp                # restore grub from this backup
-/boot/grub/grub.t2.bkp                  # restore grub from this backup
+/boot/loader/entries/*.conf.hyde.bkp    # restore systemd-boot from this backup
+/etc/default/grub.hyde.bkp              # restore grub from this backup
+/boot/grub/grub.hyde.bkp                # restore grub from this backup
 /usr/share/grub/themes                  # remove grub themes from here
-/etc/pacman.conf.t2.bkp                 # restore pacman from this backup
-/etc/sddm.conf.d/kde_settings.t2.bkp    # restore sddm from this backup
+/etc/pacman.conf.hyde.bkp               # restore pacman from this backup
+/etc/sddm.conf.d/kde_settings.hyde.bkp  # restore sddm from this backup
 /usr/share/sddm/themes                  # remove sddm themes from here
 
 Uninstall the packages manually that are no longer required based on these list
 ${scrDir}/pkg_core.lst
-${scrDir}/pkg_custom.lst
+${scrDir}/pkg_extra.lst
 NOTE

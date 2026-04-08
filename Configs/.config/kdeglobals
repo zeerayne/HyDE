@@ -8,4 +8,7 @@ TerminalApplication=kitty
 Theme=Will be overwritten on themeswitch
 
 [UiSettings]
-ColorScheme=*
+ColorScheme=colors
+
+[Wallet]
+Enabled=false

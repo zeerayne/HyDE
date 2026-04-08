@@ -13,7 +13,7 @@ fi
 
 # shellcheck disable=SC2154
 if chk_list "aurhlpr" "${aurList[@]}"; then
-    print_log -sec "AUR" -stat "detected" "${aurhlpr}"
+    print_log -sec "AUR" -stat "Detected" "${aurhlpr}"
     exit 0
 fi
 
@@ -31,7 +31,7 @@ fi
 if pkg_installed git; then
     git clone "https://aur.archlinux.org/${aurhlpr}.git" "$HOME/Clone/${aurhlpr}"
 else
-    print_log -r "AUR" -stat "missing" "git dependency..."
+    print_log -sec "AUR" -stat "missing" "'git' as dependency..."
     exit 1
 fi
 
