@@ -19,6 +19,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Waybar: waybar now uses systemd run instead of app2unit to handle env properly.
 - Updated the hyde-config binary
 - Python-env: Deprecate pip and use uv instead.
+- Hypr: Removed '~/.config/hypr/hyde.conf' as it is not being used or a long time now. Please use the 'config.toml' instead
+- hyprlock: Added options under [hyprlock]: hide_cursor,ignore_empty_input,immediate_render,text_trim,fractional_scaling,screencopy_mode,fail_timeout. See https://wiki.hypr.land/Hypr-Ecosystem/hyprlock/
+
 
 ### Added
 - Window: added 'hyde-shell window.mute' to toggle window audio. This is a python implementation for 'wl-togglesink'
@@ -27,8 +30,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Waybar: Added Eyecare menu
 - Session: *Experimental* feature which might be helpful as session restore in wayland is being worked on. 'hyde-shell session --help' to learn more!
 - Hyprland: *Experimental* Added an Alt-tab like feature that behaves like a browser. It is slow so I might port it to go. 
-
-
 
 
 
