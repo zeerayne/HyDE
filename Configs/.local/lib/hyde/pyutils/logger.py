@@ -12,7 +12,7 @@ def get_logger():
     if not log_level:
 
         class NoOpLogger:
-            def __getattr__(self):
+            def __getattr__(self, name):
                 def no_op():
                     pass
 
