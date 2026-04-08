@@ -13,7 +13,7 @@ def get_logger():
 
         class NoOpLogger:
             def __getattr__(self, name):
-                def no_op():
+                def no_op(*args, **kwargs):
                     pass
 
                 return no_op
