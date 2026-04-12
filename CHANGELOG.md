@@ -17,7 +17,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 - Window: added 'hyde-shell window.mute' to toggle window audio. This is a python implementation for 'wl-togglesink'
-- Windowrules: add opacity rule for blender to disable transparency
+- Windowrules: add opacity rule and floating rules for blender to disable transparency and float render window
 
 
 
