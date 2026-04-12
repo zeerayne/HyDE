@@ -21,7 +21,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Python-env: Deprecate pip and use uv instead.
 - Hypr: Removed '~/.config/hypr/hyde.conf' as it is not being used or a long time now. Please use the 'config.toml' instead
 - hyprlock: Added options under [hyprlock]: hide_cursor,ignore_empty_input,immediate_render,text_trim,fractional_scaling,screencopy_mode,fail_timeout. See https://wiki.hypr.land/Hypr-Ecosystem/hyprlock/
-
+- Core: Removed hyq binary .Please install it using your own package-manager. 'yay -Sy hyprquery'
 
 ### Added
 - Window: added 'hyde-shell window.mute' to toggle window audio. This is a python implementation for 'wl-togglesink'
