@@ -14,12 +14,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Hyprland: Remove `hyde.conf` as it is too brittle. Use `hyprland.conf` instead!
 - Window: Moved 'windowpin' to 'window.pin'. For consistency.
 - pyutils: Kinda clean up libnotify wrapper.
+- Updated app2unit. https://github.com/Vladimir-csp/app2unit/blob/87dd9cd14e020b199256854c84f31b62680d1b21/app2unit
+- Changed Shader main manu into 'Eye Care' and sub menus will have Temperature, Gamma and the Shaders Selector. 
+- Waybar: waybar now uses systemd run instead of app2unit to handle env properly.
+- Updated the hyde-config binary
+- Python-env: Deprecate pip and use uv instead.
+- Hypr: Removed '~/.config/hypr/hyde.conf' as it is not being used or a long time now. Please use the 'config.toml' instead
+- hyprlock: Added options under [hyprlock]: hide_cursor,ignore_empty_input,immediate_render,text_trim,fractional_scaling,screencopy_mode,fail_timeout. See https://wiki.hypr.land/Hypr-Ecosystem/hyprlock/
+- Core: Removed hyq binary .Please install it using your own package-manager. 'yay -Sy hyprquery'
 
 ### Added
 - Window: added 'hyde-shell window.mute' to toggle window audio. This is a python implementation for 'wl-togglesink'
-- Windowrules: add opacity rule and floating rules for blender to disable transparency and float render window
+- Windowrules: add opacity rule and floating rules for Blender to disable transparency, float render window, and set render window size to 50% of monitor
+- l10n: Added a bash POC for localization. Python already has built in support for localization. This is just a POC for bash scripts. It is not yet fully implemented and is not yet available for all scripts. So we can share language packs. Please open a discussion if you are interested in helping with localization. (keeping this here just to see who really cared lol.)
+- hyprsunset: Added identity param to be used temp
+- Waybar: Added Eyecare menu
+- Session: *Experimental* feature which might be helpful as session restore in wayland is being worked on. 'hyde-shell session --help' to learn more!
+- Hyprland: *Experimental* Added an Alt-tab like feature that behaves like a browser. It is slow so I might port it to go. 
+- Wallpaper: [waydeeper](https://github.com/EdenQwQ/waydeeper) can be used as wallpaper backend. To use it, waydeeper should be installed manually.
 
 
+### Fixed
+- Weather: Fix [#1664](https://github.com/HyDE-Project/HyDE/issues/1664)
+- Waybar: #
 
 
 ## v26.1.2
