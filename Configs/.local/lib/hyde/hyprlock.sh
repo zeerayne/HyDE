@@ -350,6 +350,24 @@ source = $hyde_hyprlock_conf
 CONF
 }
 
+fn_reload() {
+    local layout="${HYPRLOCK_LAYOUT:-HyDE}"
+    if [[ $layout == "Theme Preference" ]]; then
+        layout="theme"
+    fi
+    local hyprlock_conf_path
+    hyprlock_conf_path=$(find_filepath "$layout")
+    if [ -z "$hyprlock_conf_path" ]; then
+        print_log -sec "hyprlock" -stat "Error" "Layout '$layout' not found."
+        exit 1
+    fi
+    generate_conf "$hyprlock_conf_path"
+    "$LIB_DIR/hyde/font.sh" resolve "$hyprlock_conf_path"
+    fn_profile
+    reload_hyprlock
+    notify-send -i "system-lock-screen" "Hyprlock config regenerated" "Layout: $layout"
+}
+
 ensure_lockscreen_bg_exist() {
     if [ ! -f "$HYDE_CACHE_HOME/wallpapers/hyprlock.png" ]; then
         print_log -sec "hyprlock" -stat "setting" " $HYDE_CACHE_HOME/wallpapers/hyprlock.png"
@@ -368,6 +386,7 @@ argparse "mpris,--mpris" "MPRIS_PLAYER" "Handles mpris thumbnail generation" "pa
 argparse "cava,--cava" "" "Placeholder function for cava"
 argparse "art,--art" "" "Prints the path to the mpris art"
 argparse "--select,-S" "" "Selects the hyprlock layout"
+argparse "--reload,-r" "" "Regenerates hyprlock.conf using HYPRLOCK_LAYOUT (defaults to HyDE)"
 argparse "--test" "TEST_LAYOUT" "Test layout" "parameter"
 argparse "--test-preview" "TEST_PREVIEW_LAYOUT" "Test preview layout" "parameter"
 
@@ -382,6 +401,7 @@ art) fn_art ;;
 select) fn_select ;;
 test) layout_test "$TEST_LAYOUT" ;;
 test-preview) rofi_test_preview "$TEST_PREVIEW_LAYOUT" ;;
+reload) fn_reload ;;
 *)
     ensure_lockscreen_bg_exist
     check_and_sanitize_process
