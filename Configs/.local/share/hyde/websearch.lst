@@ -10,7 +10,6 @@
  | softwareengineering | https://softwareengineering.stackexchange.com/search?q=%s
  | github | https://www.github.com/search?q=%s
  | youtube | https://www.youtube.com/results?search_query=%s
- | superuser | https://www.superuser.com/search?q=%s
  | archlinux | https://archlinux.org/packages/?sort=&q=%s
  | AUR | https://aur.archlinux.org/packages?O=0&K=%s
  | searx | http://searx.neocities.org/?q=%s
