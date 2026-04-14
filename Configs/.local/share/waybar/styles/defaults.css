@@ -12,6 +12,10 @@
 @import "groups/leaf.css";
 @import "groups/leaf-inverse.css";
 
+/* classes */
+@import "classes/cpuinfo.css";
+@import "classes/gpuinfo.css";
+
 
 /* Dynamic Stuff */
 /*
@@ -24,6 +28,10 @@
 
 window#waybar {
     background: @bar-bg;
+}
+
+.module {
+    color: @main-fg;
 }
 
 /*
@@ -227,24 +235,68 @@ window#waybar.right button {
     border: 0em
 }
 
-
 tooltip {
     /* all: unset; */
     background: @main-bg;
     color: @main-fg;
-    border-width: 0.1pt;
-    border-color: @main-fg ;
+    border: 0.1em solid @main-fg;
+}
+
+window.popup decoration {
+    border: 0.1em solid @main-fg;
 }
 
 #tray menu * {
     min-height: 1.6em;
-
 }
 
 #tray menu separator {
     min-height: 0.1em;
 }
 
+#tray menu menuitem check,
+#tray menu menuitem radio {
+    min-height: 1em;
+    min-width: 1em;
+}
+
 #language {
     min-width: 1.11em;
+}
+
+#temperature,
+#temperature.warning,
+#temperature.critical {
+    background-color: transparent;
+}
+
+menu {
+    background-color: @main-bg;
+}
+
+menu menuitem {
+    transition: 0.25s;
+}
+
+menu menuitem:hover {
+    background-color: @wb-act-bg;
+    color: @wb-act-fg;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+tooltip,
+menu {
+    animation-name: fadeIn;
+    animation-duration: 0.25s;
+    animation-timing-function: ease-out;
+    animation-iteration-count: 1;
 }
