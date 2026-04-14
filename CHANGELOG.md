@@ -31,7 +31,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Session: *Experimental* feature which might be helpful as session restore in wayland is being worked on. 'hyde-shell session --help' to learn more!
 - Hyprland: *Experimental* Added an Alt-tab like feature that behaves like a browser. It is slow so I might port it to go. 
 - Wallpaper: [waydeeper](https://github.com/EdenQwQ/waydeeper) can be used as wallpaper backend. To use it, waydeeper should be installed manually.
-
+- Lua: ****Experimental** Lua support. Please open a discussion if you are interested in helping with Lua support. Uses hererocks to install lua.
 
 ### Fixed
 - Weather: Fix [#1664](https://github.com/HyDE-Project/HyDE/issues/1664)
