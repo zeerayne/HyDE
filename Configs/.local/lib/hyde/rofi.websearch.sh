@@ -88,7 +88,8 @@ handle_query() {
     fi
     write_to_top "$cached_search_dir/$site.txt" "$query"
     write_to_top "$cached_search_dir/recent.sites" "$site | ${SITES[$site]}"
-    query_url=$(echo -n ${SITES[$site]} | sed "s/%s/$query/")
+    encoded_query=$(echo -n "$query" | jq -sRr @uri)
+    query_url=$(echo -n "${SITES[$site]}" | sed "s/%s/$encoded_query/")
     if [ -n "$BROWSER" ]; then
         printf "Using browser: %s %s\n" "$BROWSER" "$query_url"
         nohup "$BROWSER" "$query_url" > /dev/null 2>&1 &
