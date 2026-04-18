@@ -6,7 +6,7 @@ All notable changes to `HyDE` will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to _Modified_ [CalVer](https://calver.org/). See [Versioning](https://github.com/HyDE-Project/HyDE/blob/master/RELEASE_POLICY.md#versioning-yymq) For more info
  -->
 
-## Unreleased
+## v26.4.3 | 3rd week of April 2026 Release!
 
 ### Changed
 
@@ -36,7 +36,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Fixed
 - Weather: Fix [#1664](https://github.com/HyDE-Project/HyDE/issues/1664)
-- Waybar: #
+- Waybar: Fix some errors on env.
 
 
 ## v26.1.2
