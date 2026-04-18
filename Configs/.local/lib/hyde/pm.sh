@@ -33,6 +33,8 @@ usage() {
 main() {
     FORCE_PM=""
     NO_CONFIRM=0
+    # Parse and remove pm.sh-specific flags from anywhere in the args
+    ARGS=()
     while [ $# -gt 0 ]; do
         case "$1" in
             --pm)
@@ -44,10 +46,12 @@ main() {
                 shift
                 ;;
             *)
-                break
+                ARGS+=("$1")
+                shift
                 ;;
         esac
     done
+    set -- "${ARGS[@]}"
     if [ $# -eq 0 ]; then
         die_wrong_usage "expected <command> argument"
     fi
