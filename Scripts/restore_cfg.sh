@@ -195,21 +195,19 @@ ensure_hyq() {
 
 	hyq_exec="$(command -v hyq 2>/dev/null || true)"
 	if [[ -n "${hyq_exec}" && -x "${hyq_exec}" ]]; then
-		echo "${hyq_exec}"
 		return 0
 	fi
 
 	print_log -y "[hook] " -b "hyprland :: " "'hyq' not found in PATH, trying package install..."
 
 	if [[ -x "${pacmanCmd}" ]]; then
-		"${pacmanCmd}" install hyprquery-git || "${pacmanCmd}" install hyprquery || true
+		"${pacmanCmd}" install --noconfirm hyprquery-git || "${pacmanCmd}" install --noconfirm hyprquery || true
 	elif command -v pacman >/dev/null 2>&1; then
-		sudo pacman -S --needed hyprquery-git || sudo pacman -S --needed hyprquery || true
+		sudo pacman -S --needed --noconfirm hyprquery-git || sudo pacman -S --needed --noconfirm hyprquery || true
 	fi
 
 	hyq_exec="$(command -v hyq 2>/dev/null || true)"
 	if [[ -n "${hyq_exec}" && -x "${hyq_exec}" ]]; then
-		echo "${hyq_exec}"
 		return 0
 	fi
 
@@ -223,7 +221,8 @@ hyprland_hook() {
 	local hyprland_default_config="${XDG_CONFIG_HOME:-$HOME/.config}/hypr/hyprland.conf"
 	local hyq_exec
 
-	hyq_exec="$(ensure_hyq)" || return 1
+	ensure_hyq || return 1
+	hyq_exec="$(command -v hyq 2>/dev/null || true)"
 
 	if ! "${hyq_exec}" "${hyprland_default_config}" --query "\$HYDE_HYPRLAND"; then
 		mkdir -p "$(dirname "${hyprland_default_config}")" "${BkpDir}/.config/hypr"
