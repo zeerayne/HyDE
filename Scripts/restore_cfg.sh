@@ -191,25 +191,20 @@ deploy_psv() {
 }
 
 ensure_hyq() {
-	local hyq_exec
-
-	hyq_exec="$(command -v hyq 2>/dev/null || true)"
-	if [[ -n "${hyq_exec}" && -x "${hyq_exec}" ]]; then
-		echo "${hyq_exec}"
+	# Check if hyq is already available
+	if command -v hyq >/dev/null 2>&1 && [ -x "$(command -v hyq)" ]; then
 		return 0
 	fi
 
 	print_log -y "[hook] " -b "hyprland :: " "'hyq' not found in PATH, trying package install..."
 
+	# Try pm.sh or pacmanCmd if available
 	if [[ -x "${pacmanCmd}" ]]; then
-		"${pacmanCmd}" install hyprquery-git || "${pacmanCmd}" install hyprquery || true
-	elif command -v pacman >/dev/null 2>&1; then
-		sudo pacman -S --needed hyprquery-git || sudo pacman -S --needed hyprquery || true
+		"${pacmanCmd}" install --no-confirm hyprquery || "${pacmanCmd}" install --no-confirm hyprquery-git
 	fi
 
-	hyq_exec="$(command -v hyq 2>/dev/null || true)"
-	if [[ -n "${hyq_exec}" && -x "${hyq_exec}" ]]; then
-		echo "${hyq_exec}"
+	# Check again if hyq is now available
+	if command -v hyq >/dev/null 2>&1 && [ -x "$(command -v hyq)" ]; then
 		return 0
 	fi
 
@@ -223,7 +218,8 @@ hyprland_hook() {
 	local hyprland_default_config="${XDG_CONFIG_HOME:-$HOME/.config}/hypr/hyprland.conf"
 	local hyq_exec
 
-	hyq_exec="$(ensure_hyq)" || return 1
+	ensure_hyq || return 1
+	hyq_exec="$(command -v hyq 2>/dev/null || true)"
 
 	if ! "${hyq_exec}" "${hyprland_default_config}" --query "\$HYDE_HYPRLAND"; then
 		mkdir -p "$(dirname "${hyprland_default_config}")" "${BkpDir}/.config/hypr"
@@ -236,6 +232,28 @@ hyprland_hook() {
 		print_log -r "[backup] :: " "${hyprland_default_config} to ${BkpDir}/.config/hypr/hyprland.conf"
 		[[ ${flg_DryRun} -ne 1 ]] && cp -f "${hyde_config}" "${hyprland_default_config}"
 		print_log -g "[restore] :: " "${hyde_config} to ${hyprland_default_config}"
+	fi
+}
+
+
+uv_hook() {
+	print_log -g "[uv]" -b " :: " "Checking uv availability..."
+	if command -v uv &>/dev/null; then
+		return 0
+	fi
+	print_log -warn "[uv]" "uv not found, installing..."
+	if [[ -x "${pacmanCmd}" ]]; then
+		"${pacmanCmd}" install --no-confirm uv || true
+	elif command -v pacman &>/dev/null; then
+		sudo pacman -S --noconfirm uv || true
+	else
+		curl -LsSf https://astral.sh/uv/install.sh | sh
+		# shellcheck disable=SC1091
+		source "$HOME/.local/bin/env" 2>/dev/null || true
+		# Ensure uv is available after installation
+		if ! command -v uv &>/dev/null; then
+			export PATH="$HOME/.local/bin:$PATH"
+		fi
 	fi
 }
 
@@ -290,22 +308,7 @@ echo ""
 
 hyprland_hook
 
-print_log -g "[uv]" -b " :: " "Checking uv availability..."
-if ! command -v uv &>/dev/null; then
-	print_log -warn "[uv]" "uv not found, installing..."
-	if command -v pacman &>/dev/null; then
-		sudo pacman -S --noconfirm uv
-	else
-		curl -LsSf https://astral.sh/uv/install.sh | sh
-		# shellcheck disable=SC1091
-		source "$HOME/.local/bin/env" 2>/dev/null || true
-
-		# Ensure uv is available after installation
-		if ! command -v uv &>/dev/null; then
-			export PATH="$HOME/.local/bin:$PATH"
-		fi
-	fi
-fi
+uv_hook
 
 print_log -g "[python env]" -b " :: " "Rebuilding HyDE Python environment..."
 if command -v hyde-shell >/dev/null 2>&1; then
