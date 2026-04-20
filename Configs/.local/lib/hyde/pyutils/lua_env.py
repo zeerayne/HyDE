@@ -22,11 +22,11 @@ import json
 
 XDG_STATE_HOME = os.environ.get("XDG_STATE_HOME", os.path.expanduser("~/.local/state"))
 HYDE_STATE_DIR = os.path.join(XDG_STATE_HOME, "hyde")
-LUA_ENV_DIR = os.path.join(XDG_STATE_HOME, "hyde", "lua-env")
+LUA_ENV_DIR = os.path.join(XDG_STATE_HOME, "hyde", "lua_env")
 ACTIVATE_SCRIPT = os.path.join(LUA_ENV_DIR, "bin", "activate")
 LUAROCKS_BIN = os.path.join(LUA_ENV_DIR, "bin", "luarocks")
 HEREROCKS_ARGS = ["-r", "@v3.13.0", "-j", "@v2.1"]
-ROCKS_SNAPSHOT = os.path.join(HYDE_STATE_DIR, "lua-env-rocks.json")
+ROCKS_SNAPSHOT = os.path.join(HYDE_STATE_DIR, "luarocks_env.json")
 BOOTSTRAP_CONFIG = os.path.join(os.path.dirname(__file__), "lua_env.json")
 
 
