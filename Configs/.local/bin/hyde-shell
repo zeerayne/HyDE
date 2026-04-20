@@ -8,7 +8,9 @@
 
 python_initialized() {
 
-	python3 "${LIB_DIR}/hyde/pyutils/python_env.py" sync
+	python3 "${LIB_DIR}/hyde/pyutils/python_env.py" sync || \
+	python3 "${LIB_DIR}/hyde/pyutils/python_env.py" rebuild
+
 }
 
 python_activate() {
