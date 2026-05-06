@@ -1,0 +1,1 @@
+/dev/null|command -v wayle > /dev/null 2>&1 && pgrep -x wayle > /dev/null 2>&1 && wayle wallpaper set "$(readlink -f "$HOME/.cache/hyde/wall.set")" 2>/dev/null
