@@ -8,8 +8,22 @@
 
 python_initialized() {
 
-	python3 "${LIB_DIR}/hyde/pyutils/python_env.py" sync || \
-	python3 "${LIB_DIR}/hyde/pyutils/python_env.py" rebuild
+	local python_script="${LIB_DIR}/hyde/pyutils/python_env.py"
+	local venv="${XDG_STATE_HOME:-$HOME/.local/state}/hyde/python_env"
+
+	if [[ -x "${venv}/bin/python" ]]; then
+		# shellcheck disable=SC1091
+		source "${venv}/bin/activate"
+		"${venv}/bin/python" "${python_script}" sync >/dev/null 2>&1 && return 0
+		echo "Sync failed; rebuilding Python environment..."
+		"${venv}/bin/python" "${python_script}" rebuild
+		return $?
+	fi
+
+	echo "Python environment not found; creating..."
+	python3 "${python_script}" create >/dev/null 2>&1 && return 0
+	echo "Create failed; attempting rebuild..."
+	python3 "${python_script}" rebuild
 
 }
 
