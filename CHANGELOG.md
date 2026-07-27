@@ -6,7 +6,15 @@ All notable changes to 'HyDE' will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to _Modified_ [CalVer](https://calver.org/). See [Versioning](https://github.com/HyDE-Project/HyDE/blob/master/RELEASE_POLICY.md#versioning-yymq) For more info
  -->
 
-## Unreleased
+## 💓 | End of July Release
+
+**Alright** Looks like hyprland 0.56.1 warns user to use lua so here you go!
+
+Run `install.sh -r` to update.
+
+Please report and try to fix any bugs. Thank you!
+Life is tight as of the moment. Any help will do. 💓
+
 
 ### Added
 - GTK: hyde will have our own dconf db called 'hyde_hyprland'. That means dconf settings are isolated for HyDE Hyprland ONLY
