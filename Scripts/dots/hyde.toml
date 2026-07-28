@@ -1,6 +1,7 @@
 [hyde]
 description = "Hyde core configuration"
 pre_command = "echo 'HyDE Is the Best!'"
+version = "v26.7.28"
 
 #? Core configuration
 [[hyde.files]]
@@ -27,7 +28,7 @@ clean_target = true
 action = "sync"
 source_root = "Configs/.local/share"
 target_root = "${XDG_DATA_HOME}"
-paths = ["hyde", "xdg-desktop-portal/hyprland-portals.conf"]
+paths = ["hyde", "wallbash", "xdg-desktop-portal/hyprland-portals.conf"]
 ignored_paths = [".*", "__pycache__", "schema"]
 
 [[hyde.files]]
