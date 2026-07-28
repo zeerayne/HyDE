@@ -66,6 +66,7 @@ Life is tight as of the moment. Any help will do. 💓
 - Hyprland: Drop of hyprlang support
 - GTK: Have a separate 'DCONF_PROFILE' for GTK apps! For QT, twas always handled by qt6ct and should not
     mangle with QT. But KDE apps uses ~/.config/kdeglobals which might break KDE apps for multi DE. (No fix for now)
+- Clipboard: `ydotool` is preferred over `wtype` for auto-pasting selected entry from clipboard
 
 
 ### Fixed
