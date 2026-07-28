@@ -13,7 +13,7 @@ dnf = ["hyprland"]
 action = "sync"
 source_root = "Configs/.local/share/hypr/"
 target_root = "${XDG_DATA_HOME}/hypr/"
-paths = ["lua", "hyde.lua"]
+paths = ["lua", "hyde.lua", "schema/hyprland-lua.json"]
 ignored_paths = ["*.conf", ".vscode"]
 
 # [[hyprland.files]]
