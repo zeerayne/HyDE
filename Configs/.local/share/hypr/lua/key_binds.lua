@@ -239,7 +239,7 @@ hl.bind(MOD .. " + ALT + P", hl.dsp.exec_cmd(hyde.sh.screenshot.monitor()), _F)
 _F = {description = "[Utilities] print all monitors", locked = true}
 hl.bind("Print", hl.dsp.exec_cmd(hyde.sh.screenshot.full()), _F)
 _F = {description = "[Utilities] OCR scanner", locked = true}
-hl.bind(MOD .. " + CONTROL + S", hl.dsp.exec_cmd(hyde.sh.screenshot.ocr()), _F)
+hl.bind(MOD .. " + CONTROL + O", hl.dsp.exec_cmd(hyde.sh.screenshot.ocr()), _F)
 
 _F = {description = "[Theming and Wallpaper] next global wallpaper"}
 hl.bind(MOD .. "+ ALT + Right", hl.dsp.exec_cmd(hyde.sh.wallpaper("--next")), _F)
