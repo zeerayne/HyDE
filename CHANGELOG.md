@@ -37,6 +37,7 @@ Life is tight as of the moment. Any help will do. 💓
 
 
 ## Fixed
+- Fix cantarell font
 - Some minor bugs
 
 ## v26.4.5 | End of April Release
