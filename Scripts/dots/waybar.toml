@@ -4,9 +4,9 @@ pre_command = "echo 'Pre commands '"
 post_command = "echo 'HyDE backed up!'"
 
 [[waybar.dependency]]
+pacman = ["waybar"]
 yay = ["waybar"]
 paru = ["waybar"]
-pacman = ["waybar"]
 dnf = ["waybar"]
 
 [[waybar.files]]
