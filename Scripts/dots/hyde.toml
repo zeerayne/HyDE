@@ -59,13 +59,13 @@ paths = ".gtkrc-2.0"
 
 # Converted from Scripts/restore_cfg.psv
 [[hyde.files]]
-action = "preserve"
+action = "sync"
 source_root = "Configs/.config/hyde"
 target_root = "${XDG_CONFIG_HOME}/hyde"
 paths = "config.toml"
 
 [[hyde.files]]
-action = "preserve"
+action = "sync"
 source_root = "Configs/.config/pypr"
 target_root = "${XDG_CONFIG_HOME}/pypr"
 paths = "config.toml"
