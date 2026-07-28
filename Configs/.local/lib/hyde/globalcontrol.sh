@@ -374,10 +374,10 @@ get_rofi_pos() {
 }
 paste_string() {
     local paste_cmd=""
-    if command -v wtype >/dev/null; then
-        paste_cmd="wtype -M ctrl V -m ctrl"
-    elif command -v ydotool >/dev/null; then
+    if command -v ydotool >/dev/null; then
         paste_cmd="ydotool key 29:1 && sleep 0.01 && ydotool key 47:1 47:0 && sleep 0.01 && ydotool key 29:0"
+    elif command -v wtype >/dev/null; then
+        paste_cmd="wtype -M ctrl V -m ctrl"
     else
         exit 0
     fi
