@@ -17,6 +17,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - OCR: the language list in the result notification is no longer split across arguments
 - Wallpaper: the duplicate check in the kon backend compares against the whole hash list again
 - Repo: dropped two stray gitlinks that made `git submodule` fail on a fresh clone
+- Grimblast updated to latest version, double slurp fixed
+
 
 ## v26.7.4 | 4th Week of July 2026 Release
 
