@@ -15,6 +15,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Hyprland: dropped the legacy hyprlang dot, the files it deployed no longer exist
 
 ### Fixed
+- Weather Applet: Avoid crashes from unknown weather codes or unavailable wttr.in responses.
+- Core: an install no longer ends at the Lua step on a machine that cannot build `lgi`; the introspection headers it compiles against are declared as a dependency, and an optional rock that still fails is reported and skipped instead of taking the run down before any dotfile is deployed
+- Hyprland: a session on a machine with a discrete NVIDIA GPU no longer comes up with a timed-out configuration; driver detection reads `/proc` and `/sys`, and the library directories are found by opening the candidate paths, so the budget Hyprland allows the whole configuration is no longer spent waiting on a subprocess
+- Core: an install deploys the cursor dots again instead of aborting on an existing theme file; the locked `deez-dots` revision predated the extraction fix, so every install kept running the defect the fix had already closed
+- Core: Pyprland commands keep their arguments when `nc`, `socat`, and `ncat` are unavailable, so commands such as `hyde-shell pypr toggle console` work through the CLI fallback again
+- Hyprland: a session started without `XDG_CONFIG_HOME`, such as one launched from a TTY, no longer dies with a Lua error before the first window; the unset variable is treated as unset instead of being pasted into a path
+- Hyprland: a home directory containing an apostrophe no longer makes the session load its libraries from the system directory instead of the user's own, and an empty `XDG_RUNTIME_DIR` reads as unset rather than resolving against the working directory
 - Waybar: the theme module and the HyDE menu call `theme.switch` again; `themeswitch` was removed and the calls failed outright
 - Dolphin: the "Set As Wallpaper" service menu switches the theme again
 - Fish: `HYPRLAND_CONFIG` points at the deployed `hypr/hyde.lua` instead of a config the Lua release deleted, so a session started outside uwsm no longer comes up without a config
@@ -23,6 +30,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Docs: the keybinding reference describes the Lua configuration instead of the removed `userprefs.conf`, documents binds that were missing from it, corrects four descriptions that no longer matched the code, and explains why an override needs the original bind's flags
 - Docs: the shipped `hypr/hyprland.lua` stub shows a working bind instead of pointing at a wiki that does not exist
 - Docs: the keybinding links in the German, Arabic, French, Dutch and Turkish readmes resolve again
+- Core: every migration that has not been applied yet now runs in version order and is recorded, instead of only the newest one running and retiring the rest unseen
 - Core: app launchers no longer show a false error when an unrelated `DEBUG` variable contains a non-boolean value such as `release`
 - Desktop: the generated battery notification startup command now launches `batterynotify.lua` instead of the removed shell implementation
 - Hyprland: Lua keybinds again match the documented shortcuts for window management, screenshots, wallpapers, Waybar, selectors, workspaces and the scratchpad
