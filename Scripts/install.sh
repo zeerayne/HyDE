@@ -362,8 +362,6 @@ EOF
 		[[global.dependency]]
 		pacman = [
 	TOML
-	# starship is needed for both zsh and fish prompts
-	echo "\"starship\"," >> "${extra_toml}"
 	echo "]" >> "${extra_toml}"
 
 	#-------------------------------#
