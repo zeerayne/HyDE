@@ -1,0 +1,6 @@
+
+[openrgb]
+pre_command = "echo 'Install OpenRGB'"
+
+[[openrgb.dependency]]
+pacman = ["openrgb"]

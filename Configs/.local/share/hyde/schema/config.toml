@@ -326,6 +326,7 @@ battery_notify = "hyde-shell app -u hyde-$XDG_SESSION_DESKTOP-battery-notify.ser
 applet_network_manager = "hyde-shell app -u hyde-$XDG_SESSION_DESKTOP-network-manager-applet.service -t service -- nm-applet --indicator"  # Network manager applet.
 applet_removable_media = "hyde-shell app -u hyde-$XDG_SESSION_DESKTOP-removable-media-applet.service -t service -- udiskie --no-automount --smart-tray"  # Removable media applet.
 applet_bluetooth = "hyde-shell app -u hyde-$XDG_SESSION_DESKTOP-bluetooth-applet.service -t service -- blueman-applet"  # Bluetooth applet.
+openrgb = "openrgb --profile \"$XDG_CACHE_HOME/hyde/wallbash/openrgb\""  # Restore OpenRGB profile on startup.
 
 # mediaplayer.py configuration.
 [mediaplayer]
