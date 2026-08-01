@@ -11,6 +11,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Added
 - Docs: `MIGRATION-LUA.md`, a transition guide for upgrading from the hyprlang configuration — what moved where, the silent failures and their causes, and the files the upgrade leaves behind
 
+### Changed
+- Clipboard: `ydotool` is preferred over `wtype` for auto-pasting selected entry from clipboard
+
 ### Removed
 - Hyprland: dropped the legacy hyprlang dot, the files it deployed no longer exist
 
@@ -74,7 +77,6 @@ Life is tight as of the moment. Any help will do. 💓
 - Hyprland: Drop of hyprlang support
 - GTK: Have a separate 'DCONF_PROFILE' for GTK apps! For QT, twas always handled by qt6ct and should not
     mangle with QT. But KDE apps uses ~/.config/kdeglobals which might break KDE apps for multi DE. (No fix for now)
-- Clipboard: `ydotool` is preferred over `wtype` for auto-pasting selected entry from clipboard
 
 
 ### Fixed
