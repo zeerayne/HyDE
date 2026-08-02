@@ -7,8 +7,9 @@ if ! source "$(which hyde-shell)"; then
 fi
 
 if pkg_installed openrgb; then
-    cacheDir="${cacheDir:-$XDG_CACHE_HOME/hyde}"
+    cacheDir="${cacheDir:-${XDG_CACHE_HOME:-$HOME/.cache}/hyde}"
     OPENRGB_PROFILE="${cacheDir}/wallbash/openrgb"
+    mkdir -p "${OPENRGB_PROFILE%/*}"
 
     openrgb --color "${dcol_pry2}"
     openrgb --save-profile "${OPENRGB_PROFILE}"
