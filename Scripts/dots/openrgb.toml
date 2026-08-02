@@ -1,6 +1,7 @@
 
 [openrgb]
 pre_command = "echo 'Install OpenRGB'"
+post_command = "sudo systemctl enable --now openrgb.service"
 
 [[openrgb.dependency]]
 pacman = ["openrgb"]
