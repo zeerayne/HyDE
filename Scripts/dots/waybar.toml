@@ -10,16 +10,18 @@ paru = ["waybar"]
 dnf = ["waybar"]
 
 [[waybar.files]]
-action = "preserve"
+action = "sync"
 source_root = "Configs/.config/waybar"
 target_root = "${XDG_CONFIG_HOME}/waybar"
 paths = ["config.jsonc", "theme.css", "style.css", "user-style.css"]
 
-# [[waybar.files]]
-# action = "preserve"
-# source_root = "Configs/.config/waybar"
-# target_root = "${XDG_CONFIG_HOME}/waybar"
-# paths = ["modules", "styles", "layouts", "menus"]
+[[waybar.files]]
+action = "sync"
+source_root = "Configs/.config/waybar"
+target_root = "${XDG_CONFIG_HOME}/waybar"
+# "menus" is deployed by the swaync dot (owns waybar/menus/swaync.xml) — listing
+# it here too trips deez's cross-dot ownership conflict and skips the deploy.
+paths = ["modules", "styles", "layouts"]
 
 [[waybar.files]]
 action = "sync"
