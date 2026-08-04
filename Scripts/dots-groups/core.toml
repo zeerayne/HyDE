@@ -1,10 +1,11 @@
 # Use for instalation script until we refactor the whole installation stack
 [global]
-    action      = "preserve"                                 #
-    git         = "https://github.com/HyDE-Project/HyDE.git"
+    action      = "sync"                                 #
+    git         = "https://github.com/zeerayne/HyDE.git"
+    git_branch  = "modded"
     owner       = "The HyDE Project"                         #
     pre_command = "echo 'starting deployment'"
-    version     = "0.1.0"
+    version     = "latest"
     # dots = ["kitty", "hyprland"] # List of dots to be used in the configuration file
     # We can call it core packages!
     # Order matters: dots are deployed in the order they are listed here. The
