@@ -259,6 +259,6 @@ elif [ "$enableWallDcol" -gt 0 ]; then
 fi
 find -H "${wallbashDirs[@]}" -type f -path "*/always*" -name "*.dcol" 2>/dev/null | awk '!seen[substr($0, match($0, /[^/]+$/))]++' | parallel fn_wallbash {} "${wallbashDirs[@]}" || render_failures=$((render_failures + $?))
 if [ "$render_failures" -ne 0 ]; then
-    print_log -sec "wallbash" -err "render" "one or more templates failed, the colour state is incomplete"
+    print_log -sec "wallbash" -err "render" "$render_failures template(s) failed, the colour state is incomplete"
     exit 1
 fi
