@@ -19,9 +19,8 @@
 -- from the search path it sets.
 local root = assert(debug.getinfo(1, "S").source:match("^@(.*)/"), "not loaded from a file")
 
----@module "hyde"
+-- luacheck: globals hyde
 hyde = hyde or {}
----@diagnostic disable-next-line: inject-field
 hyde.path = dofile(root .. "/lua/hyde/path.lua")
 package.loaded["hyde.path"] = hyde.path
 
