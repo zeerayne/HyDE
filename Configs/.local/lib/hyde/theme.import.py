@@ -171,7 +171,7 @@ def get_theme_preview(theme):
         preview_text += bar_bottom + "\n"
         image = CLONE_DIR + "/preview.png"
     else:
-        theme_data = next((t for t in JSON_DATA if t["THEME"] == theme), None)
+        theme_data = next((t for t in (JSON_DATA or []) if t["THEME"] == theme), None)
         if theme_data is None:
             logger.debug(f"Theme not found in gallery data: {theme}")
             return f"Image preview not found for {theme}"

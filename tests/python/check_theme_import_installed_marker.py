@@ -112,6 +112,24 @@ def main() -> int:
             f"an unknown theme name should hit the not-found path: stderr={result_unknown.stderr!r}",
         )
 
+    # Gallery data unavailable entirely (no hyde-themes.json -- a fresh
+    # machine with --skip-clone, or a failed clone): JSON_DATA stays None,
+    # and iterating it directly raises TypeError before the not-found
+    # fallback ever runs.
+    with __import__("tempfile").TemporaryDirectory() as tmp_no_json:
+        tmp_no_json_path = pathlib.Path(tmp_no_json)
+        (tmp_no_json_path / "hyde" / "gallery-database").mkdir(parents=True)
+        result_no_data = run_preview(tmp_no_json_path, "Anything")
+        check(
+            "TypeError" not in result_no_data.stderr,
+            f"--preview with no gallery data crashed instead of reporting not-found: "
+            f"{result_no_data.stderr}",
+        )
+        check(
+            result_no_data.returncode == 0,
+            f"--preview with no gallery data exited {result_no_data.returncode}: {result_no_data.stderr}",
+        )
+
     return failures
 
 
