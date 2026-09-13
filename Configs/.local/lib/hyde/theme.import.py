@@ -401,7 +401,7 @@ def main():
                 logger.debug("LoadedPreview text: " + args.preview)
                 preview_text = args.preview_text
                 print(preview_text)
-            get_theme_preview(args.preview)
+            print(get_theme_preview(args.preview))
         if args.fetch:
             fetch_theme(args.fetch)
     except KeyboardInterrupt:
