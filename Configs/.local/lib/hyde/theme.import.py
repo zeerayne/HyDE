@@ -16,6 +16,21 @@ CLONE_DIR = os.path.join(
     "hyde/gallery-database",
 )
 JSON_DATA = None
+INSTALLED_MARKER = "  ✓ installed"
+
+
+def get_installed_themes():
+    config_home = os.getenv("XDG_CONFIG_HOME", os.path.expanduser("~/.config"))
+    themes_dir = os.path.join(config_home, "hyde/themes")
+    if not os.path.exists(themes_dir):
+        return set()
+    return {d for d in os.listdir(themes_dir) if os.path.isdir(os.path.join(themes_dir, d))}
+
+
+def strip_installed_marker(theme):
+    if theme.endswith(INSTALLED_MARKER):
+        return theme[: -len(INSTALLED_MARKER)]
+    return theme
 
 
 def fetch_theme_preview_path(theme):
@@ -89,6 +104,7 @@ def clone_repo():
 
 
 def get_theme_preview(theme):
+    theme = strip_installed_marker(theme)
     fetch_data()
     color1 = "#39b1d6"
     color2 = "#c79bf0"
@@ -133,7 +149,10 @@ def get_theme_preview(theme):
         image = CLONE_DIR + "/preview.png"
     else:
         theme_data = next((t for t in JSON_DATA if t["THEME"] == theme), None)
-        if theme_data and theme_data.get("PREVIEW"):
+        if theme_data is None:
+            logger.debug(f"Theme not found in gallery data: {theme}")
+            return f"Image preview not found for {theme}"
+        if theme_data.get("PREVIEW"):
             image = random.choice(theme_data["PREVIEW"])
         else:
             image = None
@@ -237,8 +256,11 @@ def fzf_menu():
     try:
         fetch_data()
         if JSON_DATA:
-            themes = [theme["THEME"] for theme in JSON_DATA]
-            themes.sort(reverse=True)
+            installed = get_installed_themes()
+            theme_names = sorted((theme["THEME"] for theme in JSON_DATA), reverse=True)
+            themes = [
+                name + (INSTALLED_MARKER if name in installed else "") for name in theme_names
+            ]
             themes = ["[CONFIRM]"] + themes
             fzf_options = [
                 "--input-label-pos=center",
@@ -253,6 +275,7 @@ def fzf_menu():
                 "--preview-window=right::70%",
             ]
             SELECTED_THEMES = fzf.prompt(themes, fzf_options)
+            SELECTED_THEMES = [strip_installed_marker(t) for t in SELECTED_THEMES]
             logger.debug(f"Selected themes: {SELECTED_THEMES}")
         else:
             logger.debug("No JSON data available to display themes.")
