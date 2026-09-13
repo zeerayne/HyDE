@@ -16,7 +16,21 @@ CLONE_DIR = os.path.join(
     "hyde/gallery-database",
 )
 JSON_DATA = None
-INSTALLED_MARKER = "  ✓ installed"
+# A leading, colored checkmark -- not a repeated "installed" text label -- so
+# the theme name stays the most legible thing in the row (HIG lists-and-tables:
+# selection/status state is an accessory image, not label text). Green is
+# reserved for this; fzf's own multi-select marker uses a different glyph
+# (see --marker in fzf_menu) so the two states can't be confused.
+#
+# fzf's --ansi (needed to render the color at all) parses and *strips* SGR
+# escape codes out of every value it hands back via `{}` -- both the live
+# preview substitution and the final selected-line output on stdout. Only
+# the glyph survives that round trip, never the color codes around it. So
+# INSTALLED_GLYPH (bare, no escapes) is what every strip/compare has to
+# match; INSTALLED_PREFIX (with color) exists only to build what fzf displays.
+INSTALLED_GLYPH = "✓ "
+INSTALLED_PREFIX = f"\033[32m{INSTALLED_GLYPH}\033[0m"
+NOT_INSTALLED_PREFIX = "  "  # same 2-column width, keeps names aligned
 
 
 def get_installed_themes():
@@ -28,8 +42,16 @@ def get_installed_themes():
 
 
 def strip_installed_marker(theme):
-    if theme.endswith(INSTALLED_MARKER):
-        return theme[: -len(INSTALLED_MARKER)]
+    # Check the colored form first: it starts with the same glyph the
+    # ansi-stripped form does, so checking the glyph alone first would chop
+    # only the glyph off a still-colored string and leave the escape codes
+    # attached to the name.
+    if theme.startswith(INSTALLED_PREFIX):
+        return theme[len(INSTALLED_PREFIX) :]
+    if theme.startswith(INSTALLED_GLYPH):
+        return theme[len(INSTALLED_GLYPH) :]
+    if theme.startswith(NOT_INSTALLED_PREFIX):
+        return theme[len(NOT_INSTALLED_PREFIX) :]
     return theme
 
 
@@ -137,6 +159,7 @@ def get_theme_preview(theme):
             "  [TAB] to mark a theme\n"
             "  [Enter] or choose [CONFIRM] to confirm selected themes\n"
             "  [Esc] to exit/cancel\n\n"
+            f"  {INSTALLED_PREFIX}already installed\n\n"
             "Some helpful shortcuts:\n"
             "   CTRL A : mark all\n"
             "   CTRL D : un-mark all\n"
@@ -259,10 +282,12 @@ def fzf_menu():
             installed = get_installed_themes()
             theme_names = sorted((theme["THEME"] for theme in JSON_DATA), reverse=True)
             themes = [
-                name + (INSTALLED_MARKER if name in installed else "") for name in theme_names
+                (INSTALLED_PREFIX if name in installed else NOT_INSTALLED_PREFIX) + name
+                for name in theme_names
             ]
-            themes = ["[CONFIRM]"] + themes
+            themes = [NOT_INSTALLED_PREFIX + "[CONFIRM]"] + themes
             fzf_options = [
+                "--ansi",
                 "--input-label-pos=center",
                 "--cycle",
                 "-m",

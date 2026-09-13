@@ -1,13 +1,18 @@
-"""theme.import.py's fzf list marks already-installed themes with a suffix
-(INSTALLED_MARKER) so "More Themes" shows what's already there. The marker
-must round-trip: get_theme_preview() and fzf_menu()'s selection handling both
-look the raw theme name up in the gallery JSON by exact match, so a
-marker that isn't stripped back off breaks that lookup -- get_theme_preview()
-in particular then hits `theme_data.get(...)` on a `None` and crashes.
+"""theme.import.py's fzf list marks already-installed themes with a leading,
+colored checkmark (INSTALLED_PREFIX) so "More Themes" shows what's already
+there without repeating a text label on every row.
 
-This checks the --preview path (the only marker-sensitive behavior reachable
-without driving an interactive fzf session) with a marker-decorated name,
-which would raise AttributeError if the strip were missing or broken.
+fzf's --ansi (needed to render that color at all) STRIPS the SGR escape
+codes out of every value it hands back via `{}` -- both the live preview
+substitution and the final selected-line output on stdout -- keeping only
+the glyph. A first version of this marker stripped the wrong thing: it
+matched the *colored* prefix, which fzf's `{}` never actually contains, so
+every installed theme's JSON lookup silently failed and its preview (and
+its confirm-time selection) broke while not-installed themes -- whose
+prefix is plain spaces with nothing for --ansi to strip -- kept working.
+That's the actual shape of the bug this file exists to catch: it must
+assert the JSON lookup *succeeds* with fzf's real, already-stripped output,
+not just that the script doesn't crash on it.
 """
 
 from __future__ import annotations
@@ -20,7 +25,9 @@ import sys
 
 REPO_ROOT = pathlib.Path(os.environ.get("REPO_ROOT", "."))
 SCRIPT_PATH = REPO_ROOT / "Configs/.local/lib/hyde/theme.import.py"
-INSTALLED_MARKER = "  ✓ installed"
+INSTALLED_GLYPH = "✓ "  # what fzf's {} substitution actually contains
+INSTALLED_PREFIX = f"\033[32m{INSTALLED_GLYPH}\033[0m"  # what's fed to fzf for display
+NOT_INSTALLED_PREFIX = "  "
 
 failures = 0
 
@@ -35,11 +42,30 @@ def check(condition: bool, message: str) -> None:
 def run_preview(cache_home: pathlib.Path, theme_arg: str):
     env = dict(os.environ)
     env["XDG_CACHE_HOME"] = str(cache_home)
+    env["LOG_LEVEL"] = "debug"  # so the resolved theme name shows up on stderr
     return subprocess.run(
         [sys.executable, str(SCRIPT_PATH), "--skip-clone", "--preview", theme_arg],
         capture_output=True,
         text=True,
         env=env,
+    )
+
+
+def check_resolves(cache_home: pathlib.Path, theme_arg: str, label: str) -> None:
+    result = run_preview(cache_home, theme_arg)
+    check(
+        "AttributeError" not in result.stderr,
+        f"--preview with {label} crashed: {result.stderr}",
+    )
+    check(
+        "Theme: Vesper" in result.stderr,
+        f"--preview with {label} did not resolve to the fixture theme "
+        f"(the JSON lookup used an unstripped/mangled name): stderr={result.stderr!r}",
+    )
+    check(
+        "Theme not found in gallery data" not in result.stderr,
+        f"--preview with {label} hit the not-found path instead of matching Vesper: "
+        f"stderr={result.stderr!r}",
     )
 
 
@@ -63,23 +89,27 @@ def main() -> int:
             )
         )
 
-        result = run_preview(tmp_path, "Vesper" + INSTALLED_MARKER)
-        check(
-            "AttributeError" not in result.stderr,
-            f"--preview with the installed marker crashed instead of stripping it: {result.stderr}",
-        )
-        check(
-            result.returncode == 0,
-            f"--preview with the installed marker exited {result.returncode}: {result.stderr}",
-        )
+        # The real case: fzf's --ansi already stripped the color codes, so
+        # only the bare glyph reaches the script. This is what broke.
+        check_resolves(tmp_path, INSTALLED_GLYPH + "Vesper", "the ansi-stripped glyph (real fzf output)")
 
-        # Sanity check: an unmarked, genuinely unknown theme is the actual
-        # not-found path, not a crash -- distinguishes "strip works" above
-        # from "the script never crashes on anything".
+        # Defensive: also handle the colored form if it's ever passed directly.
+        check_resolves(tmp_path, INSTALLED_PREFIX + "Vesper", "the still-colored prefix")
+
+        # A not-installed theme carries the blank alignment prefix instead.
+        check_resolves(tmp_path, NOT_INSTALLED_PREFIX + "Vesper", "the not-installed prefix")
+
+        # Sanity check: a genuinely unknown theme is the actual not-found
+        # path, not a crash -- distinguishes "the lookup works" above from
+        # "the script never crashes on anything".
         result_unknown = run_preview(tmp_path, "DoesNotExist")
         check(
             "AttributeError" not in result_unknown.stderr,
             f"an unknown theme name should print 'not found', not crash: {result_unknown.stderr}",
+        )
+        check(
+            "Theme not found in gallery data" in result_unknown.stderr,
+            f"an unknown theme name should hit the not-found path: stderr={result_unknown.stderr!r}",
         )
 
     return failures
