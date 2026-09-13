@@ -1,0 +1,4 @@
+[submodule "language-packs"]
+	path = language-packs
+	url = https://github.com/HyDE-Project/language-packs.git
+	branch = master
