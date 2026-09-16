@@ -526,6 +526,11 @@ wallbash_state_is_complete() {
 # runs, not just until it's been backgrounded, or two overlapping switches
 # can still race to be the one left on screen.
 #
+# The lock file name is fixed (not derived from $0): "which wallpaper is on
+# screen" is one shared resource regardless of which backend script touches
+# it, so a switch to backend A must still serialize against one still
+# in-flight on backend B, e.g. right after WALLPAPER_BACKEND changes.
+#
 # Globals:
 #   Sets WALLPAPER_LOCK_FD, to be released via `flock -u "$WALLPAPER_LOCK_FD"`
 # Arguments:
@@ -537,9 +542,9 @@ wallpaper_acquire_lock() {
     local timeout="${1:-15}"
     local lockDir="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/hyde"
     mkdir -p "$lockDir"
-    exec {WALLPAPER_LOCK_FD}>"$lockDir/$(basename "$0").lock"
+    exec {WALLPAPER_LOCK_FD}>"$lockDir/wallpaper.lock"
     if ! flock -w "$timeout" "$WALLPAPER_LOCK_FD"; then
-        echo "Error: Another instance of $(basename "$0") is still running after waiting ${timeout}s." >&2
+        echo "Error: Another wallpaper backend is still running after waiting ${timeout}s." >&2
         exit 1
     fi
 }
