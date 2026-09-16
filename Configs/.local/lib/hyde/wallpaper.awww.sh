@@ -1,17 +1,9 @@
 #!/usr/bin/env bash
 selected_wall="${1:-"$$HYDE_CACHE_HOME/wall.set"}"
-lockFile="$XDG_RUNTIME_DIR/hyde/$(basename "$0").lock"
-exec {lockFd}>"$lockFile"
-if ! flock -w 15 "$lockFd"; then
-    cat << EOF
-
-Error: Another instance of $(basename "$0") is still running after waiting 15s.
-EOF
-    exit 1
-fi
-trap 'flock -u "$lockFd"' EXIT
 scrDir="$(dirname "$(realpath "$0")")"
 source "$scrDir/globalcontrol.sh"
+wallpaper_acquire_lock 15
+trap 'flock -u "$WALLPAPER_LOCK_FD"' EXIT
 case "$WALLPAPER_SET_FLAG" in
     p)
         xtrans=$WALLPAPER_AWWW_TRANSITION_PREV
@@ -43,5 +35,4 @@ xtrans=$WALLPAPER_AWWW_TRANSITION_DEFAULT
 [ -z "$wallFramerate" ] && wallFramerate=60
 [ -z "$wallTransDuration" ] && wallTransDuration=0.4
 print_log -sec "wallpaper" -stat "apply" "$selected_wall"
-awww img "$(readlink -f "$selected_wall")" --transition-bezier .43,1.19,1,.4 --transition-type "$xtrans" --transition-duration "$wallTransDuration" --transition-fps "$wallFramerate" --invert-y --transition-pos "$(hyprctl cursorpos | grep -E '^[0-9]' || echo "0,0")" &
-wait $!
+timeout 30 awww img "$(readlink -f "$selected_wall")" --transition-bezier .43,1.19,1,.4 --transition-type "$xtrans" --transition-duration "$wallTransDuration" --transition-fps "$wallFramerate" --invert-y --transition-pos "$(hyprctl cursorpos | grep -E '^[0-9]' || echo "0,0")"

@@ -3,19 +3,8 @@
 scrDir="$(dirname "$(realpath "$0")")"
 source "$scrDir/globalcontrol.sh"
 
-lockDir="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/hyde"
-mkdir -p "$lockDir"
-lockFile="$lockDir/$(basename "$0").lock"
-
-exec {lockFd}>"$lockFile"
-if ! flock -w 30 "$lockFd"; then
-    cat << EOF
-
-Error: Another instance of $(basename "$0") is still running after waiting 30s.
-EOF
-    exit 1
-fi
-trap 'flock -u "$lockFd"' EXIT
+wallpaper_acquire_lock 30
+trap 'flock -u "$WALLPAPER_LOCK_FD"' EXIT
 
 selected_wall="${1:-"$HYDE_CACHE_HOME/wall.set"}"
 selected_wall="$(readlink -f "$selected_wall")"
@@ -99,8 +88,8 @@ fi
 
 # Set wallpaper on all monitors (waydeeper handles multi-monitor by default)
 print_log -sec "wallpaper" -stat "apply" "$selected_wall"
-"${waydeeper_args[@]}" &
-wait $!
+timeout 60 "${waydeeper_args[@]}"
+set_status=$?
 
 # Start daemon if not already running
 if ! pgrep -f "waydeeper daemon" &>/dev/null; then
@@ -108,3 +97,5 @@ if ! pgrep -f "waydeeper daemon" &>/dev/null; then
     waydeeper daemon &
     disown
 fi
+
+exit "$set_status"
