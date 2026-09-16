@@ -10,8 +10,6 @@ if ! flock -w 15 "$lockFd"; then
     cat << EOF
 
 Error: Another instance of $(basename "$0") is still running after waiting 15s.
-If you are sure that no other instance is running, remove the lock file:
-    $lockFile
 EOF
     exit 1
 fi
