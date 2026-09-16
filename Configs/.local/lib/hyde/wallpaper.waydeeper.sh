@@ -7,17 +7,17 @@ lockDir="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/hyde"
 mkdir -p "$lockDir"
 lockFile="$lockDir/$(basename "$0").lock"
 
-if ! ( set -o noclobber; : > "$lockFile" ) 2>/dev/null; then
+exec {lockFd}>"$lockFile"
+if ! flock -w 30 "$lockFd"; then
     cat << EOF
 
-Error: Another instance of $(basename "$0") is running.
+Error: Another instance of $(basename "$0") is still running after waiting 30s.
 If you are sure that no other instance is running, remove the lock file:
     $lockFile
 EOF
     exit 1
 fi
-touch "$lockFile"
-trap 'rm -f "${lockFile}"' EXIT
+trap 'flock -u "$lockFd"' EXIT
 
 selected_wall="${1:-"$HYDE_CACHE_HOME/wall.set"}"
 selected_wall="$(readlink -f "$selected_wall")"
@@ -102,6 +102,7 @@ fi
 # Set wallpaper on all monitors (waydeeper handles multi-monitor by default)
 print_log -sec "wallpaper" -stat "apply" "$selected_wall"
 "${waydeeper_args[@]}" &
+wait $!
 
 # Start daemon if not already running
 if ! pgrep -f "waydeeper daemon" &>/dev/null; then
