@@ -42,16 +42,11 @@ jobs:
             git ls-remote --heads --exit-code "https://github.com/$1/tests.git" "refs/heads/$2" >/dev/null 2>&1
           }
 
-          if [ "$EVENT_NAME" = "pull_request" ] && [ -n "$HEAD_REPO" ] && [ "$HEAD_REPO" != "$REPO_FULL" ] && [ -n "$FORK_OWNER" ]; then
-            if branch_exists "$FORK_OWNER" "$BRANCH_NAME"; then
-              target_owner="$FORK_OWNER"
-              target_branch="$BRANCH_NAME"
-            elif branch_exists "$REPO_OWNER" "$BRANCH_NAME"; then
-              target_owner="$REPO_OWNER"
-              target_branch="$BRANCH_NAME"
-            fi
-          elif branch_exists "$REPO_OWNER" "$BRANCH_NAME"; then
+          if branch_exists "$REPO_OWNER" "$BRANCH_NAME"; then
             target_owner="$REPO_OWNER"
+            target_branch="$BRANCH_NAME"
+          elif [ "$EVENT_NAME" = "pull_request" ] && [ -n "$HEAD_REPO" ] && [ "$HEAD_REPO" != "$REPO_FULL" ] && [ -n "$FORK_OWNER" ] && branch_exists "$FORK_OWNER" "$BRANCH_NAME"; then
+            target_owner="$FORK_OWNER"
             target_branch="$BRANCH_NAME"
           fi
 
@@ -123,16 +118,11 @@ jobs:
             git ls-remote --heads --exit-code "https://github.com/$1/tests.git" "refs/heads/$2" >/dev/null 2>&1
           }
 
-          if [ "$EVENT_NAME" = "pull_request" ] && [ -n "$HEAD_REPO" ] && [ "$HEAD_REPO" != "$REPO_FULL" ] && [ -n "$FORK_OWNER" ]; then
-            if branch_exists "$FORK_OWNER" "$BRANCH_NAME"; then
-              target_owner="$FORK_OWNER"
-              target_branch="$BRANCH_NAME"
-            elif branch_exists "$REPO_OWNER" "$BRANCH_NAME"; then
-              target_owner="$REPO_OWNER"
-              target_branch="$BRANCH_NAME"
-            fi
-          elif branch_exists "$REPO_OWNER" "$BRANCH_NAME"; then
+          if branch_exists "$REPO_OWNER" "$BRANCH_NAME"; then
             target_owner="$REPO_OWNER"
+            target_branch="$BRANCH_NAME"
+          elif [ "$EVENT_NAME" = "pull_request" ] && [ -n "$HEAD_REPO" ] && [ "$HEAD_REPO" != "$REPO_FULL" ] && [ -n "$FORK_OWNER" ] && branch_exists "$FORK_OWNER" "$BRANCH_NAME"; then
+            target_owner="$FORK_OWNER"
             target_branch="$BRANCH_NAME"
           fi
 
