@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Theme import: the "More Themes" fzf picker (`hydectl theme import`) marks themes already present in `~/.config/hyde/themes` with a "✓ installed" suffix, so browsing the gallery no longer requires cross-checking what's already on disk
 
 ### Fixed
+- Waybar: `waybar.py` searches `/usr/local/share/waybar` and `/usr/share/waybar` for system-wide layouts, modules and includes. The entries lacked their leading `/`, so they resolved against the current directory: system-wide files were never found, and a `usr/share/waybar` tree in the directory it ran from was read instead
 - Installer: `theme.switch.sh` no longer fails with "HyDE: command not found" during `install.sh -r` by sourcing `globalcontrol.sh` directly when `hyde-shell init` is unavailable
 - Dependencies: removed unreliable version constraint `hyprquery>=0.6.8.r11`. Advise users to update `yay -Sy hyprquery`.
 - Wallpaper: `theme.switch.sh` no longer hangs forever when the awww/swww daemon is running but unresponsive. The daemon health-check (`<backend> query`, and `<backend> restore` after a restart) ran as a plain foreground call with no bound, unlike the apply command it precedes; a stalled daemon left it blocking indefinitely. It is now wrapped in `timeout`, the same treatment the apply command already had.
