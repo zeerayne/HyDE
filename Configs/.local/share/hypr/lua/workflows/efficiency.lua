@@ -30,3 +30,10 @@ hl.config({
     enabled = false,
   },
 })
+
+hl.window_rule({
+  opaque = true,
+  match = {
+    class = ".*",
+  },
+})
