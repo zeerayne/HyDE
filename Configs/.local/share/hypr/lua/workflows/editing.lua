@@ -1,7 +1,7 @@
 local workflow = {
   name = "Editing",
   icon = "",
-	description = "Best for writing and editing // Disables window transparency",
+  description = "Best for writing and editing. Disables window transparency",
 }
 
 if not hl then
