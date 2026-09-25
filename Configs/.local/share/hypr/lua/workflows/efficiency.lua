@@ -1,7 +1,7 @@
 local workflow = {
-  name = "Gaming",
-  icon = "",
-  description = "Emphasis on performance and disabling compositors expensive features",
+  name = "Efficiency",
+  icon = "󰂐",
+  description = "Best for gaming and battery life. Disables expensive compositor features",
 }
 
 if not hl then
