@@ -15,3 +15,10 @@ hl.config({
     fullscreen_opacity = 1,
   },
 })
+
+hl.window_rule({
+  opaque = true,
+  match = {
+    class = ".*",
+  },
+})
