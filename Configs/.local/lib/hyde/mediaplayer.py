@@ -220,6 +220,8 @@ def on_player_appeared(manager, player, selected_players=None):
         if not hasattr(manager, "_polling") or not manager._polling:
             manager._polling = True
             GLib.timeout_add_seconds(1, poll_if_players, manager)
+        if not getattr(manager, "_refresh_timer_active", False):
+            manager._refresh_timer_active = True
             GLib.timeout_add_seconds(5, refresh_player_names, manager)
         update_positions(manager)  # Force immediate update when a new player appears
     else:
@@ -267,8 +269,17 @@ def refresh_player_names(manager):
     counting position-polling ticks, so it stays a 5s safety net regardless
     of what the 1s poll interval below happens to be, and stops on its own
     once position polling stops.
+
+    _refresh_timer_active (separate from _polling) tracks whether *this*
+    timer instance is still alive: a rapid vanish-then-appear cycle can flip
+    _polling False then True again before this timer's own next tick sees
+    it, and gating the start-site on _polling alone would then start a
+    second, redundant 5s source that never gets stopped. Clearing the flag
+    only when this callback actually self-stops keeps at most one instance
+    running at a time.
     """
     if not getattr(manager, "_polling", False):
+        manager._refresh_timer_active = False
         return False  # matches poll_if_players: stop once polling has ended
     try:
         manager.props.player_names  # This triggers a refresh in Playerctl
@@ -484,6 +495,7 @@ def main():
     if manager.props.players:
         manager._polling = True
         GLib.timeout_add_seconds(1, poll_if_players, manager)
+        manager._refresh_timer_active = True
         GLib.timeout_add_seconds(5, refresh_player_names, manager)
     else:
         manager._polling = False
