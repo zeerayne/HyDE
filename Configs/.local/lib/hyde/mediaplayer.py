@@ -1,6 +1,13 @@
 #!/usr/bin/env python3
 import os
-import gi
+import pyutils.python_env as python_env
+
+# gi (PyGObject) is only declared under the optional "wayland" extra in
+# pyproject.toml, so the managed venv doesn't have it unless something pulls
+# it in -- v_import installs it on first use instead of crashing (#1552).
+python_env.v_import("gi", extra="wayland")
+
+import gi  # noqa: E402
 
 gi.require_version("Playerctl", "2.0")
 from gi.repository import Playerctl, GLib  # noqa: E402
@@ -252,6 +259,9 @@ def init_player(manager, name):
     return player
 
 
+_refresh_tick = 0
+
+
 def update_positions(manager):
     """
     This is the callback run once every second.
@@ -259,11 +269,16 @@ def update_positions(manager):
     updates the tooltip, and rewrites the output to stdout.
     Returns True to keep polling, or False to stop polling if no players.
     """
-    # Refresh the player list in case new players appeared after startup
-    try:
-        manager.props.player_names  # This triggers a refresh in Playerctl
-    except Exception as e:
-        logger.warning(f"Could not refresh player names: {e}")
+    global _refresh_tick
+    _refresh_tick += 1
+    # Refresh the player list in case a name-appeared/vanished signal was
+    # missed -- a real DBus round-trip, so it's a once-per-5s safety net
+    # rather than every tick.
+    if _refresh_tick % 5 == 0:
+        try:
+            manager.props.player_names  # This triggers a refresh in Playerctl
+        except Exception as e:
+            logger.warning(f"Could not refresh player names: {e}")
     if manager.props.players:
         tooltip_text = ""
         for player in manager.props.players:
@@ -304,15 +319,6 @@ def update_positions(manager):
         p_name = player.props.player_name
         track = players_data[p_name]["track"]
         artist = players_data[p_name]["artist"]
-        duration_seconds = players_data[p_name]["duration"]
-        try:
-            loop_status = player.get_loop_status()
-        except Exception:
-            loop_status = None
-        try:
-            shuffle_status = player.get_shuffle()
-        except Exception:
-            shuffle_status = None
         write_output(track, artist, player.props.status == "Playing", player, tooltip_text)
         return True  # Keep polling if there are players
     else:
