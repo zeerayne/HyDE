@@ -220,6 +220,7 @@ def on_player_appeared(manager, player, selected_players=None):
         if not hasattr(manager, "_polling") or not manager._polling:
             manager._polling = True
             GLib.timeout_add_seconds(1, poll_if_players, manager)
+            GLib.timeout_add_seconds(5, refresh_player_names, manager)
         update_positions(manager)  # Force immediate update when a new player appears
     else:
         logger.debug("New player appeared, but it's not the selected player, skipping")
@@ -259,7 +260,21 @@ def init_player(manager, name):
     return player
 
 
-_refresh_tick = 0
+def refresh_player_names(manager):
+    """
+    Forces Playerctl to re-check its DBus name list, catching a missed
+    name-appeared/vanished signal. Runs on its own 5s GLib timer rather than
+    counting position-polling ticks, so it stays a 5s safety net regardless
+    of what the 1s poll interval below happens to be, and stops on its own
+    once position polling stops.
+    """
+    if not getattr(manager, "_polling", False):
+        return False  # matches poll_if_players: stop once polling has ended
+    try:
+        manager.props.player_names  # This triggers a refresh in Playerctl
+    except Exception as e:
+        logger.warning(f"Could not refresh player names: {e}")
+    return True
 
 
 def update_positions(manager):
@@ -269,16 +284,6 @@ def update_positions(manager):
     updates the tooltip, and rewrites the output to stdout.
     Returns True to keep polling, or False to stop polling if no players.
     """
-    global _refresh_tick
-    _refresh_tick += 1
-    # Refresh the player list in case a name-appeared/vanished signal was
-    # missed -- a real DBus round-trip, so it's a once-per-5s safety net
-    # rather than every tick.
-    if _refresh_tick % 5 == 0:
-        try:
-            manager.props.player_names  # This triggers a refresh in Playerctl
-        except Exception as e:
-            logger.warning(f"Could not refresh player names: {e}")
     if manager.props.players:
         tooltip_text = ""
         for player in manager.props.players:
@@ -479,6 +484,7 @@ def main():
     if manager.props.players:
         manager._polling = True
         GLib.timeout_add_seconds(1, poll_if_players, manager)
+        GLib.timeout_add_seconds(5, refresh_player_names, manager)
     else:
         manager._polling = False
     loop.run()
