@@ -1,18 +1,23 @@
 name: Tests pointer
 
 # Keeps the `tests` submodule on dev pointing at HyDE-Project/tests main.
-# PR checks already pick the tests branch by name (see test.yml), so the
-# pointer only matters for runs without a matching branch: pushes to
-# dev/rc/master and PRs without a tests branch. It used to be bumped by hand
-# after every tests merge.
+# test.yml never reads this pointer: it always resolves `tests` fresh by
+# branch name (falling back to main), for every push and PR alike. The
+# pointer only matters to whoever clones HyDE and runs
+# `git submodule update --init` -- it should land them on a `tests` commit
+# this code has actually been run against, not an arbitrary stale one. It
+# used to be bumped by hand after every tests merge.
 #
 # When the pointer is behind, this moves it to tests/main, runs the suite
 # against that, and only if it passes opens (or updates) a PR from
 # `ci/tests-pointer` into dev. It never pushes to dev itself.
 #
-# The PR comes from the workflow token, so its regular checks don't start on
-# their own: they wait for a maintainer to approve them in the PR. That's why
-# the suite runs here first, and this run is linked from the PR body.
+# The PR's head commit is pushed with the workflow token, so GitHub holds its
+# own Tests/CI runs as `action_required` with no jobs queued until a
+# maintainer clicks "Approve and run workflows" in the Checks tab (verified
+# end to end against a real PR before this was proposed). That's why the
+# suite runs here first, and this run is linked from the PR body as the
+# real check.
 
 on:
   push:
@@ -20,7 +25,10 @@ on:
       - dev
   # Merges in the tests repo don't trigger anything here. Scheduled and
   # manual runs start from the default branch, so they check out dev
-  # explicitly below.
+  # explicitly below. GitHub only fires `schedule`/`workflow_dispatch` from a
+  # workflow file that exists on the repo's default branch (currently
+  # `master`), so until this reaches master, only the push-to-dev trigger is
+  # live -- merging this file into dev is itself the first run.
   schedule:
     - cron: "23 4 * * *"
   workflow_dispatch:
@@ -120,6 +128,10 @@ jobs:
         if: steps.compare.outputs.up_to_date == 'false'
         run: sh tests/run.sh
 
+      - name: Check hyde-shell open app priority
+        if: steps.compare.outputs.up_to_date == 'false'
+        run: sh .github/scripts/test_open_priority.sh
+
       - name: Open or update the pointer PR
         if: steps.compare.outputs.up_to_date == 'false'
         env:
@@ -141,7 +153,7 @@ jobs:
             "Moves the \`tests\` submodule on \`$TARGET_BRANCH\` from \`$CURRENT\` to \`$TESTS_REPO\` $TESTS_BRANCH \`$LATEST\`." \
             "New in tests since the previous pointer:" \
             "$TESTS_LOG" \
-            "The full suite passed against the new pointer in [this run]($GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID). Opened by the \`tests-pointer\` workflow; its regular checks wait for approval, since the PR comes from the workflow token; until then, that run is the check.")
+            "The full suite passed against the new pointer in [this run]($GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID), which is the real check: opened by the \`tests-pointer\` workflow, this PR's own Tests/CI runs land as \`action_required\` with no jobs queued, since their head commit was pushed with the workflow token. A maintainer has to open the Checks tab and click \"Approve and run workflows\" once per push to this branch before they execute.")
 
           pr=$(gh pr list --repo "$GITHUB_REPOSITORY" --head "$PR_BRANCH" --base "$TARGET_BRANCH" --state open --json number --jq '.[0].number // empty')
           if [ -n "$pr" ]; then
