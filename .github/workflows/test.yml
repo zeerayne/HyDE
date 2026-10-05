@@ -30,6 +30,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
           persist-credentials: false
 
       - name: Reject tests submodule pointer changes
@@ -37,11 +38,15 @@ jobs:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
         run: |
           set -eu
-          git fetch --depth=1 origin "$BASE_SHA"
-          base_pointer=$(git ls-tree "$BASE_SHA" tests | awk '{print $3}')
+          # Compare against the merge-base, not dev's current tip: tests-pointer.yml
+          # keeps moving dev's pointer forward after a feature branch forks off it,
+          # and that drift must not look like a pointer change the PR itself made
+          # (CodeRabbit catch on HyDE-Project/HyDE#2178).
+          merge_base=$(git merge-base "$BASE_SHA" HEAD)
+          base_pointer=$(git ls-tree "$merge_base" tests | awk '{print $3}')
           head_pointer=$(git ls-tree HEAD tests | awk '{print $3}')
           if [ "$base_pointer" != "$head_pointer" ]; then
-            echo "::error::This PR moves the 'tests' submodule pointer ($base_pointer -> $head_pointer). test.yml resolves the tests repo fresh by branch name (see tests-pointer.yml), so this commit isn't needed for CI and only risks a submodule merge conflict with the automated 'Tests pointer' workflow. Drop the pointer-bump commit; ci/tests-pointer updates dev separately."
+            echo "::error::This PR moves the 'tests' submodule pointer ($base_pointer -> $head_pointer) relative to where it branched from dev. test.yml resolves the tests repo fresh by branch name (see tests-pointer.yml), so this commit isn't needed for CI and only risks a submodule merge conflict with the automated 'Tests pointer' workflow. Drop the pointer-bump commit; ci/tests-pointer updates dev separately."
             exit 1
           fi
 
