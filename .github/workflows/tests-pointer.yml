@@ -102,8 +102,15 @@ jobs:
             echo "up_to_date=true" >>"$GITHUB_OUTPUT"
             echo "tests already points at $TESTS_BRANCH ($latest)"
           elif ! git fetch --quiet "https://github.com/$TESTS_REPO.git" "$current" "$latest"; then
-            echo "::warning::could not fetch $current and/or $latest from $TESTS_REPO to check ancestry; leaving the pointer as-is for now"
-            echo "up_to_date=true" >>"$GITHUB_OUTPUT"
+            # Neither "true" nor "false": reconcile's "close an obsolete
+            # pointer PR" step is gated on up_to_date == 'true', so that
+            # value must mean "confirmed current", not "couldn't tell" --
+            # otherwise a transient fetch failure here could close and
+            # delete a still-valid, pending pointer PR (CodeRabbit catch on
+            # #2181). "unknown" matches neither gate, so every reconcile
+            # step sits out this run and the next trigger re-evaluates.
+            echo "::warning::could not fetch $current and/or $latest from $TESTS_REPO to check ancestry; leaving the pointer and any pending PR as-is for now"
+            echo "up_to_date=unknown" >>"$GITHUB_OUTPUT"
           elif git merge-base --is-ancestor "$current" "$latest"; then
             echo "up_to_date=false" >>"$GITHUB_OUTPUT"
             echo "tests points at $current, $TESTS_BRANCH is $latest"
