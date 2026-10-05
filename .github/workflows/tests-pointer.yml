@@ -87,33 +87,33 @@ jobs:
           fi
           echo "current=$current" >>"$GITHUB_OUTPUT"
           echo "latest=$latest" >>"$GITHUB_OUTPUT"
+          # A mismatch isn't necessarily "behind": a feature branch can merge
+          # into dev carrying a newer tests commit before that same commit
+          # reaches tests/main itself (#2175 did, moments before tests/main
+          # caught up), which otherwise looks exactly like "needs a bump" and
+          # moves the pointer backward (closed as wrong in #2179). Only bump
+          # when $current is a genuine, strict ancestor of $latest -- every
+          # other case (equal, $current ahead, diverged, or the fetch below
+          # failing) leaves the pointer alone instead of guessing, since
+          # guessing "needs a bump" is the unsafe default that caused #2179
+          # (CodeRabbit catch on #2181: that includes the fetch-failure case
+          # too, not just a plain direction mismatch).
           if [ "$current" = "$latest" ]; then
             echo "up_to_date=true" >>"$GITHUB_OUTPUT"
             echo "tests already points at $TESTS_BRANCH ($latest)"
-          elif git fetch --quiet "https://github.com/$TESTS_REPO.git" "$current" "$latest"; then
-            # A mismatch isn't necessarily "behind": a feature branch can
-            # merge into dev carrying a newer tests commit before that same
-            # commit reaches tests/main itself (#2175 did, moments before
-            # tests/main caught up), which otherwise looks exactly like
-            # "needs a bump" and moves the pointer backward (closed as
-            # wrong in #2179). Fetch both commits to tell which direction
-            # they actually relate before deciding.
-            if git merge-base --is-ancestor "$latest" "$current"; then
-              echo "up_to_date=true" >>"$GITHUB_OUTPUT"
-              echo "tests already points at $current, which is ahead of $TESTS_BRANCH ($latest)"
-            else
-              echo "up_to_date=false" >>"$GITHUB_OUTPUT"
-              echo "tests points at $current, $TESTS_BRANCH is $latest"
-            fi
-          else
-            # $current unreachable (tests/main history rewritten under it, or
-            # GitHub refused the unadvertised-SHA fetch) -- fall back to the
-            # old behaviour rather than hard-failing the job over it: a
-            # direction check needs that commit, but a plain bump to latest
-            # doesn't.
-            echo "::warning::could not fetch $current and/or $latest from $TESTS_REPO to check ancestry; bumping to latest without a direction check"
+          elif ! git fetch --quiet "https://github.com/$TESTS_REPO.git" "$current" "$latest"; then
+            echo "::warning::could not fetch $current and/or $latest from $TESTS_REPO to check ancestry; leaving the pointer as-is for now"
+            echo "up_to_date=true" >>"$GITHUB_OUTPUT"
+          elif git merge-base --is-ancestor "$current" "$latest"; then
             echo "up_to_date=false" >>"$GITHUB_OUTPUT"
             echo "tests points at $current, $TESTS_BRANCH is $latest"
+          else
+            echo "up_to_date=true" >>"$GITHUB_OUTPUT"
+            if git merge-base --is-ancestor "$latest" "$current"; then
+              echo "tests already points at $current, which is ahead of $TESTS_BRANCH ($latest)"
+            else
+              echo "::warning::tests pointer ($current) and $TESTS_BRANCH ($latest) have diverged; leaving the pointer as-is"
+            fi
           fi
 
       - name: Fetch the new tests commit
