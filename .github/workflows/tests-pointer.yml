@@ -91,8 +91,21 @@ jobs:
             echo "up_to_date=true" >>"$GITHUB_OUTPUT"
             echo "tests already points at $TESTS_BRANCH ($latest)"
           else
-            echo "up_to_date=false" >>"$GITHUB_OUTPUT"
-            echo "tests points at $current, $TESTS_BRANCH is $latest"
+            # A mismatch isn't necessarily "behind": a feature branch can
+            # merge into dev carrying a newer tests commit before that same
+            # commit reaches tests/main itself (#2175 did, moments before
+            # tests/main caught up), which otherwise looks exactly like
+            # "needs a bump" and moves the pointer backward (closed as
+            # wrong in #2179). Fetch both commits to tell which direction
+            # they actually relate before deciding.
+            git fetch --quiet "https://github.com/$TESTS_REPO.git" "$current" "$latest"
+            if git merge-base --is-ancestor "$latest" "$current"; then
+              echo "up_to_date=true" >>"$GITHUB_OUTPUT"
+              echo "tests already points at $current, which is ahead of $TESTS_BRANCH ($latest)"
+            else
+              echo "up_to_date=false" >>"$GITHUB_OUTPUT"
+              echo "tests points at $current, $TESTS_BRANCH is $latest"
+            fi
           fi
 
       - name: Fetch the new tests commit
