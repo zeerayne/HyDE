@@ -183,15 +183,57 @@ toml_write "$confDir/gtk-3.0/settings.ini" "Settings" "gtk-icon-theme-name" "$IC
 toml_write "$confDir/gtk-3.0/settings.ini" "Settings" "gtk-cursor-theme-name" "$CURSOR_THEME"
 toml_write "$confDir/gtk-3.0/settings.ini" "Settings" "gtk-cursor-theme-size" "$CURSOR_SIZE"
 toml_write "$confDir/gtk-3.0/settings.ini" "Settings" "gtk-font-name" "$GTK3_FONT $GTK3_FONT_SIZE"
+##
+# Makes confDir/gtk-4.0 a real directory with only the theme's files symlinked
+# in, instead of symlinking the whole directory to the theme. A whole-directory
+# symlink makes anything that writes ~/.config/gtk-4.0/settings.ini (nwg-look,
+# kde-gtk-config, ...) write into the theme's own copy instead of the user's;
+# GTK 4 then reads that back as the theme's settings.ini, and a
+# gtk-application-prefer-dark-theme key there puts some GTK 4 apps into an
+# endless reload loop (HyDE-Project/HyDE#2200, upstream GNOME/gtk#8478).
+# settings.ini is therefore never symlinked, overwritten or removed here, so a
+# user's real file always stays theirs across theme switches.
+#
+# Arguments:
+#   $1  confDir/gtk-4.0, the target (may still be the old whole-dir symlink)
+#   $2  themesDir/<theme>/gtk-4.0, the source (may not exist)
+##
+link_gtk4_theme() {
+    local confGtk4="$1" themeGtk4="$2" old settings f name
+    if [ -L "$confGtk4" ]; then
+        old="$(readlink -f -- "$confGtk4")"
+        settings="$old/settings.ini"
+        # migrate a real settings.ini a tool wrote into the old whole-dir
+        # symlink's target, so dropping that symlink does not lose it
+        rm -f -- "$confGtk4"
+        mkdir -p -- "$confGtk4"
+        [ -f "$settings" ] && [ ! -L "$settings" ] && mv -- "$settings" "$confGtk4/settings.ini"
+    else
+        mkdir -p -- "$confGtk4"
+    fi
+    # drop symlinks from a previous theme that the new one does not provide
+    for f in "$confGtk4"/*; do
+        [ -L "$f" ] || continue
+        [ "$(basename -- "$f")" = "settings.ini" ] && continue
+        rm -- "$f"
+    done
+    [ -d "$themeGtk4" ] || return 0
+    for f in "$themeGtk4"/*; do
+        [ -e "$f" ] || continue
+        name="$(basename -- "$f")"
+        [ "$name" = "settings.ini" ] && continue
+        ln -s -- "$f" "$confGtk4/$name"
+    done
+}
+
 if [ -d "$themesDir/$GTK_THEME/gtk-4.0" ]; then
     gtk4Theme="$GTK_THEME"
 else
     gtk4Theme="Wallbash-Gtk"
     print_log -sec "theme" -stat "use" "'Wallbash-Gtk' as gtk4 theme"
 fi
-rm -rf "$confDir/gtk-4.0"
 if [ -d "$themesDir/$gtk4Theme/gtk-4.0" ]; then
-    ln -s "$themesDir/$gtk4Theme/gtk-4.0" "$confDir/gtk-4.0"
+    link_gtk4_theme "$confDir/gtk-4.0" "$themesDir/$gtk4Theme/gtk-4.0"
 else
     print_log -sec "theme" -warn "gtk4" "theme directory '$themesDir/$gtk4Theme/gtk-4.0' does not exist"
 fi
@@ -233,9 +275,6 @@ if [ -f "$HOME/.Xdefaults" ]; then
         -e "/^Xcursor\.size:/c\Xcursor.size: $CURSOR_SIZE" "$HOME/.Xdefaults"
     grep -q "^Xcursor\.theme:" "$HOME/.Xdefaults" || echo "Xcursor.theme: $CURSOR_THEME" >>"$HOME/.Xdefaults"
     grep -q "^Xcursor\.size:" "$HOME/.Xdefaults" || echo "Xcursor.size: $CURSOR_SIZE" >>"$HOME/.Xdefaults"
-fi
-if [ -f "$confDir/gtk-4.0/settings.ini" ]; then
-    rm "$confDir/gtk-4.0/settings.ini"
 fi
 export -f pkg_installed
 if [[ -d "$HYDE_CACHE_HOME/wallpapers/" ]]; then
