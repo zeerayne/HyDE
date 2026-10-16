@@ -371,7 +371,10 @@ def build_forecast(weather: WttrResponse, now_hour: int, forecast_days: int) -> 
             (cells[c] or " " * widths[c]) if c == icon_col else _esc(_pad(cells[c], widths[c], right[c]))
             for c in range(len(cells))
         ]
-        return "  ".join(parts).rstrip()
+        # One space, not two: six chance columns plus Sky made the two-space table wide
+        # enough to cross the Waybar tooltip's GTK wrap width on every row, not just
+        # outliers (HyDE-Project/HyDE weather tooltip report, 2026-10-16).
+        return " ".join(parts).rstrip()
 
     out = []
     for i, day in enumerate(days):
