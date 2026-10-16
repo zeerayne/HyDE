@@ -227,18 +227,16 @@ link_gtk4_theme() {
         mkdir -p -- "$confGtk4"
     fi
     # drop symlinks from a previous theme that the new one does not provide
-    for f in "$confGtk4"/*; do
-        [ -L "$f" ] || continue
+    while IFS= read -r -d '' f; do
         [ "$(basename -- "$f")" = "settings.ini" ] && continue
         rm -- "$f"
-    done
+    done < <(find "$confGtk4" -mindepth 1 -maxdepth 1 -type l -print0)
     [ -d "$themeGtk4" ] || return 0
-    for f in "$themeGtk4"/*; do
-        [ -e "$f" ] || continue
+    while IFS= read -r -d '' f; do
         name="$(basename -- "$f")"
         [ "$name" = "settings.ini" ] && continue
         ln -s -- "$f" "$confGtk4/$name"
-    done
+    done < <(find "$themeGtk4" -mindepth 1 -maxdepth 1 -print0)
 }
 
 if [ -d "$themesDir/$GTK_THEME/gtk-4.0" ]; then
