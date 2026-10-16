@@ -236,7 +236,7 @@ link_gtk4_theme() {
         name="$(basename -- "$f")"
         [ "$name" = "settings.ini" ] && continue
         ln -s -- "$f" "$confGtk4/$name"
-    done < <(find "$themeGtk4" -mindepth 1 -maxdepth 1 -print0)
+    done < <(find -L "$themeGtk4" -mindepth 1 -maxdepth 1 -print0)
 }
 
 if [ -d "$themesDir/$GTK_THEME/gtk-4.0" ]; then
