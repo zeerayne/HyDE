@@ -199,15 +199,30 @@ toml_write "$confDir/gtk-3.0/settings.ini" "Settings" "gtk-font-name" "$GTK3_FON
 #   $2  themesDir/<theme>/gtk-4.0, the source (may not exist)
 ##
 link_gtk4_theme() {
-    local confGtk4="$1" themeGtk4="$2" old settings f name
+    local confGtk4="$1" themeGtk4="$2" old settings staged f name
+    staged=""
     if [ -L "$confGtk4" ]; then
         old="$(readlink -f -- "$confGtk4")"
         settings="$old/settings.ini"
-        # migrate a real settings.ini a tool wrote into the old whole-dir
-        # symlink's target, so dropping that symlink does not lose it
-        rm -f -- "$confGtk4"
-        mkdir -p -- "$confGtk4"
-        [ -f "$settings" ] && [ ! -L "$settings" ] && mv -- "$settings" "$confGtk4/settings.ini"
+        if [ -f "$settings" ] && [ ! -L "$settings" ]; then
+            # Stage a real settings.ini a tool wrote into the old whole-dir
+            # symlink's target *before* touching the symlink: a failed copy
+            # then leaves the symlink, and the file inside it, exactly as
+            # they were, instead of a failed `mv` after the symlink is
+            # already gone orphaning the file outside the active config.
+            staged="$(mktemp -- "${confGtk4}.settings.ini.XXXXXX")" || return 1
+            if ! cp -p -- "$settings" "$staged"; then
+                rm -f -- "$staged"
+                print_log -sec "theme" -warn "gtk4" "could not migrate '$settings', keeping the old gtk-4.0 symlink"
+                return 1
+            fi
+        fi
+        if ! rm -f -- "$confGtk4" || ! mkdir -p -- "$confGtk4"; then
+            [ -n "$staged" ] && rm -f -- "$staged"
+            print_log -sec "theme" -warn "gtk4" "could not replace the gtk-4.0 symlink with a real directory"
+            return 1
+        fi
+        [ -n "$staged" ] && mv -- "$staged" "$confGtk4/settings.ini"
     else
         mkdir -p -- "$confGtk4"
     fi
