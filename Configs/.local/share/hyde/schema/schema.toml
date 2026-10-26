@@ -31,14 +31,6 @@ type = "array"
 [properties.wallpaper.properties.custom_paths.items]
 type = "string"
 
-[properties.wallpaper.properties.filetypes]
-default = []
-description = "Extra file extensions to treat as wallpapers, on top of gif, jpg, jpeg, png and webp."
-type = "array"
-
-[properties.wallpaper.properties.filetypes.items]
-type = "string"
-
 [properties.wallpaper.properties.backend]
 default = "awww"
 description = "Wallpaper backend, requires 'wallpaper.<backend>.sh' as handler script in $PATH"

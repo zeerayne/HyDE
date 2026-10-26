@@ -425,7 +425,6 @@ Wallpaper configuration.
 | --- | ----------- | ------- |
 | backend | Wallpaper backend, requires 'wallpaper.<backend>.sh' as handler script in $PATH | awww |
 | custom_paths | List of paths to search for wallpapers. | [] |
-| filetypes | Extra file extensions to treat as wallpapers, on top of gif, jpg, jpeg, png and webp. | [] |
 
 ### [wallpaper.awww]
 
