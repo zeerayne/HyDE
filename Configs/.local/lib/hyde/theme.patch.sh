@@ -130,12 +130,19 @@ if [ -f "$FAV_THEME_DIR/theme.dcol" ]; then
 fi
 [[ $LOG_LEVEL == "debug" ]] && print_log -n "[debug] " "restore_list: $restore_list"
 readonly restore_list
-wallpapers=$(find -H "$FAV_THEME_DIR" -type f \( -iname "*.gif" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.webp" \) ! -path "*/logo/*")
+# same extensions as get_hashmap(), so formats added via [wallpaper] filetypes are imported too
+wallpaper_exts=(gif jpg jpeg png webp "${WALLPAPER_FILETYPES[@]}")
+wallpaper_find_args=()
+for ext in "${wallpaper_exts[@]}"; do
+    wallpaper_find_args+=(-iname "*.$ext" -o)
+done
+unset 'wallpaper_find_args[-1]'
+wallpapers=$(find -H "$FAV_THEME_DIR" -type f \( "${wallpaper_find_args[@]}" \) ! -path "*/logo/*")
 wpCount="$(wc -l <<<"$wallpapers")"
 {
     [ -z "$wallpapers" ] && print_log -r "[ERROR] " "No wallpapers found" && exit_flag=true
 } || {
-    readonly wallpapers && print_log -g "\n[pass]  " "wallpapers :: [count] $wpCount (.gif+.jpg+.jpeg+.png+.webp)"
+    readonly wallpapers && print_log -g "\n[pass]  " "wallpapers :: [count] $wpCount ($(printf '.%s+' "${wallpaper_exts[@]}" | sed 's/+$//'))"
 }
 # Walk $THEME_DIR once for all tar archives instead of per-prefix
 all_tar_files=$(find -H "$THEME_DIR" -type f -name "*.tar.*" 2>/dev/null)
