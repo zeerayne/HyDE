@@ -7,11 +7,8 @@
 font = "JetBrainsMono Nerd Font"
 scale = 10
 
-[rofi.launch]
-scale = 10
-
 [rofi.cliphist]
-scale = 10
+follow_cursor = false
 
 [screenshot]
 annotation_tool = "satty"
